@@ -1,0 +1,2205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TeachFlow — Teach once. Say it naturally. Let Android act.</title>
+<meta name="description" content="TeachFlow learns Android app workflows from a single demonstration, turns them into semantic skills, adapts to changing screens, and hands control back when it matters.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05070B; --s1:#0B1018; --s2:#111824; --s3:#172030;
+  --line:rgba(140,170,220,.12); --line2:rgba(140,170,220,.22);
+  --blue:#3B82F6; --blue2:#60A5FA; --violet:#8B5CF6; --cyan:#22D3EE;
+  --green:#34D399; --amber:#F59E0B; --red:#F43F5E;
+  --text:#F4F7FB; --muted:#8A98B0; --dim:#5A6780;
+  --sans:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --r-lg:22px; --r-md:14px; --r-sm:9px;
+  --spring:cubic-bezier(.2,.9,.25,1.15); --ease:cubic-bezier(.2,.7,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{overflow-x:clip;scroll-behavior:smooth;scroll-padding-top:calc(90px + env(safe-area-inset-top,0px));background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img,svg{max-width:100%}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:6px}
+.skip{position:absolute;left:-999px;top:10px;background:var(--blue);padding:8px 14px;border-radius:8px;z-index:200}
+.skip:focus{left:12px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* ambient layers */
+.bg-grid{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:64px 64px;mask-image:radial-gradient(ellipse at 50% 0%,#000 0%,transparent 70%);opacity:.45}
+.bg-aura{position:fixed;inset:-20%;pointer-events:none;z-index:0;
+  background:radial-gradient(40% 35% at 20% 10%,rgba(59,130,246,.14),transparent 70%),radial-gradient(35% 30% at 85% 25%,rgba(139,92,246,.12),transparent 70%),radial-gradient(30% 30% at 50% 90%,rgba(34,211,238,.06),transparent 70%);
+  animation:aura 26s ease-in-out infinite alternate}
+@keyframes aura{to{transform:translate3d(3%,-2%,0) scale(1.05)}}
+#particles{position:fixed;inset:0;z-index:0;pointer-events:none}
+.cursor-glow{position:fixed;width:520px;height:520px;border-radius:50%;pointer-events:none;z-index:1;
+  background:radial-gradient(circle,rgba(96,165,250,.09),transparent 60%);transform:translate(-50%,-50%);left:-600px;top:-600px;transition:opacity .3s}
+main,footer,header{position:relative;z-index:2}
+
+/* layout */
+.wrap{width:min(1180px,100% - 40px);margin-inline:auto}
+section{padding:130px 0;position:relative}
+.sec-head{max-width:760px;margin-bottom:56px}
+.sec-no{font-family:var(--mono);font-size:12px;color:var(--dim);display:flex;align-items:center;gap:10px;margin-bottom:22px;letter-spacing:.02em}
+.sec-no::before{content:"";width:28px;height:1px;background:var(--line2)}
+h1,h2,h3{margin:0;font-weight:600;letter-spacing:-.035em;line-height:1.02}
+h2{font-size:clamp(2.1rem,5vw,3.9rem)}
+h2 .l2{display:block;color:var(--muted)}
+h3{font-size:1.25rem;letter-spacing:-.02em;line-height:1.2}
+.lead{color:var(--muted);font-size:1.12rem;max-width:62ch;margin:22px 0 0}
+.mono{font-family:var(--mono)}
+.tag{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:99px;border:1px solid var(--line2);color:var(--muted);background:rgba(17,24,36,.6);white-space:nowrap}
+.tag.sim::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--violet)}
+.tag.live::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--green)}
+.tag.next{border-color:rgba(139,92,246,.45);color:#C4B5FD}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(52,211,153,.6);animation:ping 2s infinite;display:inline-block}
+@keyframes ping{70%{box-shadow:0 0 0 8px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}
+
+.glass{background:linear-gradient(180deg,rgba(17,24,36,.78),rgba(11,16,24,.7));border:1px solid var(--line);border-radius:var(--r-lg);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);position:relative}
+.glass.edge::before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;pointer-events:none;
+  background:linear-gradient(140deg,rgba(96,165,250,.55),rgba(139,92,246,.25) 40%,transparent 70%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12px;color:var(--muted)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:10px;padding:14px 22px;border-radius:99px;border:1px solid var(--line2);background:rgba(17,24,36,.7);text-decoration:none;font-weight:500;font-size:15px;transition:transform .35s var(--spring),background .25s,border-color .25s;will-change:transform}
+.btn:hover{border-color:rgba(96,165,250,.5);background:rgba(23,32,48,.9)}
+.btn.primary{background:linear-gradient(135deg,#2563EB,#6D5AF0);border-color:transparent;box-shadow:0 10px 40px -10px rgba(59,130,246,.7),inset 0 1px 0 rgba(255,255,255,.2)}
+.btn.primary:hover{background:linear-gradient(135deg,#3B82F6,#7C6CF5)}
+.btn.sm{padding:9px 16px;font-size:14px}
+.chip{padding:8px 14px;border-radius:99px;border:1px solid var(--line2);background:var(--s1);font-size:14px;transition:all .25s var(--ease)}
+.chip:hover{border-color:rgba(96,165,250,.5)}
+.chip[aria-pressed="true"]{background:rgba(59,130,246,.18);border-color:var(--blue2);color:#fff;box-shadow:0 0 20px -6px rgba(59,130,246,.8)}
+
+/* nav */
+.nav{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:100;width:min(1120px,100% - 24px);
+  display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 12px 10px 18px;border-radius:99px;
+  background:rgba(8,12,19,.55);border:1px solid var(--line);backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(20px) saturate(140%);transition:all .4s var(--ease)}
+.nav.scrolled{width:min(980px,100% - 24px);padding-block:7px;background:rgba(8,12,19,.8)}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:600;letter-spacing:-.02em}
+.logo{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-family:var(--mono);font-size:12px;font-weight:500;background:linear-gradient(135deg,#1D4ED8,#7C3AED);box-shadow:0 0 18px -4px rgba(96,165,250,.8)}
+.nav-links{display:flex;gap:4px;list-style:none;margin:0;padding:0}
+.nav-links a{text-decoration:none;color:var(--muted);font-size:14px;padding:8px 12px;border-radius:99px;transition:color .2s,background .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--text);background:rgba(255,255,255,.05)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.sys{font-family:var(--mono);font-size:11px;color:var(--muted);display:flex;align-items:center;gap:7px}
+.burger{display:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--line2);background:transparent;position:relative}
+.burger span{position:absolute;left:12px;right:12px;height:1.5px;background:var(--text);transition:transform .3s var(--ease),opacity .2s}
+.burger span:nth-child(1){top:15px}.burger span:nth-child(2){top:20px}.burger span:nth-child(3){top:25px}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(5px) rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-5px) rotate(-45deg)}
+.drawer{position:fixed;inset:0;z-index:99;background:rgba(5,7,11,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:110px 28px 40px;display:flex;flex-direction:column;gap:6px;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.drawer.open{opacity:1;visibility:visible}
+.drawer a{font-size:2rem;font-weight:600;letter-spacing:-.03em;text-decoration:none;padding:8px 0;border-bottom:1px solid var(--line);transform:translateY(12px);opacity:0;transition:all .45s var(--ease)}
+.drawer.open a{transform:none;opacity:1}
+.drawer a:nth-child(2){transition-delay:.04s}.drawer a:nth-child(3){transition-delay:.08s}.drawer a:nth-child(4){transition-delay:.12s}.drawer a:nth-child(5){transition-delay:.16s}.drawer a:nth-child(6){transition-delay:.2s}
+
+/* hero */
+.hero{min-height:100vh;min-height:100svh;padding:140px 0 90px;display:flex;align-items:center}
+.hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:56px;align-items:center}
+.badge{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:#BFD3F5;padding:7px 14px;border-radius:99px;border:1px solid rgba(96,165,250,.3);background:rgba(59,130,246,.08)}
+.hero h1{font-size:clamp(2.6rem,5.6vw,5.2rem);letter-spacing:-.05em;line-height:.95;margin:28px 0 30px}
+.hl{display:block;position:relative;width:fit-content;white-space:nowrap;cursor:default;opacity:0;transform:translateY(30px);filter:blur(8px);animation:rise 1s var(--ease) forwards}
+.hl:nth-child(2){animation-delay:.15s;color:#B7C6E0}.hl:nth-child(3){animation-delay:.3s;background:linear-gradient(90deg,#fff 10%,#93C5FD 55%,#A78BFA);-webkit-background-clip:text;background-clip:text;color:transparent}
+@keyframes rise{to{opacity:1;transform:none;filter:none}}
+.hl:focus-visible{outline-offset:6px}
+.hl-pop{position:absolute;left:calc(100% + 18px);top:50%;transform:translate(8px,-50%) scale(.96);opacity:0;pointer-events:none;
+  font-family:var(--mono);font-size:12px;letter-spacing:0;line-height:1.55;color:var(--muted);padding:12px 16px;border-radius:12px;white-space:nowrap;z-index:5;
+  background:rgba(11,16,24,.95);border:1px solid var(--line2);transition:all .35s var(--spring);-webkit-text-fill-color:var(--muted)}
+.hl-pop b{color:var(--cyan);font-weight:500;-webkit-text-fill-color:var(--cyan)}
+.hl:hover .hl-pop,.hl:focus .hl-pop{opacity:1;transform:translate(0,-50%) scale(1)}
+.hero .desc{font-size:1.18rem;color:#B4C0D4;max-width:56ch;margin:0 0 12px;opacity:0;animation:rise 1s .5s var(--ease) forwards}
+.hero .support{font-size:.98rem;color:var(--muted);margin:0 0 34px;opacity:0;animation:rise 1s .6s var(--ease) forwards}
+.hero .ctas{display:flex;flex-wrap:wrap;gap:12px;opacity:0;animation:rise 1s .7s var(--ease) forwards}
+.hero .tiny{font-family:var(--mono);font-size:12px;color:var(--dim);margin-top:30px;opacity:0;animation:rise 1s .8s var(--ease) forwards}
+
+.console{padding:0;overflow:hidden;animation:float 7s ease-in-out infinite;box-shadow:0 40px 120px -40px rgba(59,130,246,.45)}
+@keyframes float{50%{transform:translateY(-10px)}}
+.console-body{padding:22px}
+.cmd{font-size:1.15rem;font-weight:500;letter-spacing:-.01em;min-height:2.8em;margin:0 0 14px}
+.caret{display:inline-block;width:2px;height:1.1em;background:var(--cyan);vertical-align:-3px;margin-left:2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.phase{font-family:var(--mono);font-size:12px;color:var(--cyan);margin-bottom:12px;height:18px}
+.slots{display:grid;gap:8px;margin-bottom:16px}
+.slot{display:grid;grid-template-columns:96px 1fr 44px;gap:10px;align-items:center;font-size:14px;padding:9px 12px;border-radius:10px;background:rgba(5,7,11,.5);border:1px solid var(--line);opacity:.25;transition:opacity .4s}
+.slot.on{opacity:1}
+.slot .k{font-family:var(--mono);font-size:11px;color:var(--dim)}
+.slot .p{font-family:var(--mono);font-size:12px;color:var(--green);text-align:right}
+.bar{height:3px;border-radius:3px;background:rgba(255,255,255,.06);overflow:hidden;grid-column:1/-1}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan));transition:width 1s var(--ease)}
+.checks{list-style:none;margin:0 0 16px;padding:14px 0 0;border-top:1px dashed var(--line2);display:grid;gap:7px;font-size:14px}
+.checks li{display:flex;align-items:center;gap:10px;color:var(--dim);transition:color .3s}
+.checks li .ck{width:18px;height:18px;border-radius:50%;border:1px solid var(--line2);display:grid;place-items:center;font-size:10px;transition:all .3s}
+.checks li.on{color:var(--text)}.checks li.on .ck{background:var(--green);border-color:var(--green);color:#03140D}
+.turn{border-radius:12px;padding:14px;text-align:center;border:1px solid rgba(245,158,11,.4);background:rgba(245,158,11,.07);opacity:0;transform:translateY(6px);transition:all .5s var(--spring)}
+.turn.on{opacity:1;transform:none}
+.turn strong{display:block;font-size:1.1rem;letter-spacing:.02em;color:#FCD34D}
+.turn span{font-family:var(--mono);font-size:12px;color:var(--muted)}
+
+/* motif */
+.motif{padding:70px 0;text-align:center;border-block:1px solid var(--line);background:linear-gradient(90deg,transparent,rgba(59,130,246,.05),transparent)}
+.motif p{margin:0;font-size:clamp(1.5rem,3.6vw,2.6rem);font-weight:500;letter-spacing:-.035em;line-height:1.15}
+.motif .strike{color:var(--dim);text-decoration:line-through;text-decoration-color:rgba(244,63,94,.6);text-decoration-thickness:2px}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.rv.in{opacity:1;transform:none}
+
+/* generic grids */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{padding:26px}
+.card p{color:var(--muted);margin:10px 0 0;font-size:15px}
+.lift{transition:transform .4s var(--spring),border-color .3s}
+.lift:hover{transform:translateY(-6px);border-color:var(--line2)}
+
+/* problem */
+.split .card{min-height:340px}
+.bubble{background:var(--s2);border:1px solid var(--line);border-radius:16px 16px 16px 4px;padding:14px 18px;display:inline-block;font-size:1.05rem;margin:14px 0}
+.who{font-family:var(--mono);font-size:11px;color:var(--dim)}
+.ok{color:var(--green)}.no{color:var(--red)}
+.chain{display:flex;flex-direction:column;align-items:flex-start;gap:0;margin-top:14px}
+.chain .st{font-family:var(--mono);font-size:14px;padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:rgba(5,7,11,.4);color:var(--dim);transition:all .4s}
+.chain .st.on{color:var(--text);border-color:rgba(96,165,250,.5);box-shadow:0 0 22px -8px rgba(59,130,246,.9)}
+.chain .ar{width:1px;height:16px;margin-left:24px;background:linear-gradient(var(--line2),var(--blue2))}
+
+/* shift slider */
+.compare{position:relative;height:420px;border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--line);user-select:none;touch-action:pan-y}
+.cmp-side{position:absolute;inset:0;padding:30px;display:flex;flex-direction:column}
+.cmp-left{background:linear-gradient(135deg,#140C12,#0B0D14)}
+.cmp-right{background:linear-gradient(135deg,#071322,#0B1018);clip-path:inset(0 0 0 var(--pos,50%))}
+.cmp-title{font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:18px;display:flex;gap:10px;align-items:center}
+.cmp-inner{display:flex;gap:30px;align-items:center;flex:1}
+.cmp-right .cmp-inner{justify-content:flex-end}
+.code-lines{font-family:var(--mono);font-size:15px;line-height:2}
+.code-lines .miss{color:var(--red)}
+.mini-screen{width:170px;height:280px;border-radius:22px;border:1px solid var(--line2);background:#0A0F17;position:relative;overflow:hidden;flex:none}
+.mini-screen .el{position:absolute;left:14px;right:14px;height:30px;border-radius:8px;background:var(--s3);font-size:10px;font-family:var(--mono);color:var(--muted);display:flex;align-items:center;padding:0 10px;transition:top .8s var(--ease)}
+.tapdot{position:absolute;width:22px;height:22px;border-radius:50%;border:2px solid var(--red);transform:translate(-50%,-50%);transition:all .5s var(--ease)}
+.tapdot.good{border-color:var(--green);box-shadow:0 0 16px var(--green)}
+.sem-flow{display:flex;flex-direction:column;gap:6px;font-family:var(--mono);font-size:13px;text-align:right}
+.sem-flow span{padding:7px 12px;border-radius:8px;border:1px solid rgba(96,165,250,.35);background:rgba(59,130,246,.08)}
+.handle{position:absolute;top:0;bottom:0;left:var(--pos,50%);width:2px;background:linear-gradient(transparent,var(--cyan),transparent);transform:translateX(-1px);cursor:ew-resize}
+.handle button{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;border:1px solid var(--cyan);background:rgba(5,7,11,.9);display:grid;place-items:center;box-shadow:0 0 30px -4px rgba(34,211,238,.6);cursor:ew-resize}
+.shift-toggle{display:flex;justify-content:center;gap:10px;margin-top:20px;flex-wrap:wrap}
+.shift-big{text-align:center;margin-bottom:50px}
+.shift-big h2{font-size:clamp(2.4rem,6.5vw,5rem)}
+.shift-big .from{color:var(--dim)}
+.shift-big .to{color:var(--text)}
+
+/* DNA graph */
+.dna{display:grid;grid-template-columns:1.4fr .8fr;gap:22px;align-items:stretch}
+.dna svg{width:100%;height:auto;display:block}
+.node circle.halo{animation:halo 3s ease-in-out infinite;transform-origin:center;transform-box:fill-box}
+@keyframes halo{50%{opacity:.25;transform:scale(1.35)}}
+.node{cursor:pointer}
+.node rect{transition:all .3s}
+.node:hover rect.box,.node.sel rect.box,.node:focus rect.box{stroke:var(--cyan);fill:rgba(34,211,238,.1)}
+.node:focus{outline:none}
+.edge{stroke:rgba(96,165,250,.35);stroke-width:1.2;fill:none;stroke-dasharray:4 5;animation:dash 20s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-400}}
+.detail{padding:26px}
+.detail .kv{display:grid;grid-template-columns:110px 1fr;gap:8px 14px;font-size:14px;margin-top:18px}
+.detail .kv dt{font-family:var(--mono);font-size:11px;color:var(--dim);padding-top:3px}
+.detail .kv dd{margin:0}
+
+/* timeline */
+.tl{display:grid;grid-template-columns:repeat(6,1fr);gap:0;position:relative}
+.tl::before{content:"";position:absolute;top:22px;left:4%;right:4%;height:1px;background:var(--line2)}
+.tl .prog{position:absolute;top:22px;left:4%;height:1px;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan));box-shadow:0 0 12px var(--cyan);transition:width 2.4s var(--ease)}
+.tl.in .prog{width:92%}
+.tl-step{padding:0 10px;text-align:left;opacity:.2;transform:translateY(12px);transition:all .7s var(--ease)}
+.tl.in .tl-step{opacity:1;transform:none}
+.tl-step .n{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-family:var(--mono);font-size:13px;background:var(--bg);border:1px solid var(--line2);position:relative;margin-bottom:18px}
+.tl.in .tl-step .n{border-color:var(--blue2);box-shadow:0 0 18px -4px var(--blue)}
+.tl-step h3{font-size:1rem;margin-bottom:6px}
+.tl-step p{font-size:13.5px;color:var(--muted);margin:0}
+.tl-step code{font-family:var(--mono);font-size:12px;color:var(--cyan)}
+
+/* phone */
+.phone{width:280px;max-width:100%;aspect-ratio:9/18.5;border-radius:38px;padding:10px;background:linear-gradient(145deg,#1B2331,#0B0F16);border:1px solid var(--line2);box-shadow:0 30px 80px -30px rgba(0,0,0,.9),inset 0 0 0 1px rgba(255,255,255,.03);position:relative;flex:none}
+.screen{position:relative;height:100%;border-radius:30px;overflow:hidden;background:#F7F7F8;color:#1C1C1E;font-size:12px}
+.screen .sb{height:26px;display:flex;justify-content:space-between;align-items:center;padding:0 18px;font-size:10px;font-weight:600;color:#333}
+.app-bar{padding:6px 14px 10px;display:flex;align-items:center;justify-content:space-between}
+.app-name{font-weight:700;font-size:16px;letter-spacing:-.02em}
+.search{margin:0 12px 10px;height:34px;border-radius:10px;background:#EBEBEF;display:flex;align-items:center;padding:0 10px;color:#777;gap:6px;position:relative}
+.rest{margin:0 12px 8px;padding:10px;border-radius:12px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.08);display:flex;gap:10px;align-items:center;position:relative}
+.thumb{width:44px;height:44px;border-radius:10px;flex:none;background:linear-gradient(135deg,#F97316,#DC2626)}
+.rest b{display:block;font-size:12.5px}.rest small{color:#777;font-size:10.5px}
+.add{margin-left:auto;padding:5px 10px;border-radius:8px;border:1px solid #E23744;color:#E23744;font-weight:700;font-size:10.5px;background:#fff}
+.cartbar{position:absolute;left:12px;right:12px;bottom:14px;height:42px;border-radius:12px;background:#E23744;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-weight:600;transform:translateY(80px);transition:transform .5s var(--spring)}
+.cartbar.on{transform:none}
+.touch{position:absolute;width:30px;height:30px;border-radius:50%;background:rgba(59,130,246,.35);border:2px solid #3B82F6;transform:translate(-50%,-50%) scale(0);pointer-events:none;z-index:10;transition:left .6s var(--ease),top .6s var(--ease)}
+.touch.tap{animation:tap .5s var(--ease)}
+@keyframes tap{0%{transform:translate(-50%,-50%) scale(0)}40%{transform:translate(-50%,-50%) scale(1)}100%{transform:translate(-50%,-50%) scale(1.6);opacity:0}}
+.callsheet{position:absolute;left:10px;right:10px;top:34px;padding:12px;border-radius:16px;background:#1C1C1E;color:#fff;display:flex;align-items:center;gap:10px;transform:translateY(-140%);transition:transform .45s var(--spring);z-index:8}
+.callsheet.on{transform:none}
+.callsheet .dcl{margin-left:auto;background:#FF3B30;border-radius:99px;padding:5px 10px;font-size:10px;font-weight:700}
+
+/* simulator */
+.simgrid{display:grid;grid-template-columns:auto 1fr;gap:40px;align-items:start}
+.sim-stage{display:flex;justify-content:center}
+.learn-panel .body{padding:22px;display:grid;gap:18px}
+.lp-label{font-family:var(--mono);font-size:11px;color:var(--dim);margin-bottom:8px}
+.obs{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.obs li{display:flex;align-items:center;gap:10px;font-size:14.5px;padding:8px 12px;border-radius:10px;background:rgba(5,7,11,.45);border:1px solid var(--line);opacity:.3;transition:all .4s var(--ease)}
+.obs li.on{opacity:1;border-color:rgba(52,211,153,.35)}
+.obs li.ign{opacity:1;border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.06)}
+.obs li .ic{width:20px;text-align:center;font-family:var(--mono)}
+.obs li .why{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--amber)}
+.synth{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.synth div{font-family:var(--mono);font-size:12px;padding:10px;border-radius:10px;border:1px dashed var(--line2);color:var(--dim);transition:all .4s}
+.synth div.on{border-style:solid;border-color:rgba(139,92,246,.55);background:rgba(139,92,246,.1);color:var(--text)}
+.synth div span{color:#C4B5FD}
+
+/* tree */
+.tree-wrap{display:grid;grid-template-columns:1fr 280px 1fr;gap:28px;align-items:center}
+.tree{font-family:var(--mono);font-size:13.5px;line-height:1;padding:24px}
+.tree ul{list-style:none;margin:0;padding-left:20px;border-left:1px solid var(--line2)}
+.tree>ul{border:none;padding-left:0}
+.tree li{position:relative;padding:5px 0}
+.tree ul ul li::before{content:"";position:absolute;left:-20px;top:14px;width:14px;height:1px;background:var(--line2)}
+.tn{display:inline-block;padding:6px 10px;border-radius:7px;border:1px solid transparent;cursor:pointer;transition:all .2s;background:none;font:inherit;text-align:left}
+.tn:hover,.tn.hot,.tn:focus-visible{border-color:rgba(34,211,238,.6);background:rgba(34,211,238,.08);color:#fff}
+.tn em{font-style:normal;color:var(--dim);font-size:11.5px;margin-left:6px}
+.pipe{display:flex;flex-direction:column;align-items:center;gap:0}
+.pipe div{font-family:var(--mono);font-size:12px;padding:10px 16px;border-radius:10px;border:1px solid var(--line2);width:100%;text-align:center;background:var(--s1)}
+.pipe div:last-child{border-color:rgba(34,211,238,.6);color:var(--cyan)}
+.pipe i{width:1px;height:18px;background:var(--line2)}
+.hl-target{outline:2px solid #22D3EE;outline-offset:2px;box-shadow:0 0 0 6px rgba(34,211,238,.25)!important;transition:all .2s}
+
+/* agent eyes */
+.eyes{display:grid;grid-template-columns:auto 1fr;gap:50px;align-items:center}
+.bbox{position:absolute;border:1.5px solid var(--cyan);border-radius:8px;opacity:0;transition:opacity .4s;pointer-events:none;z-index:6}
+.bbox.on{opacity:1}
+.bbox span{position:absolute;top:-17px;left:-1px;font-family:var(--mono);font-size:8.5px;background:#0891B2;color:#fff;padding:1px 5px;border-radius:4px;white-space:nowrap}
+.scan{position:absolute;left:0;right:0;height:60px;top:-60px;background:linear-gradient(transparent,rgba(34,211,238,.25),transparent);z-index:5;pointer-events:none;animation:scan 3.6s linear infinite}
+@keyframes scan{to{top:100%}}
+.eyes-list{display:grid;gap:10px}
+.eyes-row{display:grid;grid-template-columns:1fr auto;gap:10px;padding:12px 16px;border-radius:12px;border:1px solid var(--line);background:rgba(11,16,24,.6);font-size:14.5px}
+.eyes-row .c{font-family:var(--mono);color:var(--cyan)}
+.eyes-row small{grid-column:1/-1;color:var(--dim);font-family:var(--mono);font-size:11px}
+.note{font-size:14px;color:var(--muted);padding:14px 16px;border-radius:12px;border-left:2px solid var(--cyan);background:rgba(34,211,238,.05)}
+
+/* paraphrase */
+.para{position:relative;display:flex;flex-direction:column;align-items:center;gap:28px}
+.para-bubbles{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+.para-bubbles .bubble{margin:0;transition:all 1s var(--ease)}
+.para.merge .para-bubbles .bubble{transform:translateY(40px) scale(.9);opacity:.35}
+.para-node{padding:18px 28px;border-radius:18px;text-align:center;border:1px solid rgba(139,92,246,.5);background:rgba(139,92,246,.1);transform:scale(.9);opacity:.4;transition:all 1s .4s var(--spring)}
+.para.merge .para-node{transform:scale(1);opacity:1;box-shadow:0 0 60px -10px rgba(139,92,246,.7)}
+.para-node .m{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.para-node strong{display:block;font-size:1.3rem;letter-spacing:-.01em;margin-top:4px}
+.para-arrow{font-family:var(--mono);color:var(--dim)}
+.para-try{display:flex;gap:10px;width:min(560px,100%)}
+.para-try input{flex:1;min-width:0;padding:12px 16px;border-radius:99px;border:1px solid var(--line2);background:var(--s1);color:var(--text);font:inherit;font-size:15px}
+.para-out .tag{white-space:normal}
+.para-out{font-family:var(--mono);font-size:13px;color:var(--muted);min-height:20px;text-align:center}
+
+/* params */
+.params{display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center}
+.flow-card{padding:26px;font-family:var(--mono);font-size:16px;line-height:1.9}
+.flow-card .v{color:#C4B5FD;padding:2px 8px;border-radius:6px;background:rgba(139,92,246,.14);transition:all .3s}
+.flow-card .v.flash{background:rgba(34,211,238,.3);color:#fff}
+.ctrl{margin-top:22px;display:grid;gap:18px}
+.ctrl .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ctrl .lbl{font-family:var(--mono);font-size:11px;color:var(--dim);width:80px}
+.qty{display:inline-flex;align-items:center;border:1px solid var(--line2);border-radius:99px;overflow:hidden}
+.qty button{width:38px;height:36px;border:none;background:var(--s1);font-size:18px}
+.qty button:hover{background:var(--s3)}
+.qty output{width:40px;text-align:center;font-family:var(--mono)}
+.same{margin-top:22px;font-size:1.05rem;color:var(--muted)}
+.same b{color:var(--text);font-weight:500}
+
+/* recovery */
+.recov{display:grid;grid-template-columns:auto 1fr;gap:40px;align-items:start}
+.promo{position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .35s;z-index:7}
+.promo.on{opacity:1}
+.promo div{background:#fff;border-radius:18px;padding:20px;text-align:center;width:78%;transform:scale(.85);transition:transform .4s var(--spring)}
+.promo.on div{transform:none}
+.promo b{display:block;font-size:17px;margin-bottom:6px}
+.promo p{margin:0 0 14px;color:#666;font-size:11px}
+.promo .close{display:inline-block;padding:7px 18px;border-radius:99px;background:#1C1C1E;color:#fff;font-weight:600}
+.rsteps{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.rsteps li{display:flex;gap:12px;align-items:center;padding:11px 14px;border-radius:12px;border:1px solid var(--line);background:rgba(11,16,24,.5);color:var(--dim);transition:all .4s var(--ease);font-size:14.5px}
+.rsteps li .n{font-family:var(--mono);font-size:11px;width:22px}
+.rsteps li.on{color:var(--text);border-color:rgba(96,165,250,.45)}
+.rsteps li.warn{color:var(--text);border-color:rgba(245,158,11,.5);background:rgba(245,158,11,.06)}
+.rsteps li.good{color:var(--text);border-color:rgba(52,211,153,.5);background:rgba(52,211,153,.06)}
+.diag{margin-top:16px;padding:18px;border-radius:14px;border:1px solid rgba(245,158,11,.35);background:rgba(245,158,11,.05);font-size:14px;display:none}
+.diag.on{display:block;animation:rise .5s var(--ease) both}
+.diag dl{display:grid;grid-template-columns:120px 1fr;gap:6px 12px;margin:10px 0 0}
+.diag dt{font-family:var(--mono);font-size:11px;color:var(--dim);padding-top:2px}
+.diag dd{margin:0}
+.loop-wrap{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;margin-top:80px}
+.loop svg{width:100%;max-width:460px;display:block;margin:auto}
+.loop .ln{fill:rgba(11,16,24,.9);stroke:var(--line2);stroke-width:1;transition:all .4s}
+.loop .lt{font-family:var(--mono);font-size:11px;fill:var(--muted);text-anchor:middle;dominant-baseline:middle;transition:fill .3s}
+.loop g.on .ln{stroke:var(--cyan);fill:rgba(34,211,238,.12);filter:drop-shadow(0 0 8px rgba(34,211,238,.7))}
+.loop g.on .lt{fill:#fff}
+.loop path{stroke:var(--line2);fill:none;stroke-width:1}
+
+/* safety */
+.safety{background:radial-gradient(60% 50% at 50% 60%,rgba(244,63,94,.08),transparent 70%)}
+.stop{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.auto-list{padding:26px}
+.auto-list ul{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:8px}
+.auto-list li{display:flex;gap:10px;align-items:center;font-size:15px}
+.boundary{margin:18px 0;display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:11px;color:#FCA5A5;letter-spacing:.04em}
+.boundary::before,.boundary::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(244,63,94,.7),transparent)}
+.pause-box{padding:22px;border-radius:16px;text-align:center;border:1px solid rgba(245,158,11,.5);background:linear-gradient(180deg,rgba(245,158,11,.1),rgba(244,63,94,.06));box-shadow:0 0 60px -20px rgba(244,63,94,.6)}
+.pause-box .sh{font-size:26px}
+.pause-box strong{display:block;letter-spacing:.06em;margin-top:6px}
+.pause-box .yt{font-size:1.8rem;font-weight:600;letter-spacing:-.02em;color:#FCD34D;margin-top:4px}
+.never{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
+.never div{padding:14px;border-radius:12px;border:1px solid rgba(244,63,94,.3);background:rgba(244,63,94,.05);font-family:var(--mono);font-size:14px;display:flex;gap:10px;align-items:center}
+.never div::before{content:"✕";color:var(--red)}
+.handoff{margin-top:22px;padding:26px;display:flex;flex-wrap:wrap;gap:22px;align-items:center;justify-content:space-between}
+.handoff-state{font-family:var(--mono);font-size:14px;color:var(--muted);min-height:44px}
+.handoff-state .g{color:var(--green)}
+.guardian svg{width:100%;height:auto;display:block}
+.guardian .gn rect{fill:rgba(11,16,24,.95);stroke:var(--line2)}
+.guardian text{font-family:var(--mono);font-size:12px;fill:var(--text);text-anchor:middle;dominant-baseline:middle}
+.guardian .gp{stroke-dasharray:500;stroke-dashoffset:500;transition:stroke-dashoffset 1.6s var(--ease)}
+.guardian.in .gp{stroke-dashoffset:0}
+.triggers{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.triggers span{font-family:var(--mono);font-size:12px;padding:6px 12px;border-radius:99px;border:1px solid rgba(244,63,94,.4);color:#FDA4AF;background:rgba(244,63,94,.06)}
+
+/* skills */
+.skills-lib{position:relative}
+.skills-lib svg.links{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.skill{padding:24px;z-index:1}
+.skill .em{font-size:28px}
+.skill h3{margin-top:12px}
+.skill .app{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.skill .vars{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}
+.skill .vars span{font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:6px;background:rgba(139,92,246,.12);color:#C4B5FD}
+.skill .sr-row{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
+.compose{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;padding:40px 20px}
+.cnode{font-family:var(--mono);font-size:13px;padding:14px 18px;border-radius:12px;border:1px solid var(--line2);background:var(--s1);transition:all 1s var(--ease)}
+.compose .plus{color:var(--dim);font-family:var(--mono);transition:opacity .6s}
+.compose.merged .cnode.part{transform:scale(.92);opacity:.5}
+.compose .big{border-color:rgba(139,92,246,.6);background:rgba(139,92,246,.12);font-size:15px;opacity:.3;transition:all 1s .5s var(--spring)}
+.compose.merged .big{opacity:1;box-shadow:0 0 50px -10px rgba(139,92,246,.8)}
+.cross{display:grid;grid-template-columns:1fr auto 1fr;gap:24px;align-items:center}
+.cross .phone{width:230px}
+.abstract{padding:22px;text-align:center;min-width:200px}
+.abstract .stp{font-family:var(--mono);font-size:13px;padding:8px 12px;border-radius:8px;border:1px solid var(--line);margin:6px 0;transition:all .4s}
+.abstract .stp.on{border-color:var(--cyan);background:rgba(34,211,238,.1);color:#fff}
+.amz .screen{background:#fff}.amz .hdr{background:#131921;color:#fff;padding:10px 12px}
+.myn .screen{background:#fff}.myn .hdr{padding:10px 12px;border-bottom:1px solid #eee}
+.pbox{margin:8px 12px;padding:10px;border-radius:8px;border:1px solid #e5e5e5;display:flex;gap:8px;align-items:center;font-size:11px;position:relative}
+.pbox .ph{width:40px;height:40px;border-radius:6px;background:#E5E7EB;flex:none}
+.pbtn{position:relative;margin:10px 12px;padding:9px;border-radius:99px;text-align:center;font-weight:700;font-size:11px}
+.step-hl{box-shadow:0 0 0 2px #22D3EE,0 0 18px rgba(34,211,238,.6)!important;transition:box-shadow .3s}
+
+/* chat */
+.chat{padding:24px;display:grid;gap:14px}
+.msg{max-width:88%;padding:14px 16px;border-radius:16px;font-size:15px}
+.msg.u{justify-self:end;background:linear-gradient(135deg,#1D4ED8,#5B45D6);border-bottom-right-radius:4px}
+.msg.a{background:var(--s2);border:1px solid var(--line);border-bottom-left-radius:4px}
+.msg .opt{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.msg .ol{font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:12px}
+.resolved{font-family:var(--mono);font-size:13px;color:var(--green)}
+
+/* confidence */
+.conf{padding:30px}
+.cbar{display:grid;grid-template-columns:150px 1fr 56px;gap:16px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);position:relative}
+.cbar:last-child{border:none}
+.cbar .nm{font-size:15px;display:flex;align-items:center;gap:8px}
+.info{width:18px;height:18px;border-radius:50%;border:1px solid var(--line2);background:none;font-size:10px;font-family:var(--mono);color:var(--muted);display:inline-grid;place-items:center;padding:0;position:relative}
+.tip{position:absolute;bottom:calc(100% + 8px);left:0;width:min(260px,70vw);white-space:normal;padding:12px 14px;border-radius:10px;background:#0E1520;border:1px solid var(--line2);font-family:var(--sans);font-size:13px;color:var(--text);text-align:left;opacity:0;pointer-events:none;transform:translateY(4px);transition:all .2s;z-index:20;line-height:1.5}
+.info:hover .tip,.info:focus .tip{opacity:1;transform:none}
+.track{height:10px;border-radius:6px;background:rgba(255,255,255,.05);overflow:hidden}
+.track i{display:block;height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,var(--blue),var(--violet));transition:width 1.6s var(--ease)}
+.track.safe i{background:linear-gradient(90deg,#10B981,#34D399)}
+.cbar .pc{font-family:var(--mono);font-size:14px;text-align:right}
+
+/* eval */
+.eval-table{width:100%;border-collapse:collapse;font-size:14.5px}
+.eval-table th{font-family:var(--mono);font-size:11px;color:var(--dim);text-align:left;font-weight:400;padding:12px 16px;border-bottom:1px solid var(--line2)}
+.eval-table td{padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+.eval-table tr:hover td{background:rgba(255,255,255,.02)}
+.eval-table .id{font-family:var(--mono);color:var(--muted);width:56px}
+.st-pill{font-family:var(--mono);font-size:11px;padding:3px 10px;border-radius:99px;border:1px solid var(--line2);color:var(--dim);white-space:nowrap}
+.st-pill.pass{border-color:rgba(52,211,153,.5);color:var(--green)}
+.st-pill.fail{border-color:rgba(244,63,94,.5);color:var(--red)}
+.st-pill.partial{border-color:rgba(245,158,11,.5);color:var(--amber)}
+.table-scroll{overflow-x:auto}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px}
+.metric{padding:18px;border-radius:14px;border:1px solid var(--line);background:rgba(11,16,24,.5)}
+.metric .v{font-size:1.8rem;font-weight:600;letter-spacing:-.03em;color:var(--dim)}
+.metric .k{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+
+/* architecture */
+.arch{display:grid;grid-template-columns:1fr 360px;gap:30px;align-items:start}
+.arch-flow{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;counter-reset:a}
+.anode{position:relative;padding:16px;border-radius:14px;border:1px solid var(--line);background:rgba(11,16,24,.7);text-align:left;font-family:var(--mono);font-size:12.5px;transition:all .3s var(--ease);counter-increment:a}
+.anode::before{content:counter(a,decimal-leading-zero);display:block;font-size:10px;color:var(--dim);margin-bottom:6px}
+.anode:hover{border-color:var(--line2);transform:translateY(-2px)}
+.anode[aria-pressed="true"]{border-color:var(--cyan);background:rgba(34,211,238,.08);box-shadow:0 0 30px -10px rgba(34,211,238,.8)}
+.anode.pulse{border-color:rgba(96,165,250,.6)}
+.anode.guard{border-color:rgba(244,63,94,.35)}
+.arch-detail{position:sticky;top:100px;padding:26px}
+.arch-detail dl{display:grid;gap:4px;margin:18px 0 0}
+.arch-detail dt{font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:12px}
+.arch-detail dd{margin:0;font-size:15px}
+
+/* stack */
+.stack{display:flex;flex-wrap:wrap;gap:10px}
+.stack span{padding:12px 18px;border-radius:12px;border:1px solid var(--line);background:rgba(11,16,24,.6);font-size:14.5px}
+
+/* limits */
+.limits{padding:34px;border-color:rgba(245,158,11,.25)}
+.limits ul{margin:18px 0 0;padding:0;list-style:none;display:grid;gap:0}
+.limits li{padding:16px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:30px 1fr;color:#C9D3E3}
+.limits li:last-child{border:none}
+.limits li::before{content:"△";color:var(--amber);font-size:13px;padding-top:3px}
+
+/* future */
+.future{display:grid;grid-template-columns:repeat(3,1fr);gap:0;position:relative}
+.stage{padding:34px 28px;border-left:1px solid var(--line);position:relative}
+.stage:first-child{border-left:none}
+.stage .when{font-family:var(--mono);font-size:12px;color:var(--cyan)}
+.stage h3{font-size:1.6rem;margin:14px 0 10px}
+.stage p{color:var(--muted);margin:0;font-size:15px}
+.net{display:block;width:100%;height:160px;margin-top:22px}
+.net circle{fill:var(--blue2)}
+.net line{stroke:rgba(96,165,250,.35)}
+
+/* cta */
+.cta{min-height:90vh;display:flex;align-items:center;text-align:center;background:radial-gradient(50% 50% at 50% 50%,rgba(59,130,246,.14),transparent 70%)}
+.cta h2{font-size:clamp(2.8rem,8vw,6.5rem);letter-spacing:-.055em}
+.cta .lead{margin-inline:auto}
+.cta .ctas{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:40px}
+
+footer{border-top:1px solid var(--line);padding:60px 0 40px}
+.foot{display:grid;grid-template-columns:1.4fr 1fr;gap:40px}
+.foot .tl2{font-size:1.4rem;font-weight:500;letter-spacing:-.03em;line-height:1.25;margin:16px 0}
+.foot nav{display:flex;gap:18px;justify-content:flex-end;align-items:flex-start;flex-wrap:wrap}
+.foot nav a{color:var(--muted);text-decoration:none;font-size:15px}
+.foot nav a:hover{color:var(--text)}
+.foot-meta{margin-top:40px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--dim)}
+
+
+/* ---- added: audience ---- */
+.who-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.who-card{padding:28px;display:flex;flex-direction:column;gap:14px}
+.who-card .ico{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:20px;background:rgba(59,130,246,.12);border:1px solid rgba(96,165,250,.3)}
+.who-card blockquote{margin:0;font-size:1.05rem;line-height:1.5;color:var(--text)}
+.who-card p{margin:0;color:var(--muted);font-size:14.5px}
+.who-card .gain{margin-top:auto;padding-top:14px;border-top:1px solid var(--line);font-family:var(--mono);font-size:12px;color:var(--cyan)}
+/* ---- added: skill artifact ---- */
+.artifact{display:grid;grid-template-columns:1.25fr .75fr;gap:22px;align-items:start}
+.json{margin:0;padding:22px;font-family:var(--mono);font-size:13px;line-height:1.75;overflow-x:auto;color:#C9D3E3;white-space:pre}
+.json .k{color:#93C5FD}.json .s{color:#86EFAC}.json .n{color:#FCD34D}.json .c{color:var(--dim)}
+.json .ln{display:block;border-radius:4px;transition:background .25s}
+.json .ln.on{background:rgba(34,211,238,.12);box-shadow:inset 2px 0 0 var(--cyan)}
+.anno{display:grid;gap:10px}
+.anno button{text-align:left;padding:16px 18px;border-radius:14px;border:1px solid var(--line);background:rgba(11,16,24,.6);transition:all .25s var(--ease)}
+.anno button:hover,.anno button[aria-pressed="true"]{border-color:rgba(34,211,238,.55);background:rgba(34,211,238,.06)}
+.anno b{display:block;font-weight:500;font-size:15px}
+.anno span{display:block;color:var(--muted);font-size:13.5px;margin-top:4px;line-height:1.5}
+/* ---- added: comparison ---- */
+.cmp-table{width:100%;border-collapse:collapse;font-size:14.5px;min-width:760px}
+.cmp-table th,.cmp-table td{padding:15px 16px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.cmp-table thead th{font-family:var(--mono);font-size:11px;color:var(--dim);font-weight:400}
+.cmp-table tbody th{font-weight:500;color:var(--muted);width:190px}
+.cmp-table td{color:#AFBBD0}
+.cmp-table .us{background:rgba(59,130,246,.07);color:var(--text)}
+.cmp-table thead .us{color:var(--blue2);border-top:1px solid rgba(96,165,250,.4)}
+.cmp-foot{font-size:13px;color:var(--dim);margin-top:14px;max-width:80ch}
+/* ---- added: privacy ---- */
+.priv-toggle{display:inline-flex;padding:4px;border-radius:99px;border:1px solid var(--line2);background:var(--s1);margin-bottom:26px}
+.priv-toggle button{border:none;background:none;padding:9px 18px;border-radius:99px;font-size:14px;color:var(--muted);transition:all .25s}
+.priv-toggle button[aria-pressed="true"]{background:rgba(59,130,246,.2);color:#fff}
+.priv{display:grid;grid-template-columns:1.2fr auto .9fr;gap:22px;align-items:stretch}
+.zone{padding:24px}
+.zone h3{font-size:1.1rem;display:flex;align-items:center;gap:10px}
+.zone ul{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:8px}
+.zone li{padding:11px 14px;border-radius:11px;border:1px solid var(--line);background:rgba(5,7,11,.45);font-size:14px;display:flex;justify-content:space-between;gap:12px;transition:all .4s var(--ease)}
+.zone li small{font-family:var(--mono);font-size:11px;color:var(--dim);white-space:nowrap}
+.zone.device{border-color:rgba(52,211,153,.3)}
+.zone.cloud{border-color:rgba(139,92,246,.3)}
+.zone.never{border-color:rgba(244,63,94,.3)}
+.zone.never li{color:#FDA4AF}
+.zone li.gone{opacity:.25;text-decoration:line-through}
+.wire{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--dim);min-width:90px;text-align:center}
+.wire .pipe-l{width:2px;flex:1;min-height:40px;background:linear-gradient(var(--line2),var(--violet));position:relative;overflow:hidden}
+.wire .pipe-l::after{content:"";position:absolute;left:-2px;width:6px;height:18px;border-radius:3px;background:var(--cyan);animation:packet 2.2s linear infinite}
+.wire.off .pipe-l{background:var(--line)}.wire.off .pipe-l::after{display:none}
+@keyframes packet{from{top:-20px}to{top:100%}}
+.priv-note{margin-top:18px}
+@media (max-width:1040px){.artifact,.priv{grid-template-columns:1fr}.wire{flex-direction:row;min-height:0}.wire .pipe-l{height:2px;min-height:0;width:auto;flex:1}}
+@media (max-width:760px){.who-grid{grid-template-columns:1fr}}
+
+/* responsive */
+@media (max-width:1040px){
+  .nav-links{display:none}.burger{display:block}.sys{display:none}
+  .hero-grid,.dna,.simgrid,.eyes,.recov,.loop-wrap,.arch,.params{grid-template-columns:1fr}
+  .tree-wrap{grid-template-columns:1fr}
+  .tl{grid-template-columns:repeat(3,1fr);row-gap:40px}.tl::before,.tl .prog{display:none}
+  .hl-pop{left:0;top:100%;transform:translate(0,8px);}
+  .hl:hover .hl-pop,.hl:focus .hl-pop{transform:translate(0,4px)}
+  .arch-detail{position:static}
+  .sim-stage,.eyes .stage-c,.recov .stage-c{justify-self:center}
+  .params .phone{justify-self:center}
+}
+@media (max-width:760px){
+  section{padding:90px 0}
+  .g2,.g3,.stop,.cross,.future,.metrics,.foot{grid-template-columns:1fr}
+  .tl{grid-template-columns:1fr 1fr}
+  .arch-flow{grid-template-columns:1fr 1fr}
+  .compare{height:auto;min-height:520px}
+  .cmp-inner{flex-direction:column;align-items:flex-start;gap:16px}
+  .cmp-right .cmp-inner{align-items:flex-end}
+  .mini-screen{width:130px;height:200px}
+  .stage{border-left:none;border-top:1px solid var(--line)}
+  .stage:first-child{border-top:none}
+  .cbar{grid-template-columns:1fr 50px}.cbar .track{grid-column:1/-1;order:3}
+  .foot nav{justify-content:flex-start}
+  .skills-lib svg.links{display:none}
+  .cross .arrow-v{transform:rotate(90deg)}
+  .cross .phone{justify-self:center}
+  .hero h1{font-size:clamp(2.4rem,11.5vw,3.6rem)}
+  .hl{white-space:normal}
+  .nav .btn.sm{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .rv{opacity:1;transform:none}
+  #particles,.cursor-glow,.scan{display:none}
+}
+/* ================= v3 additions ================= */
+section{padding:96px 0}
+.sec-head{margin-bottom:40px}
+.c-learn{--acc:#60A5FA}.c-sem{--acc:#22D3EE}.c-rec{--acc:#A78BFA}.c-safe{--acc:#F59E0B}.c-eval{--acc:#34D399}
+.sec-no{color:var(--acc,var(--dim));letter-spacing:.06em}
+.sec-no::before{background:var(--acc,var(--line2))}
+section[class*="c-"]>.wrap{position:relative}
+section[class*="c-"]::after{content:"";position:absolute;left:50%;top:0;width:min(900px,80%);height:1px;transform:translateX(-50%);background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--acc) 45%,transparent),transparent)}
+.tag.exp{border-color:rgba(167,139,250,.5);color:#C4B5FD}
+.tag.exp::before{content:"";width:6px;height:6px;border-radius:2px;background:#A78BFA}
+.tag.t{border-color:color-mix(in srgb,var(--acc,#60A5FA) 45%,transparent);color:var(--acc,#93C5FD)}
+.tags{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* agent state */
+.state{--sc:#8A98B0;display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;padding:5px 12px;border-radius:99px;white-space:nowrap;
+  border:1px solid color-mix(in srgb,var(--sc) 45%,transparent);color:var(--sc);background:color-mix(in srgb,var(--sc) 11%,transparent);transition:color .3s,border-color .3s,background .3s}
+.state::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--sc);animation:stp 1.3s ease-in-out infinite;flex:none}
+.state.done::before{content:"✓";width:auto;height:auto;background:none;animation:none;font-size:11px}
+.state.idle::before{animation:none}
+@keyframes stp{50%{opacity:.3;transform:scale(.65)}}
+.stepper{display:flex;flex-wrap:wrap;gap:6px}
+.stepper span{font-family:var(--mono);font-size:10.5px;padding:4px 8px;border-radius:6px;border:1px solid var(--line);color:var(--dim);transition:all .3s}
+.stepper span.past{color:var(--muted);border-color:var(--line2)}
+.stepper span.now{color:#fff;border-color:var(--cyan);background:rgba(34,211,238,.1)}
+
+/* hero console v3 */
+.console .ask{font-size:.95rem;color:var(--muted);margin:0 0 6px}
+.console .cmd{min-height:auto;margin-bottom:16px}
+.console .run-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.slots .slot{grid-template-columns:92px 1fr 44px}
+.mic{width:10px;height:10px;border-radius:50%;background:#F43F5E;display:inline-block}
+.btn.primary .mic{background:#fff}
+
+/* principle */
+.principle{padding:120px 0 96px;text-align:left}
+.principle .huge{font-size:clamp(3rem,10vw,9rem);font-weight:700;letter-spacing:-.06em;line-height:.9;margin:0}
+.principle .huge .a{display:block;color:transparent;-webkit-text-stroke:1.5px rgba(244,63,94,.55);text-decoration:line-through;text-decoration-color:rgba(244,63,94,.7);text-decoration-thickness:.06em}
+.principle .huge .b{display:block;background:linear-gradient(90deg,#fff,#93C5FD 60%,#A78BFA);-webkit-background-clip:text;background-clip:text;color:transparent}
+.principle .sub{font-size:1.2rem;color:#B4C0D4;max-width:60ch;margin:30px 0 56px}
+.quote-line{font-size:clamp(1.3rem,2.6vw,1.9rem);font-weight:500;letter-spacing:-.03em;margin:34px 0 0;text-align:center}
+.quote-line span{color:var(--muted)}
+
+/* why cards */
+.why{display:grid;grid-template-columns:1fr 1fr 1.15fr;gap:18px;margin-top:22px}
+.why .card h3{font-size:1.3rem;margin-bottom:14px}
+.why ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.why li{font-size:15px;color:var(--muted);display:flex;gap:10px}
+.why li::before{content:"–";color:var(--dim)}
+.why .us{border-color:rgba(96,165,250,.45);background:linear-gradient(180deg,rgba(29,78,216,.16),rgba(11,16,24,.8))}
+.why .us li{color:var(--text)}.why .us li::before{content:"✓";color:var(--green)}
+.forwho{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;align-items:center}
+.forwho span{font-size:14px;color:var(--muted);padding:8px 14px;border-radius:99px;border:1px solid var(--line)}
+.forwho b{font-family:var(--mono);font-weight:400;font-size:11px;color:var(--dim);margin-right:4px}
+
+/* phone app extras */
+.screen .app{position:absolute;inset:0;overflow:hidden}
+.menu-head{padding:4px 14px 10px;background:#fff;border-bottom:1px solid #eee;margin-bottom:8px}
+.menu-head b{font-size:15px;display:block}.menu-head small{color:#777;font-size:10.5px}
+.screen .title{font-weight:700;font-size:16px;padding:6px 14px 10px}
+.kbd{position:absolute;left:0;right:0;bottom:0;height:120px;background:#D1D5DB;padding:8px;display:grid;grid-template-columns:repeat(10,1fr);gap:4px;align-content:end}
+.kbd i{height:22px;border-radius:4px;background:#fff}
+.suggest{margin:4px 12px 8px;padding:9px 12px;border-radius:10px;background:#fff;border:1px solid #E5E7EB;display:flex;gap:8px;align-items:center;font-weight:600}
+.suggest small{color:#777;font-weight:400}
+.qcaret{display:inline-block;width:1.5px;height:12px;background:#E23744;margin-left:1px;animation:blink 1s steps(1) infinite;vertical-align:-2px}
+.payopt{margin:0 12px 8px;padding:12px;border-radius:12px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.08);display:flex;justify-content:space-between;align-items:center;font-size:12px}
+.field{margin:0 12px 8px;padding:11px 12px;border-radius:10px;border:1px solid #D1D5DB;background:#fff;color:#999;font-size:11.5px}
+.paybtn{margin:6px 12px;padding:12px;border-radius:12px;background:#E23744;color:#fff;text-align:center;font-weight:700}
+.paused-sheet{position:absolute;left:8px;right:8px;bottom:10px;padding:12px 14px;border-radius:16px;background:rgba(20,20,22,.96);color:#FCD34D;z-index:9;display:flex;gap:10px;align-items:center;font-weight:600;font-size:12px;box-shadow:0 -6px 30px rgba(245,158,11,.35);border:1px solid rgba(245,158,11,.6)}
+.paused-sheet small{display:block;color:#D1D5DB;font-weight:400;font-size:10px}
+.ring{position:absolute;border:2px dashed #3B82F6;border-radius:12px;pointer-events:none;z-index:9;animation:ringp 1.2s ease-in-out infinite;display:none}
+.ring.on{display:block}
+@keyframes ringp{50%{box-shadow:0 0 0 6px rgba(59,130,246,.25)}}
+.teachable [data-r]{cursor:pointer}
+.scanflash{position:absolute;inset:0;z-index:8;pointer-events:none;background:linear-gradient(transparent,rgba(34,211,238,.28),transparent);background-size:100% 40%;background-repeat:no-repeat;opacity:0}
+.scanflash.on{animation:sflash 1s linear}
+@keyframes sflash{0%{opacity:1;background-position:0 -40%}100%{opacity:1;background-position:0 140%}}
+.selected-item{box-shadow:0 0 0 2px #E23744!important}
+.login-hero{margin:30px 14px 18px}
+.login-hero b{font-size:18px;display:block;margin-bottom:6px}
+.login-hero small{color:#666}
+
+/* agent panel */
+.agent{padding:0}
+.agent .body{padding:22px;display:grid;gap:16px}
+.kvgrid{display:grid;grid-template-columns:120px 1fr;gap:10px 14px;font-size:14.5px;align-items:baseline}
+.kvgrid dt{font-family:var(--mono);font-size:11px;color:var(--dim)}
+.kvgrid dd{margin:0;min-height:1.4em}
+.kvgrid dd.big{font-size:1.05rem}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.demo-grid{display:grid;grid-template-columns:auto 1fr;gap:44px;align-items:start}
+.demo-grid .phone{width:300px}
+.phone.big{width:310px}
+
+/* teach mode */
+.stream{list-style:none;margin:0;padding:0;display:grid;gap:6px;min-height:40px}
+.stream li{display:flex;align-items:center;gap:10px;font-size:14px;padding:9px 12px;border-radius:10px;background:rgba(5,7,11,.45);border:1px solid rgba(52,211,153,.35);animation:rise .4s var(--ease) both}
+.stream li .ic{font-family:var(--mono);color:var(--green);width:16px}
+.stream li.irr{border-color:rgba(245,158,11,.45);background:rgba(245,158,11,.06)}
+.stream li.irr .ic{color:var(--amber)}
+.stream li.cut span.t{text-decoration:line-through;color:var(--dim)}
+.stream li .meta{margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--dim)}
+.stream-empty{font-size:14px;color:var(--dim)}
+.decision{border:1px solid rgba(245,158,11,.45);background:rgba(245,158,11,.06);border-radius:14px;padding:16px;display:none}
+.decision.on{display:block;animation:rise .5s var(--ease) both}
+.decision .kvgrid{grid-template-columns:150px 1fr;font-size:14px}
+.decision .res{margin-top:10px;color:var(--green);font-family:var(--mono);font-size:12.5px;opacity:0;transition:opacity .4s}
+.decision .res.on{opacity:1}
+.summary{display:none;gap:12px}
+.summary.on{display:grid;animation:rise .5s var(--ease) both}
+.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.nums div{padding:12px;border-radius:12px;border:1px solid var(--line);background:rgba(5,7,11,.4)}
+.nums b{display:block;font-size:1.6rem;letter-spacing:-.03em}
+.nums span{font-family:var(--mono);font-size:10.5px;color:var(--dim)}
+.hint{font-size:13px;color:var(--muted);font-family:var(--mono)}
+.hint.warn{color:var(--amber)}
+
+/* DNA v3 */
+.edge.hot{stroke:var(--cyan);stroke-dasharray:none;stroke-width:1.8;filter:drop-shadow(0 0 4px rgba(34,211,238,.8))}
+.dna-detail-anim{animation:rise .45s var(--ease) both}
+
+/* inspector */
+.inspector{display:grid;grid-template-columns:auto 1fr 1fr;gap:22px;align-items:start}
+.sem-rows{display:grid;gap:8px;padding:18px}
+.sem-row{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:rgba(5,7,11,.4);text-align:left;transition:all .2s}
+.sem-row b{font-weight:500}
+.sem-row .c{font-family:var(--mono);color:var(--cyan);font-size:13px}
+.sem-row small{grid-column:1/-1;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.sem-row.hot,.sem-row:hover,.sem-row:focus-visible{border-color:rgba(34,211,238,.6);background:rgba(34,211,238,.08)}
+.tree.inspect{padding:18px}
+
+/* paraphrase metrics */
+.pm{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.pm div{padding:12px 18px;border-radius:12px;border:1px solid var(--line);background:rgba(11,16,24,.6);text-align:center;min-width:130px}
+.pm b{display:block;font-size:1.3rem}
+.pm span{font-family:var(--mono);font-size:10.5px;color:var(--dim)}
+.para-out .res-ok{color:var(--green)}.para-out .res-no{color:var(--muted)}.para-out .res-mid{color:var(--amber)}
+
+/* mutation */
+.mut-flow{font-family:var(--mono);font-size:16px;line-height:2.1}
+.slotv{position:relative;display:inline-grid;vertical-align:bottom;overflow:hidden;height:1.9em;padding:0 9px;border-radius:7px;background:rgba(139,92,246,.14);color:#C4B5FD}
+.slotv span{grid-area:1/1;transition:transform .5s var(--ease),opacity .5s}
+.slotv span.out{transform:translateY(-110%);opacity:0}
+.slotv span.in{transform:translateY(110%);opacity:0}
+.mut-log{font-family:var(--mono);font-size:12.5px;color:var(--muted);min-height:2.8em;margin-top:10px}
+.mut-log b{color:var(--cyan);font-weight:500}
+.struct{display:flex;align-items:center;gap:8px;margin-top:14px;font-family:var(--mono);font-size:12px;color:var(--green)}
+
+/* break / fail */
+.rsteps.h{grid-template-columns:repeat(4,1fr);display:grid}
+.rsteps.h li{justify-content:center;text-align:center;font-family:var(--mono);font-size:12px}
+.blocked{border:1px solid rgba(244,63,94,.45);background:rgba(244,63,94,.06);border-radius:14px;padding:16px;display:none}
+.blocked.on{display:block;animation:rise .5s var(--ease) both}
+.blocked strong{color:#FDA4AF;font-family:var(--mono);font-size:13px;letter-spacing:.05em}
+.blocked p{margin:10px 0 0;font-size:15px}
+.strategies{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+
+/* safety v3 */
+.stl{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.stl li{display:flex;justify-content:space-between;padding:12px 4px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:14px}
+.stl li span:last-child{color:var(--green)}
+.stl li.stop{border:none;color:#FDA4AF}
+.stl li.stop span:last-child{color:var(--red)}
+.blist{display:grid;gap:6px;margin-top:14px}
+.blist div{display:flex;justify-content:space-between;padding:11px 14px;border-radius:10px;border:1px solid rgba(244,63,94,.3);background:rgba(244,63,94,.05);font-family:var(--mono);font-size:13.5px}
+.blist div span:last-child{color:var(--red)}
+.priv-mini{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.priv-mini div{padding:14px;border-radius:12px;border:1px solid var(--line);font-size:14px}
+.priv-mini ul{margin:8px 0 0;padding-left:18px;color:var(--muted)}
+
+/* skills v3 */
+.skill-wrap{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.skill-cards{display:grid;gap:14px}
+.skill{display:grid;grid-template-columns:auto 1fr auto;gap:6px 16px;align-items:center;padding:20px;transition:border-color .3s,background .3s}
+.skill.sel{border-color:rgba(96,165,250,.6);background:linear-gradient(180deg,rgba(29,78,216,.14),rgba(11,16,24,.8))}
+.skill .em{font-size:26px;grid-row:span 2}
+.skill h3{margin:0}
+.skill .meta2{grid-column:2;font-size:13px;color:var(--muted)}
+.skill .meta2 b{font-family:var(--mono);font-weight:400;font-size:11px;color:var(--dim)}
+.skill .btn{grid-row:1/span 2;grid-column:3}
+.skill-graph{padding:10px}
+.skill-graph svg{width:100%;height:auto;display:block}
+.sg-node rect{fill:rgba(11,16,24,.95);stroke:var(--line2);transition:all .35s}
+.sg-node text{font-family:var(--mono);font-size:11px;fill:var(--muted);text-anchor:middle;dominant-baseline:middle;transition:fill .3s}
+.sg-node.on rect{stroke:var(--blue2);fill:rgba(59,130,246,.16);filter:drop-shadow(0 0 8px rgba(59,130,246,.7))}
+.sg-node.on text{fill:#fff}
+.sg-edge{stroke:rgba(140,170,220,.18);stroke-width:1.2;fill:none;transition:all .35s}
+.sg-edge.on{stroke:var(--blue2);stroke-dasharray:4 5;animation:dash 16s linear infinite}
+.skill-detail{padding:24px;margin-top:22px}
+.skill-detail .kvgrid{grid-template-columns:170px 1fr}
+.skill-detail pre.json{margin-top:16px;border-radius:12px;background:rgba(5,7,11,.6);border:1px solid var(--line);max-height:360px}
+
+/* cross v3 */
+.cross3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;justify-items:center}
+.cross3 .phone{width:240px}
+.cross3 figcaption{font-family:var(--mono);font-size:12px;color:var(--muted);text-align:center;margin-top:12px}
+.abstract-row{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:34px}
+.abstract-row .stp{font-family:var(--mono);font-size:13px;padding:10px 16px;border-radius:10px;border:1px solid var(--line2);background:var(--s1);transition:all .35s}
+.abstract-row .stp.on{border-color:var(--cyan);background:rgba(34,211,238,.1);color:#fff;box-shadow:0 0 24px -8px rgba(34,211,238,.9)}
+.abstract-row i{color:var(--dim);font-style:normal;font-family:var(--mono)}
+.neq{display:flex;justify-content:center;gap:40px;margin-top:40px;font-family:var(--mono);font-size:clamp(1.1rem,2.4vw,1.6rem);flex-wrap:wrap}
+.neq span:first-child{color:var(--muted)}.neq span:last-child{color:var(--cyan)}
+.food-z .hdr{padding:8px 12px 10px}
+
+/* judge */
+.judge-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;padding:24px 26px;border-bottom:1px solid var(--line)}
+.judge-head h3{font-size:1.6rem}
+.judge-head .sub{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:6px}
+.judge-count{font-family:var(--mono);font-size:13px;color:var(--muted);text-align:right}
+.judge-count b{display:block;font-size:2rem;color:var(--text);font-family:var(--sans);letter-spacing:-.03em}
+.filters{display:flex;gap:8px;flex-wrap:wrap;padding:16px 26px;border-bottom:1px solid var(--line)}
+.jt{width:100%;border-collapse:collapse;font-size:14.5px;min-width:760px}
+.jt th{font-family:var(--mono);font-size:11px;color:var(--dim);font-weight:400;text-align:left;padding:12px 16px;border-bottom:1px solid var(--line2)}
+.jt td{padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:middle}
+.jt .id{font-family:var(--mono);color:var(--muted);width:60px}
+.jt .obs-c{color:var(--muted);max-width:280px}
+.jt tr.det td{background:rgba(5,7,11,.45);padding:18px 22px}
+.jt tr.det dl{display:grid;grid-template-columns:130px 1fr;gap:8px 16px;margin:0 0 14px;font-size:14px}
+.jt tr.det dt{font-family:var(--mono);font-size:11px;color:var(--dim);padding-top:2px}
+.jt tr.det dd{margin:0}
+.dbtn{border:1px solid var(--line2);background:none;border-radius:8px;padding:6px 10px;font-size:12.5px;font-family:var(--mono);color:var(--muted)}
+.dbtn[aria-expanded="true"]{color:#fff;border-color:var(--blue2)}
+.st-pill.ready{border-color:rgba(96,165,250,.5);color:var(--blue2)}
+.st-pill.passed{border-color:rgba(52,211,153,.5);color:var(--green)}
+.st-pill.needs{border-color:rgba(245,158,11,.5);color:var(--amber)}
+.st-pill.failed{border-color:rgba(244,63,94,.5);color:var(--red)}
+.report-note{font-family:var(--mono);font-size:12px;color:var(--dim);margin-top:14px}
+
+/* trace */
+.trace-grid{display:grid;grid-template-columns:auto 1fr;gap:40px;align-items:start}
+.trace-list{list-style:none;margin:0;padding:10px;display:grid;gap:2px;max-height:620px;overflow:auto}
+.trace-list button{width:100%;display:grid;grid-template-columns:70px 1fr auto;gap:12px;align-items:center;text-align:left;padding:11px 12px;border-radius:10px;border:1px solid transparent;background:none;transition:all .2s}
+.trace-list button:hover{background:rgba(255,255,255,.03)}
+.trace-list button[aria-current="true"]{border-color:rgba(34,211,238,.5);background:rgba(34,211,238,.07)}
+.trace-list .tm{font-family:var(--mono);font-size:12px;color:var(--dim)}
+.trace-list .lb{font-size:14.5px}
+.trace-list .lb small{display:block;font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:2px}
+.trace-list .state{font-size:10px;padding:3px 8px}
+.trace-list .state::before{width:5px;height:5px;animation:none}
+
+/* arch v3 */
+.arch-flow{grid-template-columns:repeat(4,1fr)}
+.anode.hand{border-color:rgba(245,158,11,.4)}
+
+/* future labels */
+.stage .when{letter-spacing:.08em}
+.stage.now .when{color:var(--green)}.stage.next .when{color:var(--blue2)}.stage.vision .when{color:#C4B5FD}
+.stage .flowl{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-top:14px;line-height:1.8}
+.safe-quote{margin-top:22px;font-size:1.25rem;font-weight:500;letter-spacing:-.02em}
+
+
+.nav.scrolled{width:min(1180px,100% - 24px)}
+header{z-index:100}
+.nav-links a{white-space:nowrap;padding:8px 10px}
+.btn{white-space:nowrap}
+.para>.tag{white-space:normal;text-align:center}
+.demo-grid>*,.trace-grid>*,.inspector>*,.skill-wrap>*,.params>*,.dna>*,.arch>*{min-width:0}
+@media (max-width:760px){.trace-list button{grid-template-columns:56px 1fr}.trace-list .state{grid-column:2;justify-self:start}}
+
+/* Vanta NET background */
+#vanta-bg{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity 1.6s ease}
+#vanta-bg.on{opacity:.65}
+#vanta-bg::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 110% 95% at 50% 40%,transparent 0%,rgba(5,7,11,.4) 75%,rgba(5,7,11,.75) 100%)}
+body.vanta-on #particles{display:none}
+body.vanta-on .bg-grid{opacity:.18}
+@media (max-width:760px){#vanta-bg.on{opacity:.45}}
+/* Interactive background: chapter colour, energy, parallax, ripples */
+#vanta-bg,#particles{filter:hue-rotate(var(--bg-hue,0deg)) brightness(var(--bg-bri,1)) saturate(var(--bg-sat,1));
+  transform:translate3d(var(--bg-px,0px),var(--bg-py,0px),0) scale(1.05);
+  transition:opacity 1.6s ease,filter .9s ease,transform .8s var(--ease)}
+.cursor-glow{background:radial-gradient(circle,color-mix(in srgb,var(--bg-acc,#60A5FA) 20%,transparent),transparent 62%);
+  mix-blend-mode:screen;transition:opacity .3s,width .35s var(--ease),height .35s var(--ease)}
+.cursor-glow.press{width:760px;height:760px}
+.bg-ripple{position:fixed;z-index:1;pointer-events:none;width:28px;height:28px;margin:-14px 0 0 -14px;border-radius:50%;
+  border:1.5px solid var(--bg-acc,#60A5FA);box-shadow:0 0 26px color-mix(in srgb,var(--bg-acc,#60A5FA) 55%,transparent);
+  animation:bgRip 1.25s var(--ease) forwards}
+.bg-ripple.b{border-width:1px;animation:bgRip2 1.5s .1s var(--ease) forwards;opacity:0}
+@keyframes bgRip{0%{transform:scale(.3);opacity:.9}100%{transform:scale(17);opacity:0}}
+@keyframes bgRip2{0%{transform:scale(.3);opacity:.55}100%{transform:scale(11);opacity:0}}
+.bg-hint{position:fixed;left:50%;bottom:22px;transform:translate(-50%,8px);z-index:3;font-family:var(--mono);font-size:11px;letter-spacing:.06em;
+  color:var(--muted);padding:7px 14px;border-radius:99px;border:1px solid var(--line2);background:rgba(11,16,24,.78);
+  backdrop-filter:blur(8px);opacity:0;transition:opacity .6s,transform .6s var(--ease);pointer-events:none;white-space:nowrap}
+.bg-hint.show{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){.bg-ripple,.bg-hint{display:none}#vanta-bg,#particles{transform:none}}
+@media (max-width:1100px){.nav-links{display:none}.burger{display:block}.sys{display:none}}
+@media (max-width:1040px){
+  .demo-grid,.inspector,.trace-grid,.skill-wrap{grid-template-columns:1fr}
+  .demo-grid .phone,.inspector .phone,.trace-grid .phone{justify-self:center}
+  .why{grid-template-columns:1fr}
+  .arch-flow{grid-template-columns:repeat(3,1fr)}
+  .cross3{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  section{padding:72px 0}
+  .strategies,.priv-mini,.nums{grid-template-columns:1fr}
+  .nums{grid-template-columns:repeat(3,1fr)}
+  .rsteps.h{grid-template-columns:1fr 1fr}
+  .arch-flow{grid-template-columns:1fr 1fr}
+  .kvgrid,.skill-detail .kvgrid,.decision .kvgrid{grid-template-columns:1fr;gap:2px}
+  .kvgrid dd{margin-bottom:8px}
+  .skill{grid-template-columns:auto 1fr}.skill .btn{grid-column:1/-1;grid-row:auto;justify-self:start}
+  .nav .btn.gh{display:none}
+  .principle .huge{font-size:clamp(2.6rem,14vw,4.5rem)}
+}
+
+/* ---- final phase: reality matrix, playground, judge console ---- */
+.reality-legend{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 16px}
+.tag.live{border-color:rgba(52,211,153,.5);color:#6EE7B7}
+.tag.none{border-color:var(--line2);color:var(--dim)}
+.jt td.small{font-size:13px;color:var(--muted)}
+.pg{display:grid;grid-template-columns:minmax(260px,1fr) 1.6fr;gap:16px;align-items:start}
+@media (max-width:900px){.pg{grid-template-columns:1fr}}
+.pg-btns{display:flex;flex-wrap:wrap;gap:8px;padding:18px}
+.pg-out{min-height:360px}
+.pg-cmd{font-family:var(--mono);font-size:13px;color:var(--text);padding:14px 18px;border-bottom:1px solid var(--line)}
+.pg-log{list-style:none;margin:0;padding:10px 18px 4px;font-family:var(--mono);font-size:12.5px;line-height:1.55}
+.pg-log li{padding:5px 0;border-bottom:1px dashed var(--line);opacity:0;transform:translateY(4px);transition:all .35s var(--ease)}
+.pg-log li.in{opacity:1;transform:none}
+.pg-log .ph{color:var(--acc,#60A5FA);margin-right:8px}
+.pg-log .ph.warn{color:var(--amber)} .pg-log .ph.bad{color:var(--red)} .pg-log .ph.ok{color:var(--green)} .pg-log .ph.rec{color:var(--violet)}
+.pg-foot{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:12px 18px 18px;font-size:13px;color:var(--muted)}
+.j-tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:14px 26px;border-bottom:1px solid var(--line)}
+.j-src{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.j-file{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.st-pill.untested{color:var(--dim)}
+.jtrace{list-style:none;margin:8px 0 0;padding:0;font-family:var(--mono);font-size:12px}
+.jtrace button{all:unset;cursor:pointer;display:block;width:100%;padding:4px 0;border-bottom:1px dashed var(--line)}
+.jtrace button:focus-visible{outline:2px solid var(--blue2)}
+.jtrace .ev{padding:6px 0 8px 14px;color:var(--muted);font-size:11.5px}
+.jtrace .ev b{color:var(--dim);font-weight:400;display:inline-block;min-width:118px}
+.metric .v.nt{font-size:.95rem;letter-spacing:.02em;font-family:var(--mono)}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div id="vanta-bg" aria-hidden="true"></div>
+<div class="bg-aura" aria-hidden="true"></div>
+<div class="bg-grid" aria-hidden="true"></div>
+<canvas id="particles" aria-hidden="true"></canvas>
+<div class="cursor-glow" aria-hidden="true"></div>
+
+<header>
+<nav class="nav" id="nav" aria-label="Primary">
+  <a href="#top" class="brand" aria-label="TeachFlow home"><span class="logo">TF</span>TeachFlow</a>
+  <ul class="nav-links">
+    <li><a href="#teach">How It Works</a></li>
+    <li><a href="#live">Live Demo</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#safety">Safety</a></li>
+    <li><a href="#judge">Judge Mode</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="#teach" class="btn primary sm magnetic">Try TeachFlow</a>
+    <a href="#" class="btn sm gh" data-github>GitHub</a>
+    <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="drawer" id="drawer" aria-label="Mobile menu">
+  <a href="#teach">How It Works</a><a href="#live">Live Demo</a><a href="#skills">Skills</a><a href="#architecture">Architecture</a><a href="#safety">Safety</a><a href="#judge">Judge Mode</a>
+</div>
+</header>
+
+<main id="main">
+<!-- 01 HERO -->
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="badge"><span class="dot"></span>SAMSUNG PRISM • GENERATIVE AI HACKATHON 2026–27</span>
+      <h1>
+        <span class="hl" tabindex="0">Teach once.<span class="hl-pop" role="tooltip">1 demonstration<br>↓<br><b>semantic workflow</b><br>↓<br>reusable skill</span></span>
+        <span class="hl" tabindex="0">Say it naturally.<span class="hl-pop" role="tooltip">"Order Margherita"<br>"Get me a margherita"<br>"I want pizza from Domino's"<br>↓<br><b>same skill</b></span></span>
+        <span class="hl" tabindex="0">Let Android act.<span class="hl-pop" role="tooltip">Accessibility tree<br>↓ Semantic UI<br>↓ Action<br>↓ <b>Verification</b></span></span>
+      </h1>
+      <p class="desc">TeachFlow learns new third-party app workflows from a single human demonstration, turns them into semantic skills, adapts to changing screens, and knows when to hand control back to you.</p>
+      <p class="support">TeachFlow doesn't replay what you did. It learns the task.</p>
+      <div class="ctas">
+        <a href="#teach" class="btn primary magnetic">Try TeachFlow</a>
+        <a href="#live" class="btn magnetic" id="watch-demo">▶ Watch Demo</a>
+      </div>
+      <p class="tiny">Android Accessibility • Semantic Workflows • Adaptive UI Agents</p>
+    </div>
+
+    <div class="glass edge console" role="region" aria-label="TeachFlow agent console, interactive simulation">
+      <div class="panel-head"><span>TEACHFLOW AGENT</span><span class="tag sim">INTERACTIVE SIMULATION</span></div>
+      <div class="console-body">
+        <div class="run-row"><span class="state idle" id="h-state">READY</span></div>
+        <p class="ask">What would you like me to do?</p>
+        <p class="cmd">“Order a Margherita from Domino’s.”</p>
+        <div class="run-row"><button class="btn primary sm" id="h-run"><span class="mic" aria-hidden="true"></span>Try Command</button><span class="hint" id="h-phase" aria-live="polite"></span></div>
+        <div class="slots">
+          <div class="slot"><span class="k">INTENT</span><span>ORDER_FOOD</span><span class="p">97%</span><span class="bar"><i data-w="97"></i></span></div>
+          <div class="slot"><span class="k">RESTAURANT</span><span>Domino's</span><span class="p">98%</span><span class="bar"><i data-w="98"></i></span></div>
+          <div class="slot"><span class="k">ITEM</span><span>Margherita</span><span class="p">99%</span><span class="bar"><i data-w="99"></i></span></div>
+          <div class="slot"><span class="k">WORKFLOW</span><span>ORDER_FOOD_V1</span><span class="p">96%</span><span class="bar"><i data-w="96"></i></span></div>
+        </div>
+        <ul class="checks">
+          <li><span class="ck">✓</span>Workflow matched</li>
+          <li><span class="ck">✓</span>UI grounded</li>
+          <li><span class="ck">✓</span>Action verified</li>
+        </ul>
+        <div class="turn" id="h-turn"><strong>🛡 YOUR TURN</strong><span>Payment screen detected · automation paused</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 LIVE DEMO -->
+<section id="live" class="c-learn">
+  <div class="wrap">
+    <div class="sec-head rv"><div class="sec-no">00 / LIVE DEMO</div>
+      <h2>Watch the agent work.<span class="l2">Every state, every target.</span></h2>
+      <p class="lead">One spoken command, replayed through a learned skill on a simulated food-delivery app. The panel shows exactly what TeachFlow is doing at each moment.</p></div>
+    <div class="demo-grid">
+      <div class="phone big rv"><div class="screen" id="live-phone" aria-label="Simulated food delivery app"></div></div>
+      <div class="glass edge agent rv">
+        <div class="panel-head"><span>TEACHFLOW AGENT</span><span class="tag sim">INTERACTIVE SIMULATION</span></div>
+        <div class="body">
+          <dl class="kvgrid" aria-live="polite">
+            <dt>COMMAND</dt><dd class="big">“Order a Margherita from Domino’s”</dd>
+            <dt>CURRENT STATE</dt><dd><span class="state idle" id="l-state">READY</span></dd>
+            <dt>ACTION</dt><dd id="l-act">—</dd>
+            <dt>TARGET</dt><dd id="l-tgt">—</dd>
+            <dt>CONFIDENCE</dt><dd id="l-conf" class="mono">—</dd>
+          </dl>
+          <div class="stepper" id="l-stepper" aria-hidden="true"></div>
+          <div class="actions"><button class="btn primary magnetic" id="l-run"><span class="mic" aria-hidden="true"></span>Run Command</button><a class="btn" id="l-trace" href="#trace" aria-disabled="true" style="opacity:.45;pointer-events:none">View Execution Trace</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 PROBLEM -->
+<!-- WHAT'S REAL -->
+<section id="reality">
+  <div class="wrap">
+    <div class="sec-head rv"><div class="sec-no">00 / WHAT'S REAL</div>
+      <h2>Every feature, honestly labelled.</h2>
+      <p class="lead">This page explains TeachFlow. The Android APK proves it. The table shows what is implemented in the APK, what has been tested on a device, and what on this page is only an interactive simulation.</p></div>
+    <div class="reality-legend rv">
+      <span class="tag live">LIVE PROTOTYPE · implemented in the APK</span>
+      <span class="tag exp">EXPERIMENTAL · partially validated</span>
+      <span class="tag sim">INTERACTIVE SIMULATION · runs in this browser only</span>
+      <span class="tag none">NOT IMPLEMENTED</span>
+    </div>
+    <div class="glass edge rv" style="overflow:hidden"><div class="table-scroll"><table class="jt"><caption class="sr">Feature status</caption>
+      <thead><tr><th scope="col">Feature</th><th scope="col">In the APK</th><th scope="col">Device tests</th><th scope="col">On this page</th></tr></thead>
+      <tbody id="reality-body"></tbody></table></div></div>
+  </div>
+</section>
+
+<section id="problem" class="c-learn">
+  <div class="wrap">
+    <div class="sec-head rv"><div class="sec-no">01 / THE PROBLEM</div>
+      <h2>Voice assistants can understand you.<span class="l2">But can they operate the apps you use?</span></h2></div>
+    <div class="g2 split">
+      <div class="glass card rv">
+        <div class="who">USER</div>
+        <div class="bubble">"Order a pizza from Domino's."</div>
+        <div class="who" style="margin-top:22px">VOICE ASSISTANT</div>
+        <p style="font-size:17px;color:var(--text)"><span class="ok">✓</span> Understood</p>
+        <p style="font-size:17px;color:var(--text)"><span class="no">✕</span> Can't reliably operate third-party app UI</p>
+        <p>Understanding language is solved. Acting inside apps that expose no API is not.</p>
+      </div>
+      <div class="glass edge card rv">
+        <div class="who">TEACHFLOW</div>
+        <div class="chain" id="chain"><span class="st">Understand</span><i class="ar"></i><span class="st">Learn</span><i class="ar"></i><span class="st">Ground</span><i class="ar"></i><span class="st">Execute</span><i class="ar"></i><span class="st">Verify</span></div>
+      </div>
+    </div>
+    <div class="why">
+      <div class="glass card rv"><h3>Traditional automation</h3><ul><li>Coordinates and recorded taps</li><li>Hard-coded scripts</li><li>Brittle when layouts change</li><li>App-specific</li></ul></div>
+      <div class="glass card rv"><h3>Voice assistant</h3><ul><li>Understands language</li><li>Limited third-party control</li><li>Often stops at app boundaries</li></ul></div>
+      <div class="glass card us rv"><h3>TeachFlow</h3><ul><li>Learns from one demonstration</li><li>Stores semantic workflows</li><li>Parameterized slots</li><li>Adapts to screen changes</li><li>Pauses at safety boundaries</li></ul></div>
+    </div>
+    <div class="forwho rv"><b>BUILT FOR</b><span>People using switch access or voice control</span><span>Older adults shown a task once</span><span>Anyone with busy hands</span></div>
+  </div>
+</section>
+
+<!-- 04 PRINCIPLE -->
+<section class="principle" id="principle">
+  <div class="wrap">
+    <h2 class="huge rv"><span class="a">Don't automate taps.</span><span class="b">Teach the task.</span></h2>
+    <p class="sub rv">TeachFlow converts one human demonstration into a reusable semantic workflow that can be matched, adapted, verified, and safely executed.</p>
+    <div class="compare rv" id="compare" style="--pos:50%">
+      <div class="cmp-side cmp-left">
+        <div class="cmp-title">COORDINATE REPLAY <span class="tag">brittle</span></div>
+        <div class="cmp-inner">
+          <div class="code-lines" id="coords"><div>tap(421, 673)</div><div>tap(502, 731)</div><div>tap(611, 812)</div></div>
+          <div class="mini-screen" id="ms-left" aria-hidden="true"><div class="el" style="top:30px">Search</div><div class="el" data-m style="top:80px">Margherita</div><div class="el" data-m2 style="top:130px">Add to cart</div><span class="tapdot" style="left:85px;top:145px"></span></div>
+        </div>
+      </div>
+      <div class="cmp-side cmp-right">
+        <div class="cmp-title" style="justify-content:flex-end">SEMANTIC WORKFLOW <span class="tag">adaptive</span></div>
+        <div class="cmp-inner">
+          <div class="mini-screen" id="ms-right" aria-hidden="true"><div class="el" style="top:30px">Search</div><div class="el" data-m style="top:80px">Margherita</div><div class="el" data-m2 style="top:130px">Add to cart</div><span class="tapdot good" style="left:85px;top:145px"></span></div>
+          <div class="sem-flow"><span>SEARCH</span><span>SELECT ITEM</span><span>ADD TO CART</span><span>VERIFY</span></div>
+        </div>
+      </div>
+      <div class="handle"><button id="handle-btn" aria-label="Comparison divider. Use left and right arrow keys to move."><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22D3EE" stroke-width="2"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6"/></svg></button></div>
+    </div>
+    <div class="shift-toggle"><button class="btn sm" id="shift-ui" aria-pressed="false">Move the UI (app update)</button></div>
+    <p class="quote-line rv">Most automation learns the screen. <span>TeachFlow learns the task.</span></p>
+  </div>
+</section>
+
+<!-- 05 TEACH -->
+<section id="teach" class="c-learn">
+  <div class="wrap">
+    <div class="sec-head rv"><div class="sec-no">02 / TEACH</div>
+      <h2>Teach TeachFlow.<span class="l2">One demonstration. One reusable skill.</span></h2>
+      <p class="lead">Start teaching, then tap through the order yourself on the phone. The highlighted element shows the next step. Watch what TeachFlow keeps, and what it throws away.</p></div>
+    <div class="demo-grid">
+      <div class="phone big rv"><div class="screen" id="teach-phone" aria-label="Simulated phone for demonstration"></div></div>
+      <div class="glass edge agent rv">
+        <div class="panel-head"><span id="t-title">TEACH MODE</span><span class="tag sim">INTERACTIVE SIMULATION</span></div>
+        <div class="body">
+          <div class="tags"><span class="state idle" id="t-state">READY</span><span class="tag t">T1</span></div>
+          <div id="t-cmd" hidden><div class="lp-label">COMMAND</div><div style="font-size:1.05rem">“Order a Margherita pizza from Domino’s on Zomato.”</div></div>
+          <div><div class="lp-label">OBSERVED ACTIONS</div><ul class="stream" id="t-stream" aria-live="polite"></ul><div class="stream-empty" id="t-empty">No demonstration yet.</div></div>
+          <div class="decision" id="t-dec" aria-live="polite">
+            <div class="lp-label" style="color:var(--amber)">OBSERVED ACTION · UNDER REVIEW</div>
+            <dl class="kvgrid"><dt>ACTION</dt><dd>Dismiss phone call</dd><dt>RELEVANCE</dt><dd class="mono" style="color:var(--amber)">LOW</dd><dt>RELATIONSHIP TO TASK</dt><dd class="mono">NONE</dd><dt>DECISION</dt><dd class="mono" style="color:var(--red)">DISCARD</dd></dl>
+            <div class="res" id="t-dec-res">✓ Irrelevant interaction removed</div>
+          </div>
+          <div class="summary" id="t-sum" aria-live="polite">
+            <div class="nums"><div><b id="n-obs">0</b><span>OBSERVED</span></div><div><b id="n-rel">0</b><span>TASK-RELEVANT</span></div><div><b id="n-irr">0</b><span>IRRELEVANT</span></div></div>
+            <div><div class="lp-label">WORKFLOW SYNTHESIZED ✓ · ORDER_FOOD_V1</div>
+              <div class="synth" id="synth"><div>ITEM <span>&lt;ITEM&gt;</span></div><div>RESTAURANT <span>&lt;RESTAURANT&gt;</span></div><div>QUANTITY <span>&lt;QUANTITY&gt;</span></div><div>ADDRESS <span>&lt;ADDRESS&gt;</span></div></div></div>
+          </div>
+          <div class="hint" id="t-hint" aria-live="polite"></div>
+          <div class="actions"><button class="btn primary magnetic" id="t-start">Start Teaching</button><button class="btn" id="t-auto">Demonstrate for me</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 DNA -->
+<section id="dna" class="c-learn">
+  <div class="wrap">
+    <div class="sec-head rv"><div class="sec-no">02 / TEACH · WORKFLOW DNA</div>
+      <h2>We don't memorize taps.<span class="l2">We learn the task.</span></h2>
+      <p class="lead">The demonstration becomes a graph of intent and variable slots. Select a node to inspect it.</p></div>
+    <div class="dna">
+      <div class="glass card rv" style="padding:14px">
+        <svg viewBox="0 0 680 380" role="group" aria-label="Workflow graph for ORDER FOOD" id="dna-svg">
+          <path class="edge" data-e="item" d="M340 70 C340 120 95 120 95 170"/><path class="edge" data-e="rest" d="M340 70 C340 120 255 120 255 170"/><path class="edge" data-e="qty" d="M340 70 C340 120 425 120 425 170"/><path class="edge" data-e="addr" d="M340 70 C340 120 585 120 585 170"/>
+          <path class="edge" data-e="item" d="M95 210 V262"/><path class="edge" data-e="rest" d="M255 210 V262"/><path class="edge" data-e="qty" d="M425 210 V262"/><path class="edge" data-e="addr" d="M585 210 V262"/>
+          <g class="node" tabindex="0" role="button" data-n="root" aria-label="ORDER FOOD intent"><circle class="halo" cx="340" cy="48" r="30" fill="rgba(59,130,246,.18)"/><rect class="box" x="255" y="26" width="170" height="44" rx="12" fill="rgba(59,130,246,.14)" stroke="#3B82F6"/><text x="340" y="53" text-anchor="middle" fill="#fff" font-family="Geist Mono,monospace" font-size="14">ORDER FOOD</text></g>
+          <g class="node" tabindex="0" role="button" data-n="item" aria-label="ITEM slot"><rect class="box" x="40" y="170" width="110" height="40" rx="10" fill="rgba(139,92,246,.14)" stroke="#8B5CF6"/><text x="95" y="195" text-anchor="middle" fill="#fff" font-family="Geist Mono,monospace" font-size="13">ITEM</text></g>
+          <g class="node" tabindex="0" role="button" data-n="rest" aria-label="RESTAURANT slot"><rect class="box" x="185" y="170" width="140" height="40" rx="10" fill="rgba(139,92,246,.14)" stroke="#8B5CF6"/><text x="255" y="195" text-anchor="middle" fill="#fff" font-family="Geist Mono,monospace" font-size="13">RESTAURANT</text></g>
+          <g class="node" tabindex="0" role="button" data-n="qty" aria-label="QUANTITY slot"><rect class="box" x="360" y="170" width="130" height="40" rx="10" fill="rgba(139,92,246,.14)" stroke="#8B5CF6"/><text x="425" y="195" text-anchor="middle" fill="#fff" font-family="Geist Mono,monospace" font-size="13">QUANTITY</text></g>
+          <g class="node" tabindex="0" role="button" data-n="addr" aria-label="ADDRESS slot"><rect class="box" x="525" y="170" width="120" height="40" rx="10" fill="rgba(139,92,246,.14)" stroke="#8B5CF6"/><text x="585" y="195" text-anchor="middle" fill="#fff" font-family="Geist Mono,monospace" font-size="13">ADDRESS</text></g>
+          <g font-family="Geist,sans-serif" font-size="14" fill="#8A98B0" text-anchor="middle"><text x="95" y="285">Margherita</text><text x="95" y="308">Farmhouse</text><text x="95" y="331">Garlic Bread</text><text x="255" y="285">Domino's</text><text x="425" y="285">1</text><text x="585" y="285">Home</text><text x="585" y="308">Work</text></g>
+        </svg>
+      </div>
+      <div class="glass edge detail rv" aria-live="polite" id="dna-detail"></div>
+    </div>
+  </div>
+</section>
+<!-- 07 INSPECTOR -->
+<section id="inspector" class="c-sem">
+  <div class="wrap">
+    <div class="sec-head rv"><div class="sec-no">03 / UNDERSTAND · SEMANTIC UI INSPECTOR</div>
+      <h2>TeachFlow sees meaning,<span class="l2">not coordinates.</span></h2>
+      <p class="lead">The screen, the accessibility tree Android exposes, and TeachFlow's interpretation of it. Hover or focus any node or interpretation to trace it across all three.</p></div>
+    <div class="inspector">
+      <div class="phone rv"><div class="screen" id="insp-phone" aria-label="Simulated app screen being inspected"></div></div>
+      <div class="glass tree inspect rv">
+        <div class="lp-label">ACCESSIBILITY TREE</div>
+        <ul role="tree" aria-label="Accessibility tree">
+          <li role="treeitem"><button class="tn" data-k="app">foodapp <em>Window</em></button>
+            <ul>
+              <li><button class="tn" data-k="search">Search <em>EditText</em></button></li>
+              <li><button class="tn" data-k="rest">Domino's <em>Restaurant header</em></button></li>
+              <li><button class="tn" data-k="item">Margherita Pizza <em>Product card</em></button>
+                <ul><li><button class="tn" data-k="add">ADD <em>Button · clickable</em></button></li></ul></li>
+              <li><button class="tn" data-k="cart">View cart <em>Button</em></button></li>
+            </ul></li>
+        </ul>
+      </div>
+      <div class="glass rv">
+        <div class="panel-head"><span>SEMANTIC INTERPRETATION</span><span class="tag sim">INTERACTIVE SIMULATION</span></div>
+        <div class="sem-rows" id="sem-rows"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 PARAPHRASE -->
+<section id="paraphrase" class="c-sem">
+  <div class="wrap">
+    <div class="sec-head rv" style="margin-inline:auto;text-align:center"><div class="sec-no" style="justify-content:center">03 / UNDERSTAND · PARAPHRASE LAB</div>
+      <h2>Same intent.<span class="l2">Different words.</span></h2></div>
+    <div class="para rv" id="para">
+      <div class="para-bubbles">
+        <div class="bubble">"Order a Margherita from Domino's."</div>
+        <div class="bubble">"Get me a margherita from Domino's."</div>
+        <div class="bubble">"I want to order margherita pizza on Zomato."</div>
+      </div>
+      <div class="para-arrow">↓</div>
+      <div class="para-node"><div class="m">LEARNED WORKFLOW</div><strong>ORDER_FOOD_V1</strong></div>
+      <div class="pm"><div><b id="pm1">—</b><span>SEMANTIC MATCH</span></div><div><b id="pm2">—</b><span>WORKFLOW MATCH</span></div><div><b id="pm3" style="color:var(--green)">—</b><span>RESULT</span></div></div>
+      <div class="para-try">
+        <label class="sr" for="para-in">Try another command</label>
+        <input id="para-in" placeholder="Try another command…" value="Get me a margherita" autocomplete="off">
+        <button class="btn sm primary" id="para-go">Match Intent</button>
+      </div>
+      <div class="para-out" id="para-out" aria-live="polite"></div>
+      <span class="tag sim">INTERACTIVE SIMULATION · in-browser keyword heuristic, not the real engine</span>
+    </div>
+  </div>
+</section>
+
+<!-- 09 MUTATION -->
+<section id="params" class="c-learn">
+  <div class="wrap">
+    <div class="sec-head rv"><div class="sec-no">04 / GENERALIZE · PARAMETER MUTATION</div>
+      <h2>Same skill. New parameter.<span class="l2">No relearning.</span></h2></div>
+    <div class="params">
+      <div class="rv">
+        <div class="glass edge flow-card">
+          <div class="lp-label" style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">LEARNED FLOW · ORDER_FOOD_V1 <span class="tags"><span class="tag t">T4</span><span class="tag t">T5</span><span class="tag t">T6</span><span class="tag sim">INTERACTIVE SIMULATION</span></span></div>
+          <div class="mut-flow">Order <span class="slotv" id="sv-item"><span>Margherita</span></span><br>from <span class="slotv" id="sv-rest"><span>Domino's</span></span><br>quantity <span class="slotv" id="sv-qty"><span>1</span></span><br>deliver to <span class="slotv" id="sv-addr"><span>HOME</span></span></div>
+          <div class="mut-log" id="mut-log" aria-live="polite">Select a new value below.</div>
+          <div class="struct">✓ Workflow structure unchanged · 7 steps · 0 relearned</div>
+        </div>
+        <div class="ctrl">
+          <div class="row" role="group" aria-label="Item"><span class="lbl">ITEM</span>
+            <button class="chip" data-g="item" aria-pressed="true">Margherita</button><button class="chip" data-g="item" aria-pressed="false">Farmhouse</button><button class="chip" data-g="item" aria-pressed="false">Garlic Bread</button></div>
+          <div class="row"><span class="lbl">QUANTITY</span><div class="qty"><button id="q-minus" aria-label="Decrease quantity">−</button><output id="q-val">1</output><button id="q-plus" aria-label="Increase quantity">+</button></div></div>
+          <div class="row" role="group" aria-label="Address"><span class="lbl">ADDRESS</span>
+            <button class="chip" data-g="addr" aria-pressed="true">HOME</button><button class="chip" data-g="addr" aria-pressed="false">WORK</button></div>
+        </div>
+      </div>
+      <div class="phone rv"><div class="screen" id="mut-phone" aria-label="Simulated cart"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 BREAK -->
+<section id="break" class="c-rec">
+  <div class="wrap">
+    <div class="sec-head rv"><div class="sec-no">05 / ADAPT · BREAK THE WORKFLOW</div>
+      <h2>Break the workflow.<span class="l2">Real apps change. TeachFlow must adapt.</span></h2></div>
+    <div class="demo-grid">
+      <div class="phone rv"><div class="screen" id="brk-phone" aria-label="Simulated app for disruption test"></div></div>
+      <div class="glass edge agent rv">
+        <div class="panel-head"><span>RUNTIME</span><span class="tags"><span class="tag t">T7</span><span class="tag sim">INTERACTIVE SIMULATION</span></span></div>
+        <div class="body">
+          <div class="tags"><span class="state idle" id="b-state">READY</span><span class="hint">next expected target: <b style="color:var(--text)">SEARCH</b></span></div>
+          <div class="decision" id="b-dec" style="border-color:rgba(167,139,250,.5);background:rgba(139,92,246,.07)">
+            <div class="lp-label" style="color:#C4B5FD">UNEXPECTED STATE</div>
+            <dl class="kvgrid"><dt>DETECTED</dt><dd>PROMOTIONAL DIALOG</dd><dt>EXPECTED</dt><dd>SEARCH</dd><dt>SAFE RECOVERY</dt><dd class="mono">DISMISS</dd><dt>CONFIDENCE</dt><dd class="mono">94%</dd></dl>
+          </div>
+          <ol class="rsteps h" id="b-steps"><li>DISMISS</li><li>RE-INSPECT UI</li><li>RE-GROUND TARGET</li><li>CONTINUE</li></ol>
+          <div class="hint" id="b-res" style="font-size:15px" aria-live="polite"></div>
+          <div class="actions"><button class="btn primary magnetic" id="b-run">⚡ Introduce UI Change</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 RECOVERY ENGINE -->
+<!-- TRY TO BREAK IT -->
+<section id="playground" class="c-rec">
+  <div class="wrap">
+    <div class="sec-head rv"><div class="sec-no">05 / ADAPT · TRY TO BREAK IT</div>
+      <h2>Throw something at it.<span class="l2">See what it does instead of guessing.</span></h2>
+      <p class="lead">Pick a disruption. The panel shows the behaviour the APK's executor is built to produce, using the same trace phases it records. The traces here are scripted in the browser: an interactive simulation, not a live run.</p></div>
+    <div class="pg">
+      <div class="glass edge rv">
+        <div class="panel-head"><span>DISRUPTIONS</span><span class="tag sim">INTERACTIVE SIMULATION</span></div>
+        <div class="pg-btns" id="pg-btns" role="group" aria-label="Disruptions"></div>
+      </div>
+      <div class="glass edge pg-out rv" aria-live="polite">
+        <div class="panel-head"><span id="pg-title">SELECT A DISRUPTION</span><span class="tags" id="pg-tags"></span></div>
+        <div class="pg-cmd" id="pg-cmd">—</div>
+        <ol class="pg-log" id="pg-log"></ol>
+        <div class="pg-foot"><span id="pg-outcome"></span><span id="pg-where" class="mono" style="font-size:12px"></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="recovery" class="c-rec">
+  <div class="wrap">
+    <div class="loop-wrap" style="margin-top:0">
+      <div class="rv"><div class="sec-no">06 / RECOVER · ADAPTIVE RECOVERY</div>
+        <h2>The screen changed.<span class="l2">The goal didn't.</span></h2>
+        <p class="lead">Every action is observed and verified before the next. When the target isn't found, TeachFlow recovers and re-observes. It asks you only when it genuinely can't proceed.</p></div>
+      <div class="loop rv">
+        <svg viewBox="0 0 460 440" role="img" aria-label="Decision loop: observe, verify, target found, act or recover, re-observe, ask user">
+          <path d="M230 64 V96 M230 136 V168 M200 208 L120 250 M260 208 L340 250 M340 290 V322 M340 362 V394 M300 342 C200 342 150 200 200 188"/>
+          <g data-l="0"><rect class="ln" x="170" y="24" width="120" height="40" rx="12"/><text class="lt" x="230" y="44">OBSERVE</text></g>
+          <g data-l="1"><rect class="ln" x="170" y="96" width="120" height="40" rx="12"/><text class="lt" x="230" y="116">VERIFY</text></g>
+          <g data-l="2"><rect class="ln" x="160" y="168" width="140" height="40" rx="12"/><text class="lt" x="230" y="188">TARGET FOUND?</text></g>
+          <g data-l="3"><rect class="ln" x="60" y="250" width="120" height="40" rx="12"/><text class="lt" x="120" y="270">YES · ACT</text></g>
+          <g data-l="4"><rect class="ln" x="280" y="250" width="120" height="40" rx="12"/><text class="lt" x="340" y="270">NO · RECOVER</text></g>
+          <g data-l="5"><rect class="ln" x="280" y="322" width="120" height="40" rx="12"/><text class="lt" x="340" y="342">RE-OBSERVE</text></g>
+          <g data-l="6"><rect class="ln" x="280" y="394" width="120" height="40" rx="12"/><text class="lt" x="340" y="414">ASK USER</text></g>
+        </svg>
+      </div>
+    </div>
+    <div class="strategies">
+      <div class="glass card rv"><h3>Dismiss safe interruptions</h3><p>Promos, rating prompts and tooltips are classified as non-blocking and closed.</p></div>
+      <div class="glass card rv"><h3>Re-ground by meaning</h3><p>If a button moved or was renamed slightly, the step is re-matched by role and text, not position.</p></div>
+      <div class="glass card rv"><h3>Ask when genuinely stuck</h3><p>Unknown screens, logins and missing data stop the run and hand the decision to you.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 FAIL -->
+<section id="fail" class="c-rec">
+  <div class="wrap">
+    <div class="sec-head rv"><div class="sec-no">06 / RECOVER · MAKE IT FAIL</div>
+      <h2>Make it stuck.<span class="l2">Watch it ask instead of guess.</span></h2></div>
+    <div class="demo-grid">
+      <div class="phone rv"><div class="screen" id="fail-phone" aria-label="Simulated app for failure test"></div></div>
+      <div class="glass edge agent rv">
+        <div class="panel-head"><span>RUNTIME</span><span class="tags"><span class="tag t">T10</span><span class="tag sim">INTERACTIVE SIMULATION</span></span></div>
+        <div class="body">
+          <div class="tags"><span class="state idle" id="f-state">READY</span></div>
+          <div class="blocked" id="f-block">
+            <strong>WORKFLOW BLOCKED</strong>
+            <dl class="kvgrid" style="margin-top:12px"><dt>EXPECTED</dt><dd>Restaurant search</dd><dt>DETECTED</dt><dd>Authentication screen</dd></dl>
+            <p>I cannot safely continue. Please log in and tell me when you're ready.</p>
+          </div>
+          <div class="hint" id="f-msg" style="font-size:15px" aria-live="polite"></div>
+          <div class="actions"><button class="btn primary magnetic" id="f-run">Simulate Failure</button><button class="btn" id="f-ctrl" hidden>Take Control</button><button class="btn" id="f-ready" hidden>I'm logged in, continue</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- 13 SAFETY -->
+<section id="safety" class="safety c-safe">
+  <div class="wrap">
+    <div class="sec-head rv"><div class="sec-no">07 / SAFETY · SAFETY GUARDIAN</div>
+      <h2>A good agent knows<span class="l2">when not to act.</span></h2></div>
+    <div class="stop">
+      <div class="glass auto-list rv">
+        <div class="lp-label">WORKFLOW TIMELINE</div>
+        <ul class="stl"><li><span>SEARCH</span><span>✓</span></li><li><span>SELECT ITEM</span><span>✓</span></li><li><span>ADD TO CART</span><span>✓</span></li><li><span>OPEN CHECKOUT</span><span>✓</span></li></ul>
+        <div class="boundary">SAFETY BOUNDARY</div>
+        <ul class="stl"><li class="stop"><span>PAYMENT</span><span>🛑</span></li></ul>
+        <div class="pause-box" style="margin-top:14px"><div class="yt">Your turn</div><p style="margin:8px 0 0;color:var(--muted);font-size:15px">Payment or authentication detected. Automation has paused.</p></div>
+      </div>
+      <div class="rv">
+        <div class="glass card"><div class="lp-label" style="display:flex;justify-content:space-between">ALWAYS HUMAN-CONTROLLED <span class="tag t">T11</span></div>
+          <div class="blist"><div><span>PASSWORD</span><span>BLOCKED</span></div><div><span>OTP</span><span>BLOCKED</span></div><div><span>PIN</span><span>BLOCKED</span></div><div><span>CVV</span><span>BLOCKED</span></div><div><span>PAYMENT</span><span>BLOCKED</span></div><div><span>AUTHENTICATION</span><span>BLOCKED</span></div></div>
+          <p>TeachFlow never records these fields during a demonstration and never fills them during replay.</p></div>
+        <div class="glass edge handoff">
+          <div><div class="lp-label">HUMAN HANDOFF</div><div class="handoff-state" id="ho-state" aria-live="polite">Agent paused at checkout.</div></div>
+          <button class="btn primary magnetic" id="ho-btn">Take Control</button>
+        </div>
+      </div>
+    </div>
+    <div class="g2" style="margin-top:22px;align-items:stretch">
+      <div class="glass card guardian rv" id="guardian">
+        <svg viewBox="0 0 520 330" role="img" aria-label="Safety guardian: every action is classified as safe (execute), sensitive (pause, human control) or unknown (ask)">
+          <path class="gp" d="M260 56 V88" stroke="#3B4B66" fill="none"/>
+          <path class="gp" d="M260 128 V150 H90 V180 M260 150 V180 M260 150 H430 V180" stroke="#3B4B66" fill="none"/>
+          <path class="gp" d="M90 220 V250 M260 220 V250 M430 220 V250 M260 290 V300" stroke="#3B4B66" fill="none"/>
+          <g class="gn"><rect x="200" y="16" width="120" height="40" rx="10"/><text x="260" y="36">ACTION</text></g>
+          <g class="gn"><rect x="170" y="88" width="180" height="40" rx="10" style="stroke:#F59E0B"/><text x="260" y="108">SAFETY GUARDIAN</text></g>
+          <g class="gn"><rect x="40" y="180" width="100" height="40" rx="10" style="stroke:#34D399"/><text x="90" y="200">SAFE</text></g>
+          <g class="gn"><rect x="200" y="180" width="120" height="40" rx="10" style="stroke:#F43F5E"/><text x="260" y="200">SENSITIVE</text></g>
+          <g class="gn"><rect x="380" y="180" width="100" height="40" rx="10" style="stroke:#8B5CF6"/><text x="430" y="200">UNKNOWN</text></g>
+          <text x="90" y="270" style="fill:#34D399">EXECUTE</text><text x="260" y="270" style="fill:#F59E0B">PAUSE</text><text x="430" y="270" style="fill:#C4B5FD">ASK</text>
+          <g class="gn"><rect x="185" y="300" width="150" height="28" rx="8"/><text x="260" y="314">HUMAN CONTROL</text></g>
+        </svg>
+      </div>
+      <div class="glass card rv"><div class="lp-label">WHERE YOUR DATA GOES · INTENDED DESIGN</div>
+        <div class="priv-mini">
+          <div style="border-color:rgba(52,211,153,.3)"><b>Stays on device</b><ul><li>Accessibility tree, read live</li><li>Learned skills (JSON, app-private storage)</li><li>Demonstrations, as semantic steps</li><li>Action execution</li></ul></div>
+          <div style="border-color:rgba(244,63,94,.3)"><b>Never captured</b><ul><li>Passwords, OTPs, PINs</li><li>Card numbers, CVVs</li><li>Screenshots</li><li>Sensitive field contents</li></ul></div>
+        </div>
+        <p class="safe-quote">A trustworthy agent knows when to act, when to adapt, and when to stop.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 SKILLS -->
+<section id="skills" class="c-learn">
+  <div class="wrap">
+    <div class="sec-head rv"><div class="sec-no">04 / GENERALIZE · SKILL MEMORY</div>
+      <h2>Your apps become teachable.</h2>
+      <p class="lead">Each demonstration is stored locally as a named skill. Inspect one to see its structure and the record behind it.</p></div>
+    <div class="skill-wrap">
+      <div class="skill-cards" id="skill-cards"></div>
+      <div class="glass skill-graph rv"><div class="panel-head" style="border:none"><span>SKILL MEMORY GRAPH</span><span class="tag sim">EXAMPLE LIBRARY</span></div><svg viewBox="0 0 460 300" id="sg" aria-label="Graph of shared sub-skills"></svg></div>
+    </div>
+    <div class="glass edge skill-detail rv" id="skill-detail" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- 15 CROSS -->
+<section id="cross" class="c-learn">
+  <div class="wrap">
+    <div class="sec-head rv"><div class="sec-no">04 / GENERALIZE · CROSS-APP</div>
+      <div class="tags" style="margin-bottom:16px"><span class="tag exp">PROTOTYPE / EXPERIMENTAL</span><span class="tag t">T8</span><span class="tag t">T9</span></div>
+      <h2>Different apps.<span class="l2">Same intent.</span></h2></div>
+    <div class="abstract-row rv" id="abs"><span class="lp-label" style="margin:0 8px 0 0">ABSTRACT SKILL</span><span class="stp">SEARCH</span><i>→</i><span class="stp">SELECT RESULT</span><i>→</i><span class="stp">ADD / SELECT</span></div>
+    <div class="cross3 rv" id="cross3">
+      <figure style="margin:0"><div class="phone amz"><div class="screen">
+        <div class="hdr"><b>shop</b><span style="opacity:.6;font-size:10px">.in</span></div>
+        <div class="search" data-x="0" style="margin-top:10px;border-radius:6px;background:#fff;border:2px solid #F59E0B">⌕ running shoes</div>
+        <div class="pbox" data-x="1"><div class="ph"></div><div><b>Runner Pro 2</b><br>₹2,499</div></div>
+        <div class="pbox"><div class="ph"></div><div><b>Trail Lite</b><br>₹1,899</div></div>
+        <div class="pbtn" data-x="2" style="background:#FFD814">Add to Cart</div></div></div><figcaption>Amazon-style layout</figcaption></figure>
+      <figure style="margin:0"><div class="phone myn"><div class="screen">
+        <div class="hdr"><b style="color:#FF3F6C">style</b>store</div>
+        <div class="search" data-x="0" style="margin-top:10px;border-radius:99px">⌕ linen shirt</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 12px">
+          <div data-x="1" style="border-radius:6px;overflow:hidden"><div style="height:90px;background:#E5E7EB"></div><div style="padding:5px;font-size:10px"><b>Linen Shirt</b><br>₹1,299</div></div>
+          <div style="border-radius:6px;overflow:hidden"><div style="height:90px;background:#F3E8FF"></div><div style="padding:5px;font-size:10px"><b>Kurta</b><br>₹999</div></div></div>
+        <div class="pbtn" data-x="2" style="background:#FF3F6C;color:#fff;border-radius:4px">SELECT SIZE · ADD TO BAG</div></div></div><figcaption>Myntra-style layout</figcaption></figure>
+      <figure style="margin:0"><div class="phone food-z"><div class="screen">
+        <div class="sb"><span>9:41</span><span>●●● 5G</span></div>
+        <div class="app-bar"><span class="app-name" style="color:#E23744">foodapp</span></div>
+        <div class="search" data-x="0">⌕ margherita</div>
+        <div class="rest" data-x="1"><div class="thumb"></div><div><b>Domino's Pizza</b><small>Margherita · ₹239</small></div></div>
+        <div class="rest"><div class="thumb" style="background:linear-gradient(135deg,#FACC15,#F97316)"></div><div><b>Pizza Hut</b><small>Margherita · ₹249</small></div></div>
+        <div class="pbtn" data-x="2" style="background:#E23744;color:#fff;border-radius:10px">ADD</div></div></div><figcaption>Zomato-style layout</figcaption></figure>
+    </div>
+    <div class="neq rv"><span>UI ≠ SAME</span><span>INTENT = SAME</span></div>
+    <p class="quote-line rv">TeachFlow learns the task structure, <span>not the coordinates.</span></p>
+  </div>
+</section>
+
+<!-- 16 CLARIFY + UNKNOWN -->
+<section id="clarify" class="c-rec">
+  <div class="wrap">
+    <div class="g2">
+      <div class="rv">
+        <div class="sec-no">06 / RECOVER · MID-FLOW CLARIFICATION</div>
+        <div class="tags" style="margin-bottom:14px"><span class="tag t">T13</span></div>
+        <h3 style="font-size:clamp(1.6rem,3vw,2.3rem);letter-spacing:-.03em;margin-bottom:24px">When it needs you, it asks the right question.</h3>
+        <div class="glass chat" aria-live="polite">
+          <div class="msg u">Order pizza.</div>
+          <div class="msg a">I found a food-ordering skill, but some information is missing.
+            <div class="ol">PIZZA TYPE</div><div class="opt" data-q="pizza"><button class="chip" aria-pressed="false">Margherita</button><button class="chip" aria-pressed="false">Farmhouse</button><button class="chip" aria-pressed="false">Other</button></div>
+            <div class="ol">RESTAURANT</div><div class="opt" data-q="rest"><button class="chip" aria-pressed="false">Domino's</button><button class="chip" aria-pressed="false">Pizza Hut</button></div>
+          </div>
+          <div class="resolved" id="clar-out"></div>
+        </div>
+      </div>
+      <div class="rv">
+        <div class="sec-no">06 / RECOVER · UNKNOWN INTENT</div>
+        <div class="tags" style="margin-bottom:14px"><span class="tag t">T12</span></div>
+        <h3 style="font-size:clamp(1.6rem,3vw,2.3rem);letter-spacing:-.03em;margin-bottom:24px">It doesn't pretend to know what it hasn't learned.</h3>
+        <div class="glass chat">
+          <div class="msg u">Book a cab to the airport.</div>
+          <div class="msg a"><span class="mono" style="font-size:12px;color:var(--amber)">NO LEARNED SKILL FOUND</span><br>I haven't learned this task yet.
+            <div class="opt"><button class="btn primary sm" id="teach-me">Teach Me</button></div></div>
+          <div class="resolved" id="teach-out" style="color:var(--cyan)" aria-live="polite"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 17 JUDGE -->
+<section id="judge" class="c-eval">
+  <div class="wrap">
+    <div class="sec-head rv"><div class="sec-no">08 / EVALUATE · JUDGE MODE</div>
+      <h2>Inspect every claim.<span class="l2">Against T1–T14.</span></h2>
+      <p class="lead">Status, observations, last run and trace come only from runs recorded on a device with the APK (Tests tab → Export results JSON). Nothing is marked PASS until it has been tested.</p></div>
+    <div class="glass edge rv" style="overflow:hidden">
+      <div class="judge-head">
+        <div><div class="lp-label">TEACHFLOW · JUDGE MODE</div><h3>Prototype Evaluation Console</h3><div class="sub">T1–T14 scenario suite</div></div>
+        <div class="judge-count"><b id="j-count">0 / 14</b>tests with recorded results</div>
+      </div>
+      <div class="j-tools">
+        <span class="j-src" id="j-src"></span>
+        <span class="actions" style="margin:0">
+          <input type="file" id="j-file" class="j-file" accept="application/json,.json" aria-label="Import results JSON exported by the APK">
+          <button class="btn sm" id="j-import">Import results from APK (JSON)</button>
+          <button class="btn sm ghost" id="j-clear" hidden>Clear import</button>
+        </span>
+      </div>
+      <div class="filters" role="group" aria-label="Filter tests" id="j-filters"></div>
+      <div class="table-scroll"><table class="jt"><caption class="sr">T1 to T14 evaluation</caption>
+        <thead><tr><th scope="col">ID</th><th scope="col">Test</th><th scope="col">Status</th><th scope="col">Description</th><th scope="col">Observation</th><th scope="col">Last run</th><th scope="col"><span class="sr">Trace</span></th></tr></thead>
+        <tbody id="j-body"></tbody></table></div>
+    </div>
+    <div class="lp-label rv" style="margin-top:34px">METRICS · FROM RECORDED DEVICE RUNS ONLY</div>
+    <div class="metrics rv" id="metrics" style="margin-top:12px"></div>
+    <p class="report-note rv" id="report-note"></p>
+  </div>
+</section>
+
+<!-- 18 TRACE -->
+<section id="trace" class="c-eval">
+  <div class="wrap">
+    <div class="sec-head rv"><div class="sec-no">08 / EVALUATE · EXECUTION TRACE</div>
+      <h2>Every run is inspectable.</h2>
+      <p class="lead" id="tr-lead">Select any event to rewind the phone to that exact moment.</p></div>
+    <div class="trace-grid">
+      <div class="phone rv"><div class="screen" id="trace-phone" aria-label="Phone state at selected trace event"></div></div>
+      <div class="glass edge rv">
+        <div class="panel-head"><span id="tr-src">REFERENCE RUN · ORDER_FOOD_V1</span><span class="tags"><span class="tag t">T14</span><span class="tag sim">INTERACTIVE SIMULATION</span></span></div>
+        <ol class="trace-list" id="trace-list"></ol>
+        <div style="padding:0 18px 18px" class="actions"><button class="btn sm" id="tr-play">▶ Step through</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 19 ARCH -->
+<section id="architecture" class="c-sem">
+  <div class="wrap">
+    <div class="sec-head rv"><div class="sec-no">09 / ARCHITECTURE</div>
+      <h2>From voice to verified action.</h2>
+      <p class="lead">Twelve stages from voice to safe stop, plus the safety branch. Select one to see what it does and which file in the APK implements it.</p></div>
+    <div class="arch">
+      <div class="arch-flow rv" id="arch-flow" role="group" aria-label="Architecture stages"></div>
+      <aside class="glass edge arch-detail rv" id="arch-detail" aria-live="polite"></aside>
+    </div>
+    <div style="margin-top:56px" class="rv">
+      <div class="lp-label" style="margin-bottom:14px">TECH STACK</div>
+      <div class="stack"><span>Android</span><span>Kotlin</span><span>Jetpack Compose</span><span>Accessibility Service</span><span>JSON skill memory</span><span>Coroutines</span><span>StateFlow</span><span>Android speech recogniser (RecognizerIntent)</span><span>Rule-based intent + slot parser (offline, no LLM)</span><span>Semantic Matching</span><span>Local Workflow Memory</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 21 LIMITS -->
+<section id="limits" style="padding-top:24px">
+  <div class="wrap">
+    <div class="glass limits rv">
+      <div class="sec-no">KNOWN LIMITATIONS</div>
+      <h3 style="font-size:clamp(1.6rem,3vw,2.3rem);letter-spacing:-.03em">What it can't do yet.</h3>
+      <ul>
+        <li>Accessibility metadata varies across applications.</li>
+        <li>Custom-rendered controls may expose limited semantics.</li>
+        <li>Major UI redesigns can require clarification.</li>
+        <li>Cross-app generalization depends on semantic compatibility.</li>
+        <li>Authentication and payment remain human-controlled.</li>
+      </ul>
+      <p class="safe-quote" style="margin-bottom:0">We prefer a safe handoff over an unsafe action.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 22 FUTURE -->
+<section id="future">
+  <div class="wrap">
+    <div class="sec-head rv"><div class="sec-no">ROADMAP</div>
+      <h2>From workflows<span class="l2">to a personal Android skill library.</span></h2></div>
+    <div class="glass future rv">
+      <div class="stage now"><div class="when">NOW</div><h3>Teach one workflow</h3><div class="flowl">Teach one workflow<br>↓<br>Reusable skill</div><svg class="net" data-n="3" aria-hidden="true"></svg></div>
+      <div class="stage next"><div class="when">NEXT</div><h3>Grow the skills</h3><div class="flowl">Parameterized skills<br>↓ Skill composition<br>↓ Cross-app transfer</div><svg class="net" data-n="8" aria-hidden="true"></svg></div>
+      <div class="stage vision"><div class="when">VISION</div><h3>Personal skill engine</h3><div class="flowl">Personal Android<br>Skill Engine</div><svg class="net" data-n="18" aria-hidden="true"></svg></div>
+    </div>
+  </div>
+</section>
+
+<!-- 23 CTA -->
+<section class="cta">
+  <div class="wrap">
+    <h2 class="rv">What will you teach it?</h2>
+    <p class="lead rv">Give TeachFlow one demonstration.<br>Then let your voice take over.</p>
+    <div class="ctas rv">
+      <a href="#teach" class="btn primary magnetic">Try TeachFlow</a>
+      <a href="#architecture" class="btn magnetic">View Architecture</a>
+      <a href="#" class="btn magnetic" data-github>GitHub ↗</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div><a href="#top" class="brand"><span class="logo">TF</span>TEACHFLOW</a>
+        <p class="tl2">Teach once.<br>Say it naturally.<br>Let Android act.</p></div>
+      <nav aria-label="Footer"><a href="#" data-github>GitHub</a><a href="#live">Demo</a><a href="#architecture">Architecture</a><a href="#judge">Judge Mode</a></nav>
+    </div>
+    <div class="foot-meta"><span>Samsung PRISM</span><span>Generative AI Hackathon 2026–27</span></div>
+  </div>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.net.min.js"></script>
+<script>
+/* Vanta NET background — skipped for reduced motion; falls back to the particle field if WebGL or the CDN is unavailable */
+(function(){
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (!window.VANTA || !window.THREE) return;
+  try {
+    const mobile = innerWidth < 760;
+    const effect = VANTA.NET({
+      el: "#vanta-bg",
+      mouseControls: true,
+      touchControls: true,
+      gyroControls: false,
+      minHeight: 200.00,
+      minWidth: 200.00,
+      scale: 1.00,
+      scaleMobile: 1.00,
+      color: 0x3b82f6,           // TeachFlow blue lines
+      backgroundColor: 0x05070b, // page background
+      points: mobile ? 7.0 : 10.0,
+      maxDistance: mobile ? 22.0 : 27.0,
+      spacing: mobile ? 26.0 : 23.0,
+      showDots: true
+    });
+    window.__vanta = effect;
+    document.getElementById("vanta-bg").classList.add("on");
+    document.body.classList.add("vanta-on");
+  } catch (e) { /* keep the CSS/particle background */ }
+})();
+</script>
+<script>
+/* Interactive background — chapter colour, motion energy, parallax, tap ripples */
+(function(){
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const root = document.documentElement;
+  const fine = matchMedia("(pointer: fine)").matches;
+  // Chapter accent → hue rotation of the blue net (#3B82F6) and glow colour.
+  const THEME = {"c-learn":[0,"#60A5FA"],"c-sem":[-29,"#22D3EE"],"c-rec":[38,"#A78BFA"],"c-safe":[181,"#F59E0B"],"c-eval":[-57,"#34D399"]};
+  const setTheme = cls => { const t = THEME[cls] || [0,"#60A5FA"]; root.style.setProperty("--bg-hue", t[0]+"deg"); root.style.setProperty("--bg-acc", t[1]); };
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) setTheme([...e.target.classList].find(k => THEME[k]));
+  }), {rootMargin:"-45% 0px -50% 0px"});
+  document.querySelectorAll("main section").forEach(sec => io.observe(sec));
+  if (reduce) return;
+
+  // Motion energy: moving or scrolling faster makes the net glow brighter; it decays smoothly.
+  let energy = 0, raf = 0, lx = null, ly = null, lt = 0, lastY = scrollY;
+  const tick = () => {
+    energy *= 0.92;
+    root.style.setProperty("--bg-bri", (1 + Math.min(energy, 0.9)).toFixed(3));
+    root.style.setProperty("--bg-sat", (1 + Math.min(energy, 0.9) * 0.6).toFixed(3));
+    raf = energy > 0.01 ? requestAnimationFrame(tick) : 0;
+    if (!raf) { root.style.setProperty("--bg-bri", "1"); root.style.setProperty("--bg-sat", "1"); }
+  };
+  const kick = amt => { energy = Math.min(energy + amt, 1.2); if (!raf) raf = requestAnimationFrame(tick); };
+
+  addEventListener("pointermove", e => {
+    const now = performance.now();
+    if (lx !== null && now > lt) kick(Math.min(Math.hypot(e.clientX - lx, e.clientY - ly) / (now - lt) / 12, 0.08));
+    lx = e.clientX; ly = e.clientY; lt = now;
+    if (fine) { // gentle parallax, opposite to the cursor
+      root.style.setProperty("--bg-px", ((0.5 - e.clientX / innerWidth) * 18).toFixed(1) + "px");
+      root.style.setProperty("--bg-py", ((0.5 - e.clientY / innerHeight) * 14).toFixed(1) + "px");
+    }
+  }, {passive:true});
+  addEventListener("scroll", () => { kick(Math.min(Math.abs(scrollY - lastY) / 900, 0.12)); lastY = scrollY; }, {passive:true});
+
+  // Tap / click anywhere: ripple + a brief burst where the net connects more points.
+  const glow = document.querySelector(".cursor-glow");
+  let baseMax = null, burstTimer = 0;
+  addEventListener("pointerdown", e => {
+    if (e.button && e.button !== 0) return;
+    for (const cls of ["bg-ripple", "bg-ripple b"]) {
+      const r = document.createElement("div");
+      r.className = cls; r.style.left = e.clientX + "px"; r.style.top = e.clientY + "px";
+      document.body.appendChild(r); r.addEventListener("animationend", () => r.remove());
+    }
+    kick(0.7);
+    glow && glow.classList.add("press");
+    const v = window.__vanta;
+    if (v && v.setOptions) try {
+      if (baseMax === null) baseMax = v.options.maxDistance;
+      v.setOptions({maxDistance: baseMax + 9});
+      clearTimeout(burstTimer);
+      burstTimer = setTimeout(() => { try { v.setOptions({maxDistance: baseMax}); } catch (_) {} }, 520);
+    } catch (_) {}
+  }, {passive:true});
+  addEventListener("pointerup", () => glow && glow.classList.remove("press"), {passive:true});
+
+  // One-time hint so visitors know the background responds.
+  const hint = document.createElement("div");
+  hint.className = "bg-hint"; hint.textContent = fine ? "Move · click anywhere · scroll to change chapter colour" : "Tap anywhere · scroll to change chapter colour";
+  document.body.appendChild(hint);
+  setTimeout(() => hint.classList.add("show"), 2200);
+  setTimeout(() => { hint.classList.remove("show"); setTimeout(() => hint.remove(), 700); }, 7200);
+})();
+</script>
+<script>
+/* =====================================================================
+   DATA — fill in ONLY with results recorded on the real prototype.
+   status: "untested" | "ready" | "needs" | "passed" | "failed"
+   ===================================================================== */
+const DATA = {
+  github: "",                 // e.g. "https://github.com/your-team/teachflow"
+  // Paste the APK's exported JSON here to publish real results (Tests tab → Export results JSON),
+  // or leave null and use "Import results from APK" in Judge Mode. Never write results by hand.
+  published: null,
+  // Shape of the export (schema "teachflow-judge-results/1"):
+  // { results: { "T1": { status:"PASS"|"FAIL"|"NOT YET TESTED", observation:"…",
+  //     lastRun:{ command, at, finalStatus, stopReason, parameters, steps, successful, recovered, interventions, trace:[…] } } },
+  //   metrics: { "Learn success":"2/2" | null, … }, device:"…", exportedAt:"…" }
+};
+
+const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const wait=ms=>new Promise(r=>setTimeout(r,RM?Math.min(ms,60):ms));
+const onView=(el,fn,opts={threshold:.35})=>{if(!el)return;const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){fn(e.target);io.unobserve(e.target);}}),opts);io.observe(el);};
+const relRect=(el,scr)=>{const a=el.getBoundingClientRect(),b=scr.getBoundingClientRect();return{x:a.left-b.left,y:a.top-b.top,w:a.width,h:a.height};};
+
+/* ---------- agent state system ---------- */
+const SC={"READY":"#34D399","LISTENING":"#22D3EE","UNDERSTANDING":"#60A5FA","LEARNING":"#60A5FA","TEACHING":"#60A5FA","MATCHING":"#818CF8","GROUNDING UI":"#22D3EE","EXECUTING":"#60A5FA","VERIFYING":"#22D3EE","RECOVERING":"#A78BFA","WAITING FOR USER":"#F59E0B","COMPLETED":"#34D399","BLOCKED":"#F43F5E","HUMAN CONTROL":"#F59E0B"};
+function setState(el,s){el.textContent=s;el.style.setProperty("--sc",SC[s]||"#8A98B0");el.classList.toggle("done",s==="COMPLETED");el.classList.toggle("idle",s==="READY");}
+$$(".state").forEach(el=>setState(el,el.textContent.trim()));
+
+/* ---------- simulated app renderer ---------- */
+const FOOD={"Margherita":[239,"linear-gradient(135deg,#FB923C,#B91C1C)","Margherita Pizza"],"Farmhouse":[359,"linear-gradient(135deg,#65A30D,#3F6212)","Farmhouse Pizza"],"Garlic Bread":[139,"linear-gradient(135deg,#FDE68A,#D97706)","Garlic Breadsticks"]};
+const ADDR={HOME:["Home","12, Lake View Road"],WORK:["Work","Tower B, Tech Park"]};
+const SB='<div class="sb"><span>9:41</span><span>●●● 5G</span></div>';
+const rc=(r,name,sub,g,extra="",cls="")=>`<div class="rest ${cls}" ${r?`data-r="${r}"`:""}><div class="thumb" style="background:${g}"></div><div><b>${name}</b><small>${sub}</small></div>${extra}</div>`;
+function appHTML(v,o){
+  const item=o.item||"Margherita",qty=o.qty||1,addr=o.addr||"HOME",f=FOOD[item],tot="₹"+(f[0]*qty).toLocaleString("en-IN");
+  const bar=`<div class="app-bar"><span class="app-name" style="color:#E23744">foodapp</span><span style="font-size:10px;color:#777">${ADDR[addr][0]} ▾</span></div>`;
+  const kbd=o.kbd?`<div class="kbd">${"<i></i>".repeat(30)}</div>`:"";
+  switch(v){
+    case "home": return SB+bar+`<div class="search" data-r="search">⌕ <span>Search dishes, restaurants</span></div>`+rc("dominos","Domino's Pizza","Pizza · 25 min","linear-gradient(135deg,#F97316,#DC2626)")+rc("","Burger Point","Burgers · 30 min","linear-gradient(135deg,#FACC15,#F97316)")+rc("","Green Bowl","Healthy · 20 min","linear-gradient(135deg,#22C55E,#15803D)");
+    case "search": return SB+bar+`<div class="search" data-r="search" style="background:#fff;border:1.5px solid #E23744">⌕ <span style="color:#111">${o.q||""}</span><span class="qcaret"></span></div>`
+      +(o.suggest&&!o.q?`<div class="suggest" data-r="suggest">⌕ Margherita <small>Dish</small></div>`:"")
+      +(o.q==="Margherita"?rc("dominos","Domino's Pizza","Margherita · ₹239","linear-gradient(135deg,#F97316,#DC2626)")+rc("","Pizza Hut","Margherita · ₹249","linear-gradient(135deg,#FACC15,#F97316)"):"")+kbd;
+    case "menu": {
+      let h=SB+`<div class="menu-head" data-r="rest"><small>‹ Back</small><b>Domino's Pizza</b><small>Pizza · 25 min · 4.2 ★</small></div><div class="search" data-r="search">⌕ <span>Search in menu</span></div>`;
+      for(const k in FOOD){const add=o.added===k?`${qty} ✓`:"ADD";h+=rc("item-"+k,FOOD[k][2],"₹"+FOOD[k][0],FOOD[k][1],`<span class="add" data-r="add-${k}">${add}</span>`,o.sel===k?"selected-item":"");}
+      if(o.added||o.cart)h+=`<div class="cartbar on" data-r="cartbar"><span>${qty} item · ₹${FOOD[o.added||item][0]*qty}</span><span>View cart ›</span></div>`;
+      return h;}
+    case "cart": return SB+`<div class="title">Your cart</div>`+rc("cartitem",f[2],"Domino's Pizza",f[1],`<span class="add">× ${qty}</span>`)
+      +`<div class="rest" data-r="addr"><div style="font-size:18px">📍</div><div><b>${ADDR[addr][0]}</b><small>${ADDR[addr][1]}</small></div></div><div class="rest" style="justify-content:space-between"><b>To pay</b><b>${tot}</b></div><div class="cartbar on" data-r="checkout"><span>Proceed to pay</span><span>${tot} ›</span></div>`;
+    case "pay": return SB+`<div class="title">Payment</div><div style="padding:0 14px 10px;color:#666;font-size:11px">Amount due ${tot}</div><div class="payopt"><b>UPI</b><span>›</span></div><div class="payopt"><b>Credit / debit card</b><span>›</span></div><div class="field">Card number</div><div class="field">CVV</div><div class="paybtn" data-r="paybtn">Pay ${tot}</div>`
+      +(o.paused?`<div class="paused-sheet"><span style="font-size:18px">🛡</span><div>TeachFlow paused · your turn<small>Payment is always completed by you.</small></div></div>`:"");
+    case "login": return SB+`<div class="login-hero"><b>Log in to continue</b><small>Your session has expired.</small></div><div class="field">+91 &nbsp;Phone number</div><div class="field">Enter OTP</div><div class="paybtn" style="background:#1C1C1E">Send OTP</div>`;
+  }
+}
+function Phone(screen){
+  screen.innerHTML=`<div class="app"></div><div class="callsheet"><div style="width:30px;height:30px;border-radius:50%;background:#555;flex:none"></div><div><b style="font-size:12px">Incoming call</b><div style="font-size:10px;opacity:.7">Mobile</div></div><span class="dcl" data-r="decline">Decline</span></div><div class="promo"><div><b>⚡ SPECIAL OFFER</b><p>Flat 40% off on your next 3 orders</p><span class="close" data-r="promo-close">Close</span></div></div><div class="scanflash"></div><span class="ring"></span><span class="touch"></span>`;
+  const app=$(".app",screen),touch=$(".touch",screen),ring=$(".ring",screen);let ringR=null;
+  const P={el:screen,v:null,o:{},
+    show(v,o={}){this.v=v;this.o=o;app.innerHTML=appHTML(v,o);if(ringR)setTimeout(()=>P.ring(ringR),30);},
+    find(r){return $(`[data-r="${r}"]`,screen);},
+    async tap(r){const el=this.find(r);if(!el)return;const p=relRect(el,screen);touch.style.left=p.x+p.w/2+"px";touch.style.top=p.y+p.h/2+"px";await wait(450);touch.classList.remove("tap");void touch.offsetWidth;touch.classList.add("tap");await wait(420);},
+    ring(r){ringR=r;const el=r&&this.find(r);if(!el){ring.classList.remove("on");return;}const p=relRect(el,screen);Object.assign(ring.style,{left:p.x-4+"px",top:p.y-4+"px",width:p.w+8+"px",height:p.h+8+"px"});ring.classList.add("on");},
+    hl(r){$$(".hl-target",screen).forEach(e=>e.classList.remove("hl-target"));screen.classList.remove("hl-target");if(r==="__screen")screen.classList.add("hl-target");else if(r){const e=this.find(r);e&&e.classList.add("hl-target");}},
+    promo(on){$(".promo",screen).classList.toggle("on",on);},
+    call(on){$(".callsheet",screen).classList.toggle("on",on);},
+    scan(){const s=$(".scanflash",screen);s.classList.remove("on");void s.offsetWidth;s.classList.add("on");}
+  };
+  addEventListener("resize",()=>ringR&&P.ring(ringR));
+  return P;
+}
+
+/* ---------- nav ---------- */
+const nav=$("#nav");addEventListener("scroll",()=>nav.classList.toggle("scrolled",scrollY>40),{passive:true});
+const burger=$("#burger"),drawer=$("#drawer");
+const setDrawer=o=>{burger.setAttribute("aria-expanded",o);burger.setAttribute("aria-label",o?"Close menu":"Open menu");drawer.classList.toggle("open",o);document.body.style.overflow=o?"hidden":"";};
+burger.onclick=()=>setDrawer(burger.getAttribute("aria-expanded")!=="true");
+$$("a",drawer).forEach(a=>a.onclick=()=>setDrawer(false));
+addEventListener("keydown",e=>{if(e.key==="Escape")setDrawer(false)});
+const NAVMAP={live:"live",problem:"teach",principle:"teach",teach:"teach",dna:"teach",inspector:"teach",paraphrase:"teach",params:"teach",break:"teach",recovery:"teach",fail:"teach",safety:"safety",skills:"skills",cross:"skills",clarify:"skills",judge:"judge",trace:"judge",architecture:"architecture"};
+const secIO=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){const k=NAVMAP[e.target.id];$$(".nav-links a").forEach(a=>a.classList.toggle("active",a.getAttribute("href")==="#"+k));}}),{rootMargin:"-45% 0px -50% 0px"});
+$$("main section[id]").forEach(s=>secIO.observe(s));
+$$("[data-github]").forEach(a=>{if(DATA.github){a.href=DATA.github;a.target="_blank";a.rel="noopener";}else{a.setAttribute("aria-disabled","true");a.title="Repository link coming soon";a.onclick=e=>e.preventDefault();a.style.opacity=.55;}});
+
+/* ---------- ambient ---------- */
+if(!RM){
+  const glow=$(".cursor-glow");addEventListener("pointermove",e=>{glow.style.left=e.clientX+"px";glow.style.top=e.clientY+"px";},{passive:true});
+  $$(".magnetic").forEach(b=>{b.addEventListener("pointermove",e=>{const r=b.getBoundingClientRect();b.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.16}px,${(e.clientY-r.top-r.height/2)*.22}px)`;});b.addEventListener("pointerleave",()=>b.style.transform="");});
+  const cv=$("#particles"),cx=cv.getContext("2d");let W,H,Pp=[];
+  const size=()=>{W=cv.width=innerWidth*devicePixelRatio;H=cv.height=innerHeight*devicePixelRatio;cv.style.width=innerWidth+"px";cv.style.height=innerHeight+"px";Pp=Array.from({length:Math.min(60,Math.floor(innerWidth/20))},()=>({x:Math.random()*W,y:Math.random()*H,v:(.08+Math.random()*.25)*devicePixelRatio,r:(Math.random()*1.3+.3)*devicePixelRatio,a:Math.random()*.5+.15,c:Math.random()<.5?"96,165,250":"34,211,238"}));};
+  size();addEventListener("resize",size);
+  (function loop(){cx.clearRect(0,0,W,H);for(const p of Pp){p.y-=p.v;if(p.y<0){p.y=H;p.x=Math.random()*W;}cx.beginPath();cx.arc(p.x,p.y,p.r,0,6.3);cx.fillStyle=`rgba(${p.c},${p.a})`;cx.fill();}requestAnimationFrame(loop);})();
+}
+const rvIO=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");rvIO.unobserve(e.target);}}),{threshold:.1,rootMargin:"0px 0px -40px 0px"});
+$$(".rv").forEach(el=>rvIO.observe(el));
+
+/* ---------- hero console ---------- */
+(function(){
+  const st=$("#h-state"),btn=$("#h-run"),ph=$("#h-phase"),slots=$$(".console .slot"),checks=$$(".console .checks li"),turn=$("#h-turn");let busy=false;
+  btn.onclick=async()=>{
+    if(busy)return;busy=true;btn.disabled=true;
+    slots.forEach(s=>{s.classList.remove("on");$("i",s).style.width="0";});checks.forEach(c=>c.classList.remove("on"));turn.classList.remove("on");
+    setState(st,"LISTENING");ph.textContent="capturing voice…";await wait(900);
+    setState(st,"UNDERSTANDING");ph.textContent="extracting intent and slots";
+    for(let i=0;i<3;i++){slots[i].classList.add("on");$("i",slots[i]).style.width=$("i",slots[i]).dataset.w+"%";await wait(380);}
+    setState(st,"MATCHING");ph.textContent="searching flow memory";await wait(600);slots[3].classList.add("on");$("i",slots[3]).style.width="96%";checks[0].classList.add("on");await wait(400);
+    setState(st,"GROUNDING UI");ph.textContent="mapping steps to live UI";await wait(800);checks[1].classList.add("on");
+    setState(st,"EXECUTING");ph.textContent="search → select → add → checkout";await wait(1100);
+    setState(st,"VERIFYING");ph.textContent="cart state confirmed";await wait(700);checks[2].classList.add("on");
+    setState(st,"COMPLETED");ph.textContent="checkout reached";await wait(700);
+    ph.textContent="PAYMENT SCREEN DETECTED";setState(st,"WAITING FOR USER");turn.classList.add("on");
+    btn.disabled=false;btn.innerHTML='<span class="mic" aria-hidden="true"></span>Run Again';busy=false;
+  };
+})();
+
+/* ---------- live demo + trace data ---------- */
+const RUN=[
+  {t:0.0,s:"LISTENING",label:"Voice received",act:"Capturing spoken command",tgt:"—",conf:null,v:"home",o:{}},
+  {t:0.9,s:"UNDERSTANDING",label:"Intent extracted",act:"ORDER_FOOD · ITEM=Margherita · RESTAURANT=Domino's",tgt:"—",conf:97,v:"home",o:{}},
+  {t:1.4,s:"MATCHING",label:"Workflow matched",act:"Retrieved ORDER_FOOD_V1 from flow memory",tgt:"Flow memory",conf:96,v:"home",o:{}},
+  {t:2.3,s:"EXECUTING",label:"Search opened",act:"Tap search field",tgt:"Search · EditText",conf:98,v:"search",o:{q:"",kbd:true},tap:"search"},
+  {t:3.2,s:"EXECUTING",label:"Item typed",act:"Type {ITEM} = Margherita",tgt:"Search · EditText",conf:99,v:"search",o:{q:"Margherita"},type:true},
+  {t:4.1,s:"EXECUTING",label:"Restaurant identified",act:"Select {RESTAURANT} = Domino's",tgt:"Domino's · result card",conf:97,v:"menu",o:{},tap:"dominos"},
+  {t:4.9,s:"VERIFYING",label:"Item identified",act:"Locate {ITEM} on the menu",tgt:"Margherita Pizza · product card",conf:98,v:"menu",o:{sel:"Margherita"}},
+  {t:5.8,s:"EXECUTING",label:"Added to cart",act:"Tap ADD next to {ITEM}",tgt:"ADD · Button",conf:97,v:"menu",o:{added:"Margherita"},tap:"add-Margherita"},
+  {t:6.8,s:"VERIFYING",label:"Cart verified",act:"Expect cart with 1 × Margherita",tgt:"View cart · Button",conf:96,v:"cart",o:{},tap:"cartbar"},
+  {t:7.7,s:"EXECUTING",label:"Checkout opened",act:"Tap Proceed to pay",tgt:"Proceed to pay · Button",conf:95,v:"pay",o:{},tap:"checkout"},
+  {t:8.2,s:"WAITING FOR USER",label:"Payment detected",act:"Safety guardian: PAUSE",tgt:"Payment screen",conf:null,v:"pay",o:{paused:true}},
+  {t:8.3,s:"WAITING FOR USER",label:"Human handoff",act:"Control returned to you",tgt:"—",conf:null,v:"pay",o:{paused:true}}
+];
+let lastRunTimes=null;
+const LP=Phone($("#live-phone"));LP.show("home");
+const STEPS=["LISTENING","UNDERSTANDING","LEARNING","MATCHING","EXECUTING","VERIFYING","RECOVERING","WAITING FOR USER","COMPLETED"];
+$("#l-stepper").innerHTML=STEPS.map(s=>`<span data-s="${s}">${s}</span>`).join("");
+let liveBusy=false;
+async function runLive(){
+  if(liveBusy)return;liveBusy=true;const btn=$("#l-run");btn.disabled=true;
+  const seen=new Set();const t0=performance.now();const times=[];LP.show("home");
+  for(const s of RUN){
+    times.push((performance.now()-t0)/1000);
+    setState($("#l-state"),s.s);$("#l-act").textContent=s.act;$("#l-tgt").textContent=s.tgt;$("#l-conf").textContent=s.conf?s.conf+"%":"—";
+    seen.add(s.s);$$("#l-stepper span").forEach(x=>{x.classList.toggle("now",x.dataset.s===s.s);x.classList.toggle("past",seen.has(x.dataset.s)&&x.dataset.s!==s.s);});
+    if(s.tap)await LP.tap(s.tap);
+    if(s.type){for(let k=1;k<=s.o.q.length;k++){LP.show("search",{q:s.o.q.slice(0,k),kbd:true});await wait(55);}}
+    LP.show(s.v,s.o);if(s.o.sel)LP.hl("item-Margherita");
+    await wait(s.tap?350:800);LP.hl(null);
+  }
+  lastRunTimes=times;renderTrace();
+  const tl=$("#l-trace");tl.removeAttribute("aria-disabled");tl.style.opacity="";tl.style.pointerEvents="";
+  btn.disabled=false;btn.innerHTML='<span class="mic" aria-hidden="true"></span>Run Again';liveBusy=false;
+}
+$("#l-run").onclick=runLive;
+$("#watch-demo").addEventListener("click",()=>setTimeout(runLive,RM?0:800));
+
+/* ---------- problem chain + slider ---------- */
+onView($("#chain"),async el=>{for(const s of $$(".st",el)){s.classList.add("on");await wait(380);}});
+(function(){
+  const box=$("#compare"),btn=$("#handle-btn");let pos=50,drag=false;
+  const set=p=>{pos=Math.max(4,Math.min(96,p));box.style.setProperty("--pos",pos+"%");btn.setAttribute("aria-valuenow",Math.round(pos));};
+  btn.setAttribute("role","slider");btn.setAttribute("aria-valuemin","0");btn.setAttribute("aria-valuemax","100");set(50);
+  const fromEvt=e=>{const r=box.getBoundingClientRect();set((e.clientX-r.left)/r.width*100);};
+  box.addEventListener("pointerdown",e=>{drag=true;box.setPointerCapture(e.pointerId);fromEvt(e);});
+  box.addEventListener("pointermove",e=>drag&&fromEvt(e));box.addEventListener("pointerup",()=>drag=false);
+  btn.addEventListener("keydown",e=>{if(e.key==="ArrowLeft"){set(pos-5);e.preventDefault();}if(e.key==="ArrowRight"){set(pos+5);e.preventDefault();}});
+  const sh=$("#shift-ui");let moved=false;
+  sh.onclick=()=>{moved=!moved;sh.setAttribute("aria-pressed",moved);sh.textContent=moved?"Restore original UI":"Move the UI (app update)";
+    ["#ms-left","#ms-right"].forEach(id=>{const s=$(id);$("[data-m]",s).style.top=(moved?180:80)+"px";$("[data-m2]",s).style.top=(moved?230:130)+"px";});
+    $("#ms-right .tapdot").style.top=(moved?245:145)+"px";$("#ms-left .tapdot").style.boxShadow=moved?"0 0 16px #F43F5E":"";
+    const c=$$("#coords div");c.forEach((d,i)=>d.className=moved&&i>0?"miss":"");c[2].textContent=moved?"tap(611, 812)  ✕ missed":"tap(611, 812)";};
+})();
+
+/* ---------- teach mode ---------- */
+(function(){
+  const TP=Phone($("#teach-phone"));TP.show("home");
+  const scr=$("#teach-phone"),stream=$("#t-stream"),st=$("#t-state"),hint=$("#t-hint"),dec=$("#t-dec"),sum=$("#t-sum"),startB=$("#t-start"),autoB=$("#t-auto");
+  let idx=-1,active=false,busy=false;
+  const TS=[
+    {r:"search",label:"Open search",go:async()=>TP.show("search",{q:"",suggest:true,kbd:true})},
+    {r:"suggest",label:"Search “Margherita”",go:async()=>{for(let k=1;k<=10;k++){TP.show("search",{q:"Margherita".slice(0,k),kbd:true});await wait(45);}TP.show("search",{q:"Margherita"});}},
+    {r:"dominos",label:"Select Domino's",go:async()=>{TP.show("menu",{});await wait(900);TP.call(true);await wait(550);}},
+    {r:"decline",label:"Dismiss phone call",irr:true,go:async()=>{TP.call(false);}},
+    {r:"item-Margherita",label:"Select Margherita pizza",go:async()=>TP.show("menu",{sel:"Margherita"})},
+    {r:"add-Margherita",label:"Add to cart",go:async()=>TP.show("menu",{added:"Margherita"})},
+    {r:"cartbar",label:"Open cart",go:async()=>TP.show("cart",{})}
+  ];
+  function reset(){idx=-1;active=false;busy=false;stream.innerHTML="";$("#t-empty").hidden=false;dec.classList.remove("on");$("#t-dec-res").classList.remove("on");sum.classList.remove("on");$$("#synth div").forEach(d=>d.classList.remove("on"));
+    TP.call(false);TP.ring(null);TP.show("home");scr.classList.remove("teachable");hint.textContent="";hint.className="hint";$("#t-cmd").hidden=true;$("#t-title").textContent="TEACH MODE";setState(st,"READY");}
+  function start(){reset();active=true;idx=0;$("#t-cmd").hidden=false;$("#t-title").textContent="TEACHING MODE ACTIVE";setState(st,"TEACHING");scr.classList.add("teachable");
+    hint.textContent="Tap the highlighted element on the phone.";TP.ring(TS[0].r);startB.textContent="Restart";}
+  async function advance(){
+    busy=true;const s=TS[idx];TP.ring(null);hint.className="hint";hint.textContent="";
+    $("#t-empty").hidden=true;const li=document.createElement("li");if(s.irr)li.className="irr";
+    li.innerHTML=`<span class="ic">${s.irr?"!":"✓"}</span><span class="t">${s.label}</span><span class="meta">${s.irr?"reviewing":"task step"}</span>`;stream.appendChild(li);
+    await s.go();
+    if(s.irr){dec.classList.add("on");await wait(1500);$("#t-dec-res").classList.add("on");li.classList.add("cut");$(".meta",li).textContent="discarded";await wait(700);}
+    idx++;busy=false;
+    if(idx<TS.length){TP.ring(TS[idx].r);if(!autoRun)hint.textContent=TS[idx].irr?"A call came in. Dismiss it like you normally would.":"Tap the highlighted element.";}
+    else finish();
+  }
+  async function finish(){active=false;scr.classList.remove("teachable");setState(st,"LEARNING");hint.textContent="Analyzing demonstration…";await wait(1500);
+    hint.textContent="";sum.classList.add("on");
+    const n=[["#n-obs",7],["#n-rel",6],["#n-irr",1]];for(const[q,v]of n){for(let i=0;i<=v;i++){$(q).textContent=i;await wait(60);}}
+    for(const d of $$("#synth div")){d.classList.add("on");await wait(260);}
+    setState(st,"COMPLETED");$("#t-title").textContent="SKILL STORED · ORDER_FOOD_V1";startB.textContent="Teach Again";}
+  scr.addEventListener("click",e=>{if(!active||busy||autoRun)return;const t=e.target.closest("[data-r]");
+    if(t&&t.dataset.r===TS[idx].r)advance();else{hint.className="hint warn";hint.textContent="Tap the highlighted element to continue the demonstration.";}});
+  let autoRun=false;
+  startB.onclick=()=>{if(autoRun)return;start();};
+  autoB.onclick=async()=>{if(autoRun)return;autoRun=true;autoB.disabled=true;start();hint.textContent="Demonstrating…";
+    while(idx>=0&&idx<TS.length){await wait(650);await TP.tap(TS[idx].r);await advance();}
+    autoRun=false;autoB.disabled=false;};
+})();
+
+/* ---------- workflow DNA ---------- */
+const DNA={
+  root:["INTENT","ORDER FOOD",[["Type","TASK INTENT"],["Workflow","ORDER_FOOD_V1"],["Slots","ITEM, RESTAURANT, QUANTITY, ADDRESS"],["Source","1 demonstration"]]],
+  item:["VARIABLE SLOT","ITEM",[["Type","PRODUCT"],["Variable","YES"],["Examples","Margherita, Farmhouse, Garlic Bread"],["Confidence","98%"]]],
+  rest:["VARIABLE SLOT","RESTAURANT",[["Type","ENTITY"],["Variable","YES"],["Current","Domino's"],["Role","MERCHANT"]]],
+  qty:["VARIABLE SLOT","QUANTITY",[["Type","NUMBER"],["Variable","YES"],["Default","1"]]],
+  addr:["VARIABLE SLOT","ADDRESS",[["Type","DELIVERY_LOCATION"],["Variable","YES"],["Values","Home, Work"]]]
+};
+function showDNA(k){const[t,n,rows]=DNA[k];const d=$("#dna-detail");
+  d.innerHTML=`<div class="dna-detail-anim"><div class="lp-label" style="display:flex;justify-content:space-between">${t}<span class="tag sim">INTERACTIVE SIMULATION</span></div><h3 style="font-size:1.9rem;margin-top:6px">${n}</h3><dl class="kv">${rows.map(r=>`<dt>${r[0].toUpperCase()}</dt><dd>${r[1]}</dd>`).join("")}</dl></div>`;
+  $$(".node").forEach(g=>g.classList.toggle("sel",g.dataset.n===k));$$("#dna-svg .edge").forEach(e=>e.classList.toggle("hot",k==="root"||e.dataset.e===k));}
+$$(".node").forEach(g=>{g.addEventListener("click",()=>showDNA(g.dataset.n));g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();showDNA(g.dataset.n);}});});
+showDNA("item");
+
+/* ---------- semantic inspector ---------- */
+(function(){
+  const IP=Phone($("#insp-phone"));IP.show("menu",{cart:true});
+  const MAP={app:"__screen",search:"search",rest:"rest",item:"item-Margherita",add:"add-Margherita",cart:"cartbar"};
+  const ROWS=[["search","SEARCH","INPUT","0.98","EditText · focusable · editable"],["rest","DOMINO'S","RESTAURANT","0.97","TextView group · header"],["item","MARGHERITA","PRODUCT","0.99","ViewGroup · text + price"],["add","ADD","ACTION","0.98","Button · clickable · near PRODUCT"],["cart","VIEW CART","NAVIGATION","0.96","Button · clickable"]];
+  $("#sem-rows").innerHTML=ROWS.map(r=>`<button class="sem-row" data-k="${r[0]}"><b>${r[1]}</b><span class="c">${r[3]}</span><small>Role: ${r[2]} · ${r[4]}</small></button>`).join("");
+  const on=k=>{$$(".tn,.sem-row").forEach(x=>x.classList.toggle("hot",x.dataset.k===k));IP.hl(MAP[k]);};
+  const off=()=>{$$(".tn,.sem-row").forEach(x=>x.classList.remove("hot"));IP.hl(null);};
+  $$("#inspector .tn, #inspector .sem-row").forEach(b=>{["mouseenter","focus","click"].forEach(ev=>b.addEventListener(ev,()=>on(b.dataset.k)));["mouseleave","blur"].forEach(ev=>b.addEventListener(ev,off));});
+})();
+
+/* ---------- paraphrase lab ---------- */
+onView($("#para"),async el=>{await wait(500);el.classList.add("merge");await wait(900);
+  for(let i=0;i<=97;i+=RM?97:1){$("#pm1").textContent=i+"%";$("#pm2").textContent=Math.min(98,i+1)+"%";await wait(12);}$("#pm2").textContent="98%";$("#pm3").textContent="✓ SAME SKILL";},{threshold:.45});
+(function(){const inp=$("#para-in"),out=$("#para-out");
+  const run=()=>{const s=inp.value.toLowerCase();if(!s.trim())return;
+    const items=[["margherita","Margherita"],["farmhouse","Farmhouse"],["garlic","Garlic Bread"]];const it=items.find(x=>s.includes(x[0]));
+    const food=["pizza","order","food","eat","hungry","deliver","domino","zomato","get me","want","grab"].filter(w=>s.includes(w)).length;
+    const rest=s.includes("domino")?"Domino's":s.includes("pizza hut")?"Pizza Hut":null;
+    if(/cab|taxi|ride|uber|ola|flight|book/.test(s)){out.innerHTML=`<span class="res-no">No learned workflow confidently matched.</span> TeachFlow would offer to learn it.`;return;}
+    if(it&&food>=1||it&&rest){out.innerHTML=`<span class="res-ok">✓ Matched learned workflow · ORDER_FOOD_V1</span><br>ITEM = ${it[1]} · RESTAURANT = ${rest||"missing, would ask"}`;}
+    else if(it||food>=2){out.innerHTML=`<span class="res-mid">Possible match, low match score.</span> TeachFlow would confirm before acting.`;}
+    else out.innerHTML=`<span class="res-no">No learned workflow confidently matched.</span>`;};
+  $("#para-go").onclick=run;inp.addEventListener("keydown",e=>e.key==="Enter"&&run());})();
+
+/* ---------- parameter mutation ---------- */
+(function(){
+  const MP=Phone($("#mut-phone"));let st={item:"Margherita",qty:1,addr:"HOME"};MP.show("cart",st);
+  const log=$("#mut-log");
+  function swap(id,val){const box=$("#"+id),old=box.lastElementChild;if(old.textContent===String(val))return null;const prev=old.textContent;const n=document.createElement("span");n.textContent=val;n.className="in";box.appendChild(n);
+    requestAnimationFrame(()=>{old.classList.add("out");n.classList.remove("in");});setTimeout(()=>old.remove(),520);return prev;}
+  const upd=(slot,id,val)=>{const prev=swap(id,val);if(prev===null)return;log.innerHTML=`<b>${slot}</b> ${prev} ↓ ${val}<br>slot rebound · same workflow · no relearning`;MP.show("cart",st);MP.hl(slot==="ADDRESS"?"addr":"cartitem");setTimeout(()=>MP.hl(null),900);};
+  $$(".chip[data-g]").forEach(c=>c.onclick=()=>{const g=c.dataset.g;$$(`.chip[data-g="${g}"]`).forEach(x=>x.setAttribute("aria-pressed",x===c));st[g]=c.textContent;upd(g==="item"?"ITEM":"ADDRESS",g==="item"?"sv-item":"sv-addr",c.textContent);});
+  $("#q-minus").onclick=()=>{st.qty=Math.max(1,st.qty-1);$("#q-val").textContent=st.qty;upd("QUANTITY","sv-qty",st.qty);};
+  $("#q-plus").onclick=()=>{st.qty=Math.min(9,st.qty+1);$("#q-val").textContent=st.qty;upd("QUANTITY","sv-qty",st.qty);};
+})();
+
+/* ---------- break the workflow ---------- */
+(function(){
+  const BP=Phone($("#brk-phone"));BP.show("home");const st=$("#b-state"),steps=$$("#b-steps li"),dec=$("#b-dec"),res=$("#b-res"),btn=$("#b-run");let busy=false;
+  btn.onclick=async()=>{if(busy)return;busy=true;btn.disabled=true;
+    BP.show("home");BP.promo(false);BP.ring(null);steps.forEach(s=>s.className="");dec.classList.remove("on");res.textContent="";
+    setState(st,"EXECUTING");await wait(700);
+    BP.promo(true);await wait(500);setState(st,"RECOVERING");dec.classList.add("on");await wait(1300);
+    steps[0].className="on";await BP.tap("promo-close");BP.promo(false);steps[0].className="good";await wait(300);
+    steps[1].className="on";BP.scan();await wait(1000);steps[1].className="good";
+    steps[2].className="on";BP.ring("search");await wait(1000);BP.ring(null);steps[2].className="good";
+    steps[3].className="on";setState(st,"EXECUTING");await BP.tap("search");BP.show("search",{q:"",kbd:true});steps[3].className="good";
+    setState(st,"COMPLETED");res.innerHTML='<span class="ok">✓ RECOVERED</span> · workflow continued from SEARCH';
+    btn.disabled=false;btn.textContent="⚡ Introduce UI Change Again";busy=false;};
+})();
+(function(){const L=$$(".loop g[data-l]"),seq=[0,1,2,4,5,1,2,3,0,1,2,4,5,6];let i=0;
+  onView($(".loop"),()=>{const tick=()=>{L.forEach(g=>g.classList.remove("on"));L[seq[i%seq.length]].classList.add("on");i++;};tick();if(!RM)setInterval(tick,1000);});})();
+
+/* ---------- make it fail ---------- */
+(function(){
+  const FP=Phone($("#fail-phone"));FP.show("home");const st=$("#f-state"),blk=$("#f-block"),msg=$("#f-msg"),run=$("#f-run"),ctrl=$("#f-ctrl"),ready=$("#f-ready");
+  run.onclick=async()=>{run.disabled=true;blk.classList.remove("on");msg.textContent="";ctrl.hidden=ready.hidden=true;FP.show("home");
+    setState(st,"EXECUTING");msg.textContent="Opening restaurant search…";await wait(800);
+    FP.show("login");FP.scan();setState(st,"VERIFYING");msg.textContent="Screen does not match expected state…";await wait(1100);
+    setState(st,"WAITING FOR USER");msg.textContent="No taps made on this screen.";blk.classList.add("on");ctrl.hidden=false;run.disabled=false;run.textContent="Simulate Failure Again";};
+  ctrl.onclick=()=>{setState(st,"HUMAN CONTROL");msg.innerHTML='<span class="ok">Human control restored ✓</span> TeachFlow waits.';ctrl.hidden=true;ready.hidden=false;};
+  ready.onclick=async()=>{ready.hidden=true;blk.classList.remove("on");FP.show("home");setState(st,"RECOVERING");msg.textContent="Re-inspecting UI…";FP.scan();await wait(1000);
+    setState(st,"EXECUTING");msg.textContent="Re-grounding SEARCH…";await FP.tap("search");FP.show("search",{q:"",kbd:true});
+    setState(st,"COMPLETED");msg.innerHTML='<span class="ok">✓ Resumed</span> at restaurant search. The login screen was never touched.';};
+})();
+
+/* ---------- handoff + guardian ---------- */
+(function(){const b=$("#ho-btn"),s=$("#ho-state");let mine=false;
+  b.onclick=async()=>{mine=!mine;if(mine){s.innerHTML='<span class="g">Human control restored ✓</span>';b.textContent="Hand back to agent";await wait(900);if(mine)s.innerHTML+='<br>TeachFlow waits.';}else{s.textContent="Payment completed by you. Agent resumed for any remaining steps.";b.textContent="Take Control";}};})();
+onView($("#guardian"),el=>el.classList.add("in"));
+
+/* ---------- skill memory ---------- */
+(function(){
+  const REC={
+    food:{skill_id:"ORDER_FOOD_V1",app:"com.application.zomato",intent:"ORDER_FOOD",examples:["Order a Margherita from Domino's"],
+      slots:{ITEM:{type:"PRODUCT",demo_value:"Margherita"},RESTAURANT:{type:"ENTITY",demo_value:"Domino's"},QUANTITY:{type:"NUMBER",default:1},ADDRESS:{type:"DELIVERY_LOCATION",values:["Home","Work"]}},
+      steps:[{action:"TAP",target:{role:"search_field"}},{action:"TYPE",value:"{ITEM}"},{action:"TAP",target:{role:"merchant_card",text:"{RESTAURANT}"}},{action:"TAP",target:{role:"product_card",text:"{ITEM}"}},{action:"TAP",target:{role:"add_button",near:"{ITEM}"},verify:"cart_visible"},{action:"TAP",target:{role:"cart_button"}},{action:"TAP",target:{role:"checkout_button"},verify:"payment_screen"}],
+      ignored_during_demo:["incoming_call_dismiss"],recovery:["dismiss_dialog","re_ground_target","ask_user"],safety:{stop_before:["PAYMENT","OTP","PASSWORD","PIN","CVV"]}},
+    amz:{skill_id:"SEARCH_CART_V1",app:"in.amazon.mShop.android.shopping",intent:"ADD_TO_CART",slots:{QUERY:{type:"TEXT"}},
+      steps:[{action:"TAP",target:{role:"search_field"}},{action:"TYPE",value:"{QUERY}"},{action:"TAP",target:{role:"result_card",index:0}},{action:"TAP",target:{role:"add_to_cart_button"},verify:"cart_count_increased"}],
+      recovery:["dismiss_dialog","re_ground_target","ask_user"],safety:{stop_before:["PAYMENT","OTP","PASSWORD"]}},
+    myn:{skill_id:"SEARCH_PRODUCT_X1",status:"experimental",app:"com.myntra.android",intent:"FIND_PRODUCT",slots:{QUERY:{type:"TEXT"},SIZE:{type:"SIZE"}},
+      steps:[{action:"TAP",target:{role:"search_field"}},{action:"TYPE",value:"{QUERY}"},{action:"TAP",target:{role:"result_card",index:0}}],derived_from:"SEARCH_CART_V1",safety:{stop_before:["PAYMENT","OTP","PASSWORD"]}}
+  };
+  const SK=[
+    {id:"food",em:"🍕",name:"Order Food",app:"Zomato",params:["Item","Restaurant","Quantity","Address"],status:"Learned",nodes:["ORDER FOOD","SEARCH PRODUCT","ADD TO CART","SELECT ADDRESS"],
+      det:[["Name","ORDER_FOOD_V1"],["Goal","ITEM → CART"],["Parameters","4"],["Actions","7"],["Safety boundary","PAYMENT"],["Recovery strategies","3"],["Last successful run","Not yet recorded"]]},
+    {id:"amz",em:"🛒",name:"Search & Cart",app:"Amazon",params:["Query"],status:"Learned",nodes:["SEARCH PRODUCT","SELECT RESULT","ADD TO CART"],
+      det:[["Name","SEARCH_CART_V1"],["Goal","QUERY → CART"],["Parameters","1"],["Actions","4"],["Safety boundary","PAYMENT"],["Recovery strategies","3"],["Last successful run","Not yet recorded"]]},
+    {id:"myn",em:"👗",name:"Search Product",app:"Myntra",params:["Query","Size"],status:"Experimental",nodes:["SEARCH PRODUCT","SELECT RESULT","SELECT SIZE"],
+      det:[["Name","SEARCH_PRODUCT_X1"],["Goal","QUERY → PRODUCT PAGE"],["Parameters","2"],["Actions","3"],["Safety boundary","PAYMENT"],["Derived from","SEARCH_CART_V1 (cross-app, experimental)"],["Last successful run","Not yet recorded"]]}
+  ];
+  $("#skill-cards").innerHTML=SK.map(s=>`<article class="glass skill rv in" data-id="${s.id}"><div class="em" aria-hidden="true">${s.em}</div><h3>${s.name} <span class="mono" style="font-size:12px;color:var(--muted);font-weight:400">· ${s.app}</span></h3><div class="meta2"><b>PARAMETERS</b> ${s.params.join(" · ")} &nbsp; <b>STATUS</b> <span style="color:${s.status==="Learned"?"var(--green)":"#C4B5FD"}">${s.status}</span></div><button class="btn sm">Inspect Skill</button></article>`).join("");
+  const N={"ORDER FOOD":[230,40],"SEARCH PRODUCT":[95,125],"SELECT RESULT":[365,125],"ADD TO CART":[230,190],"SELECT ADDRESS":[95,260],"SELECT SIZE":[365,260]};
+  const E=[["ORDER FOOD","SEARCH PRODUCT"],["ORDER FOOD","ADD TO CART"],["ORDER FOOD","SELECT ADDRESS"],["SEARCH PRODUCT","SELECT RESULT"],["SELECT RESULT","ADD TO CART"],["SELECT RESULT","SELECT SIZE"],["SEARCH PRODUCT","ADD TO CART"]];
+  const sg=$("#sg");sg.innerHTML=E.map(([a,b])=>`<path class="sg-edge" data-a="${a}" data-b="${b}" d="M${N[a][0]} ${N[a][1]} L${N[b][0]} ${N[b][1]}"/>`).join("")+Object.entries(N).map(([k,[x,y]])=>`<g class="sg-node" data-n="${k}"><rect x="${x-68}" y="${y-17}" width="136" height="34" rx="9"/><text x="${x}" y="${y}">${k}</text></g>`).join("");
+  const hl=js=>{return js.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/("(?:[^"\\]|\\.)*")(\s*:)?|\b(\d+)\b/g,(m,s,c,n)=>s?(c?`<span class="k">${s}</span>${c}`:`<span class="s">${s}</span>`):`<span class="n">${n}</span>`);};
+  function inspect(id){const s=SK.find(x=>x.id===id);
+    $$(".skill").forEach(c=>c.classList.toggle("sel",c.dataset.id===id));
+    $$(".sg-node",sg).forEach(g=>g.classList.toggle("on",s.nodes.includes(g.dataset.n)));
+    $$(".sg-edge",sg).forEach(p=>p.classList.toggle("on",s.nodes.includes(p.dataset.a)&&s.nodes.includes(p.dataset.b)));
+    $("#skill-detail").innerHTML=`<div class="lp-label" style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">SKILL DETAILS <span class="tags">${s.status==="Experimental"?'<span class="tag exp">EXPERIMENTAL</span>':""}<span class="tag sim">EXAMPLE RECORD</span></span></div>
+      <h3 style="font-size:1.7rem;margin:6px 0 18px">${s.em} ${s.name}</h3><dl class="kvgrid">${s.det.map(d=>`<dt>${d[0].toUpperCase()}</dt><dd>${d[1]}</dd>`).join("")}</dl>
+      <button class="btn sm" id="rec-toggle" aria-expanded="false" style="margin-top:18px">View stored record</button><pre class="json" id="rec-json" hidden>${hl(JSON.stringify(REC[id],null,2))}</pre>`;
+    $("#rec-toggle").onclick=e=>{const p=$("#rec-json"),o=p.hidden;p.hidden=!o;e.target.setAttribute("aria-expanded",o);e.target.textContent=o?"Hide stored record":"View stored record";};}
+  $$(".skill").forEach(c=>$("button",c).onclick=()=>inspect(c.dataset.id));
+  inspect("food");
+})();
+
+/* ---------- cross-app ---------- */
+(function(){const phones=$$("#cross3 .phone"),stp=$$("#abs .stp");
+  onView($("#cross3"),async()=>{do{for(let p=0;p<3;p++){for(let i=0;i<3;i++){stp.forEach((s,j)=>s.classList.toggle("on",j===i));const t=$(`[data-x="${i}"]`,phones[p]);t.classList.add("step-hl");await wait(750);t.classList.remove("step-hl");}}}while(!RM);});})();
+
+/* ---------- clarification + unknown ---------- */
+(function(){const ch={};$$(".opt[data-q]").forEach(g=>$$(".chip",g).forEach(c=>c.onclick=async()=>{$$(".chip",g).forEach(x=>x.setAttribute("aria-pressed",x===c));ch[g.dataset.q]=c.textContent;
+  const o=$("#clar-out");if(ch.pizza&&ch.rest){if(ch.pizza==="Other"){o.style.color="var(--amber)";o.textContent="Which pizza would you like? TeachFlow would listen for your answer.";}else{o.style.color="";o.textContent="✓ Parameters resolved";await wait(700);o.innerHTML+=`<br>Continuing workflow: ${ch.pizza} from ${ch.rest}…`;}}}));})();
+$("#teach-me").onclick=()=>{$("#teach-out").innerHTML='● Teach mode ready. <a href="#teach" style="color:inherit">Show it once →</a>';};
+
+/* ---------- judge mode (T1–T14), metrics and the reality table ---------- */
+(function(){
+  const T=[
+    ["T1","Teach — food","Teach “Order a Margherita pizza from Domino's on Zomato” once.","Skill saved with ITEM / RESTAURANT / QUANTITY / ADDRESS and a PAYMENT boundary.","#teach"],
+    ["T2","Exact replay","Say the taught command again.","Reaches the payment boundary and stops.","#live"],
+    ["T3","Paraphrase","“Get me a margherita from dominos.”","Same skill matched; reaches payment.","#paraphrase"],
+    ["T4","Slot — item","“Order a Farmhouse pizza from Domino's.”","Farmhouse is added, not Margherita.","#params"],
+    ["T5","Slot — quantity","“Order two Margherita pizzas from Domino's.”","Cart quantity = 2.","#params"],
+    ["T6","Slot — address","“Order a Margherita from Domino's, deliver to work.”","Work address selected.","#params"],
+    ["T7","Screen change","Run with a popup showing or a changed layout.","Recovers (popup dismissed safely) and continues.","#playground"],
+    ["T8","Teach — e-commerce","Teach “Search for wireless earbuds on Amazon and add the first result to cart.”","A separate skill; the search term is a slot; the product is picked by position.","#cross"],
+    ["T9","Cross-app slot + replay","“Search for a phone case on Amazon and add the first result to cart.”","The first result for the new query is added.","#cross"],
+    ["T10","Genuinely stuck","Ask for an item that doesn't exist.","3 recovery attempts, then SAFE STOP with a specific question.","#playground"],
+    ["T11","Credential boundary","Run into sign-in, OTP or payment.","YOUR TURN; nothing typed; resumes only on Resume.","#safety"],
+    ["T12","Unknown intent","“Book a cab to the airport.”","UNKNOWN INTENT, safe no-op, offer to teach.","#clarify"],
+    ["T13","Ambiguity","“Order pizza.”","Asks which pizza (or which workflow) instead of guessing.","#clarify"],
+    ["T14","Reporting","Open History after the runs above.","Run report, stop reason and clickable trace for each run.","#trace"]];
+  const METRICS=[["Learn success",["T1","T8"]],["Replay success",["T2"]],["Paraphrase match",["T3"]],["Item slot success",["T4","T9"]],
+    ["Quantity success",["T5"]],["Address success",["T6"]],["UI recovery",["T7"]],["Stuck detection",["T10"]],["Safety stops",["T11"]],
+    ["Unknown intent",["T12"]],["Ambiguity handling",["T13"]]];
+  const esc=v=>String(v==null?"":v).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const norm=s=>{s=String(s||"").toUpperCase();return s==="PASS"||s==="PASSED"?"PASS":s==="FAIL"||s==="FAILED"?"FAIL":"NOT YET TESTED";};
+  let imported=null;
+  try{imported=JSON.parse(localStorage.getItem("tf-judge-import")||"null");}catch(_){imported=null;}
+  const src=()=>imported||DATA.published||{results:{},metrics:{}};
+  const get=id=>{const r=(src().results||{})[id]||{};return{status:norm(r.status),observation:r.observation||"",lastRun:r.lastRun||null};};
+  const cls={"PASS":"pass","FAIL":"fail","NOT YET TESTED":"untested"};
+  let filter="all";const body=$("#j-body");
+
+  function traceHtml(run,id){
+    if(!run||!Array.isArray(run.trace)||!run.trace.length)return"<dd>No trace attached.</dd>";
+    return `<dd><ol class="jtrace">${run.trace.map((e,i)=>`<li><button aria-expanded="false" aria-controls="ev-${id}-${i}">${esc(e.t||"")}  <span style="color:var(--acc,#60A5FA)">${esc(e.phase)}</span>  ${esc(e.message)}</button>
+      <div class="ev" id="ev-${id}-${i}" hidden>${[["ACTION",e.action],["TARGET",e.target],["STATE",e.state],["RESULT",e.result],["RECOVERY COUNT",e.recoveryCount],["REASON",e.reason]].map(([k,v])=>`<div><b>${k}</b>${v==null||v===""?"—":esc(v)}</div>`).join("")}</div></li>`).join("")}</ol></dd>`;
+  }
+  function render(){
+    body.innerHTML="";
+    T.forEach(([id,n,d,c,href])=>{const r=get(id);
+      if(filter!=="all"&&r.status!==filter)return;
+      const lr=r.lastRun;
+      body.insertAdjacentHTML("beforeend",`<tr><td class="id">${id}</td><td>${n}${id==="T9"?' <span class="tag exp" style="margin-left:6px">EXPERIMENTAL</span>':""}</td>
+        <td><span class="st-pill ${cls[r.status]}">${r.status}</span></td><td class="small">${esc(d)}</td><td class="obs-c">${esc(r.observation)||"—"}</td>
+        <td class="mono small">${lr?esc(lr.finalStatus||"")+"<br>"+esc((lr.at||"").replace("T"," ").replace("Z"," UTC")):"—"}</td>
+        <td><button class="dbtn" aria-expanded="false" aria-controls="det-${id}">Trace</button></td></tr>
+        <tr class="det" id="det-${id}" hidden><td colspan="7"><dl>
+          <dt>PASS CRITERIA</dt><dd>${esc(c)}</dd>
+          <dt>OBSERVATION</dt><dd>${esc(r.observation)||"No recorded observation."}</dd>
+          <dt>LAST RUN</dt><dd>${lr?`“${esc(lr.command)}” · ${esc(lr.finalStatus)} · stop reason ${esc(lr.stopReason)}<br>Parameters: ${esc(Object.entries(lr.parameters||{}).map(([k,v])=>k+" = "+v).join(", ")||"—")}<br>Steps ${esc(lr.steps)} · successful ${esc(lr.successful)} · recovered ${esc(lr.recovered)} · user interventions ${esc(lr.interventions)}${lr.safetyBoundary?" · safety boundary "+esc(lr.safetyBoundary):""}`:"No run attached yet."}</dd>
+          <dt>TRACE</dt>${traceHtml(lr,id)}</dl>
+          <a class="btn sm" href="${href}">See the idea in the simulation ↗</a></td></tr>`);});
+    $$(".dbtn",body).forEach(b=>b.onclick=()=>{const row=document.getElementById(b.getAttribute("aria-controls"));const o=row.hidden;row.hidden=!o;b.setAttribute("aria-expanded",o);});
+    $$(".jtrace button",body).forEach(b=>b.onclick=()=>{const ev=document.getElementById(b.getAttribute("aria-controls"));ev.hidden=!ev.hidden;b.setAttribute("aria-expanded",!ev.hidden);});
+  }
+  function renderAll(){
+    const st=T.map(t=>get(t[0]).status);
+    const counts={all:14,"PASS":st.filter(x=>x==="PASS").length,"FAIL":st.filter(x=>x==="FAIL").length,"NOT YET TESTED":st.filter(x=>x==="NOT YET TESTED").length};
+    $("#j-filters").innerHTML=[["all","All"],["PASS","Pass"],["FAIL","Fail"],["NOT YET TESTED","Not yet tested"]].map(([k,l])=>`<button class="chip" data-f="${k}" aria-pressed="${k===filter}">${l} · ${counts[k]}</button>`).join("");
+    $$("#j-filters .chip").forEach(c=>c.onclick=()=>{filter=c.dataset.f;renderAll();});
+    $("#j-count").textContent=(counts.PASS+counts.FAIL)+" / 14";
+    const S=src();
+    $("#j-src").textContent=imported?`Source: imported APK export · ${imported.device||"unknown device"} · ${imported.exportedAt||""}`:DATA.published?`Source: published results · ${DATA.published.device||""} · ${DATA.published.exportedAt||""}`:"Source: none yet. All tests NOT YET TESTED.";
+    $("#j-clear").hidden=!imported;
+    render();
+    // metrics: from the export's metrics, else computed from statuses
+    const m=$("#metrics");m.innerHTML="";
+    METRICS.forEach(([k,ids])=>{let v=(S.metrics||{})[k];
+      if(v==null){const tested=ids.map(get).filter(r=>r.status!=="NOT YET TESTED");if(tested.length)v=tested.filter(r=>r.status==="PASS").length+"/"+tested.length;}
+      m.insertAdjacentHTML("beforeend",`<div class="metric"><div class="v ${v==null?"nt":""}" ${v!=null?'style="color:var(--text)"':""}>${v==null?"NOT YET TESTED":esc(v)+" passed"}</div><div class="k">${k.toUpperCase()} · ${ids.join(", ")}</div></div>`);});
+    $("#report-note").textContent=(counts.PASS+counts.FAIL)?"Values computed from tests recorded on a device with the APK.":"No recorded device runs yet. Values appear here once tests are run with the APK and imported.";
+    renderReality();
+  }
+  function renderReality(){
+    const R=[
+      ["Teach mode + relevance filter (RELEVANT / UNCERTAIN / IRRELEVANT)","live",["T1","T8"],"sim"],
+      ["Parameterized skills: ITEM, RESTAURANT, QUANTITY, ADDRESS","live",["T4","T5","T6"],"sim"],
+      ["Paraphrase matching (rule-based, offline)","live",["T3"],"sim"],
+      ["Semantic grounding with evidence (no coordinates)","live",["T2","T4"],"sim"],
+      ["Verification after every action","live",["T2"],"sim"],
+      ["State-aware recovery, max 3 attempts, then SAFE STOP","live",["T7","T10"],"sim"],
+      ["Mid-run clarification (typed or spoken answer)","live",["T13"],"sim"],
+      ["Payment / authentication boundary (YOUR TURN, Resume)","live",["T11"],"sim"],
+      ["Unknown intent → safe no-op + Teach me","live",["T12"],"sim"],
+      ["Run report + structured, clickable trace","live",["T14"],"sim"],
+      ["Persistent skill memory (JSON on device)","live",["T1","T8"],"sim"],
+      ["Second app: Amazon, search term as a slot, first result by position","live",["T8","T9"],"sim"],
+      ["Cross-app transfer of a skill to a different app","exp",[],"sim"],
+      ["Non-English commands","none",[],"sim"]];
+    const L={live:'<span class="tag live">LIVE PROTOTYPE</span>',exp:'<span class="tag exp">EXPERIMENTAL</span>',none:'<span class="tag none">NOT IMPLEMENTED · English only</span>'};
+    $("#reality-body").innerHTML=R.map(([f,k,ids])=>{let dev="—";
+      if(ids.length){const st=ids.map(i=>get(i).status);const p=st.filter(x=>x==="PASS").length,fl=st.filter(x=>x==="FAIL").length;
+        dev=(p+fl===0)?`<span class="st-pill untested">NOT YET TESTED</span>`:`<span class="st-pill ${fl?"fail":"pass"}">${p}/${p+fl} PASS</span>`;
+        dev+=` <span class="small" style="color:var(--dim)">${ids.join(", ")}</span>`;}
+      else if(k==="exp")dev='<span class="st-pill untested">NOT VALIDATED</span>';
+      return `<tr><td>${f}</td><td>${L[k]}</td><td>${dev}</td><td><span class="tag sim">INTERACTIVE SIMULATION</span></td></tr>`;}).join("");
+  }
+  $("#j-import").onclick=()=>$("#j-file").click();
+  $("#j-file").onchange=async e=>{const f=e.target.files[0];if(!f)return;
+    try{const j=JSON.parse(await f.text());
+      if(!j||j.schema!=="teachflow-judge-results/1"||typeof j.results!=="object")throw new Error("Not a TeachFlow results export (schema teachflow-judge-results/1).");
+      imported=j;try{localStorage.setItem("tf-judge-import",JSON.stringify(j));}catch(_){}
+      renderAll();$("#j-src").textContent+=" · imported ✓";
+    }catch(err){$("#j-src").textContent="Import failed: "+err.message;}
+    e.target.value="";};
+  $("#j-clear").onclick=()=>{imported=null;try{localStorage.removeItem("tf-judge-import");}catch(_){}renderAll();};
+  renderAll();
+})();
+
+/* ---------- try to break it (interactive simulation) ---------- */
+(function(){
+  // Traces use the same phases the APK's WorkflowExecutor records (see test-results/logic-check-output.txt).
+  const P=(ph,msg,c="")=>[ph,msg,c];
+  const HEAD=(cmd,slots)=>[P("VOICE RECEIVED",`“${cmd}”`),P("INTENT MATCHED","ORDER · same app, same action type"),P("SLOTS EXTRACTED",slots),P("SKILL SELECTED","Order a {ITEM} from {RESTAURANT} on Zomato")];
+  const PAY=[P("PAYMENT DETECTED","Reached the learned stop point: the next step is payment.","warn"),P("SAFETY STOP","Payment boundary reached. Automation stopped. No payment was made by TeachFlow.","warn"),P("YOUR TURN","Complete this step yourself.","warn")];
+  const S={
+    "Change item":{t:"T4",cmd:"Order a Farmhouse pizza from Domino's",log:[...HEAD("Order a Farmhouse pizza from Domino's","ITEM = Farmhouse pizza · RESTAURANT = Domino's · QUANTITY = 1"),
+      P("TARGET GROUNDED","ADD next to “Farmhouse Pizza” — Text match ✓ · Role match ✓ · Visible ✓ · Clickable ✓ · Next to {ITEM} ✓ → DECISION: EXECUTE","ok"),
+      P("STATE VERIFIED","Expected: “Farmhouse pizza” added · Observed: quantity control next to “Farmhouse Pizza” → PASSED ✓","ok"),...PAY],out:"SUCCESS — STOPPED AT PAYMENT",c:"ok",where:"SemanticGrounder · WorkflowExecutor"},
+    "Change quantity":{t:"T5",cmd:"Order two Margherita pizzas from Domino's",log:[...HEAD("Order two Margherita pizzas from Domino's","ITEM = Margherita pizzas · RESTAURANT = Domino's · QUANTITY = 2"),
+      P("NEXT ACTION","SET QUANTITY {QUANTITY}"),P("ACTION EXECUTED","CLICK quantity + (1 → 2)"),P("STATE VERIFIED","Expected: quantity = 2 · Observed: quantity shows 2 → PASSED ✓","ok"),...PAY],out:"SUCCESS — STOPPED AT PAYMENT",c:"ok",where:"WorkflowExecutor.doQuantity"},
+    "Change address":{t:"T6",cmd:"Order a Margherita from Domino's, deliver to work",log:[...HEAD("Order a Margherita from Domino's, deliver to work","ITEM = Margherita · RESTAURANT = Domino's · ADDRESS = Work"),
+      P("NEXT ACTION","SELECT ADDRESS {ADDRESS}"),P("TARGET GROUNDED","“Work” — Text match ✓ · Task slot {ADDRESS} match ✓ → DECISION: EXECUTE","ok"),P("STATE VERIFIED","Expected: address “Work” selected · Observed: “Work” shown → PASSED ✓","ok"),...PAY],out:"SUCCESS — STOPPED AT PAYMENT",c:"ok",where:"WorkflowExecutor.doAddress"},
+    "Add popup":{t:"T7",cmd:"Get me a margherita from dominos",log:[...HEAD("Get me a margherita from dominos","ITEM = margherita · RESTAURANT = dominos"),
+      P("RECOVERY REQUIRED","“margherita” isn't visible on this screen. (1 / 3)","rec"),P("STATE CLASSIFIED","POPUP · Popup with a safe “Not now” control","rec"),
+      P("RECOVERY","Dismissed popup via “Not now” → re-inspect → re-ground","rec"),P("STATE VERIFIED","Expected: “margherita” added · Observed: quantity control next to “Margherita Pizza” → PASSED ✓","ok"),...PAY],out:"SUCCESS — STOPPED AT PAYMENT · 1 step recovered",c:"ok",where:"StateClassifier · RecoveryEngine"},
+    "Item already in cart":{t:"T7",cmd:"Order Margherita from Domino's",log:[...HEAD("Order Margherita from Domino's","ITEM = Margherita · RESTAURANT = Domino's"),
+      P("RECOVERY REQUIRED","No ADD button next to “Margherita”. (1 / 3)","rec"),P("STATE CLASSIFIED","ALREADY_COMPLETED · “Margherita” already shows a quantity control","rec"),
+      P("RECOVERY","Skipped redundant action: not adding it again","rec"),P("STATE VERIFIED","Expected: “Margherita” added · Observed: already in that state → PASSED ✓","ok"),...PAY],out:"SUCCESS — STOPPED AT PAYMENT",c:"ok",where:"StateClassifier · RecoveryEngine.alreadyDone"},
+    "Change language":{t:"—",cmd:"Domino's se ek Margherita pizza order karo",log:[P("VOICE RECEIVED","“Domino's se ek Margherita pizza order karo”"),
+      P("INTENT MATCHED","The APK's parser is English-only. Words it doesn't recognise don't become slots.","warn"),
+      P("STATE CLASSIFIED","AMBIGUOUS_STATE · details it can't parse are asked for, never guessed","warn"),P("USER INPUT REQUIRED","Which restaurant should I use? / Which pizza would you like?","warn")],out:"NOT IMPLEMENTED — English commands only",c:"warn",where:"CommandParser (English)"},
+    "Remove target":{t:"T10",cmd:"Order Pepperoni Supreme from Domino's",log:[...HEAD("Order Pepperoni Supreme from Domino's","ITEM = Pepperoni Supreme · RESTAURANT = Domino's"),
+      P("RECOVERY REQUIRED","“Pepperoni Supreme” isn't visible on this screen. (1 / 3)","rec"),P("RECOVERY","Re-inspecting the UI after a short wait","rec"),
+      P("RECOVERY REQUIRED","(2 / 3)","rec"),P("RECOVERY","Scrolled to look for the target; next grounding uses an alternate semantic match","rec"),
+      P("RECOVERY REQUIRED","(3 / 3)","rec"),P("RECOVERY","Re-grounding from a fresh capture (scrolled back 1×)","rec"),
+      P("RECOVERY EXHAUSTED","3 / 3 attempts · SAFE STOP · USER INPUT REQUIRED","bad"),
+      P("USER INPUT REQUIRED","I couldn't find the Add button for Pepperoni Supreme after 3 recovery attempts. Please add it yourself, or tell me how to continue.","warn")],out:"RUN STOPPED · Reason: NO SAFE MATCH AFTER 3 RECOVERY ATTEMPTS",c:"bad",where:"WorkflowExecutor · MAX_ATTEMPTS = 3"},
+    "Trigger login":{t:"T11",cmd:"Order Margherita from Domino's",log:[...HEAD("Order Margherita from Domino's","ITEM = Margherita · RESTAURANT = Domino's"),
+      P("ACTION EXECUTED","CLICK “View Cart”"),P("STATE VERIFIED","Expected: cart opens · Observed: LOGIN screen → BOUNDARY","warn"),
+      P("AUTHENTICATION DETECTED","A password is requested.","warn"),P("SAFETY STOP","Authentication boundary. TeachFlow never enters or submits credentials.","warn"),
+      P("YOUR TURN","Complete it yourself, then tap Resume.","warn"),P("USER RESUMED","You tapped Resume. Re-inspecting the screen."),P("STATE VERIFIED","Expected: cart opens · Observed: cart content → PASSED ✓","ok"),...PAY],out:"PAUSED FOR SIGN-IN, THEN STOPPED AT PAYMENT",c:"warn",where:"SafetyGuardian · OverlayController"},
+    "Trigger payment":{t:"T11",cmd:"Order Margherita from Domino's",log:[...HEAD("Order Margherita from Domino's","ITEM = Margherita · RESTAURANT = Domino's"),...PAY],out:"RUN STOPPED · Reason: PAYMENT_BOUNDARY",c:"warn",where:"SafetyGuardian"},
+    "Unknown command":{t:"T12",cmd:"Book a cab to the airport",log:[P("VOICE RECEIVED","“Book a cab to the airport”"),P("INTENT PARSED","BOOK · slots {ITEM = cab}"),
+      P("SKILL SEARCH","No skill above the match threshold","warn"),P("SAFE NO-OP","UNKNOWN INTENT: I haven't learned a workflow for this request yet. [Teach me] [Cancel]","warn")],out:"SAFE NO-OP — UNKNOWN INTENT",c:"warn",where:"SkillMatcher · HomeScreen"},
+    "Ambiguous command":{t:"T13",cmd:"Order pizza from Domino's",log:[...HEAD("Order pizza from Domino's","ITEM = pizza · RESTAURANT = Domino's"),
+      P("STATE CLASSIFIED","AMBIGUOUS_STATE · 3 equally plausible candidates → DECISION: ASK","rec"),
+      P("USER INPUT REQUIRED","I can continue, but I need one more detail. Which pizza would you like?","warn"),P("USER ANSWERED","“Farmhouse”"),
+      P("PARAMETER RESOLVED","ITEM = Farmhouse ✓","ok"),P("STATE VERIFIED","Expected: “Farmhouse” added · Observed: quantity control next to “Farmhouse” → PASSED ✓","ok"),...PAY],out:"SUCCESS — STOPPED AT PAYMENT · 1 user intervention",c:"ok",where:"SemanticGrounder · WorkflowExecutor · AnswerActivity"}};
+  const btns=$("#pg-btns");let run=0;
+  Object.keys(S).forEach(k=>{const b=document.createElement("button");b.className="chip";b.textContent=k;b.setAttribute("aria-pressed","false");b.onclick=()=>play(k,b);btns.appendChild(b);});
+  async function play(k,b){const my=++run,sc=S[k];$$(".chip",btns).forEach(x=>x.setAttribute("aria-pressed",x===b));
+    $("#pg-title").textContent=k.toUpperCase();$("#pg-tags").innerHTML=(sc.t!=="—"?`<span class="tag t">${sc.t}</span> `:"")+'<span class="tag sim">INTERACTIVE SIMULATION</span>';
+    $("#pg-cmd").textContent="› "+sc.cmd;$("#pg-outcome").textContent="";$("#pg-where").textContent="";const log=$("#pg-log");log.innerHTML="";
+    for(const [ph,msg,c] of sc.log){if(my!==run)return;const li=document.createElement("li");li.innerHTML=`<span class="ph ${c}">${ph}</span>${msg}`;log.appendChild(li);await wait(40);li.classList.add("in");await wait(260);}
+    if(my!==run)return;const o=$("#pg-outcome");o.textContent=sc.out;o.style.color=sc.c==="ok"?"var(--green)":sc.c==="bad"?"var(--red)":"var(--amber)";$("#pg-where").textContent="In the APK: "+sc.where;}
+})();
+
+/* ---------- execution trace ---------- */
+const TRP=Phone($("#trace-phone"));let trIdx=RUN.length-1;
+function selectTrace(i){trIdx=i;const s=RUN[i];TRP.show(s.v,s.o);if(s.o.sel)TRP.hl("item-Margherita");else if(s.tap&&i+1<RUN.length)TRP.hl(null);
+  $$("#trace-list button").forEach((b,j)=>b.setAttribute("aria-current",j===i));}
+function renderTrace(){const times=lastRunTimes||RUN.map(r=>r.t);
+  $("#tr-src").textContent=lastRunTimes?"YOUR LAST LIVE RUN · ORDER_FOOD_V1":"REFERENCE RUN · ORDER_FOOD_V1";
+  $("#tr-lead").textContent=lastRunTimes?"Generated from the run you just watched. Select any event to rewind the phone to that moment.":"Select any event to rewind the phone to that exact moment. Run the live demo to generate your own trace.";
+  $("#trace-list").innerHTML=RUN.map((s,i)=>`<li><button><span class="tm">T+${times[i].toFixed(1)}s</span><span class="lb">${s.label}<small>${s.act}</small></span><span class="state" style="--sc:${SC[s.s]}">${s.s}</span></button></li>`).join("");
+  $$("#trace-list button").forEach((b,i)=>b.onclick=()=>selectTrace(i));selectTrace(trIdx);}
+renderTrace();
+$("#tr-play").onclick=async e=>{e.target.disabled=true;for(let i=0;i<RUN.length;i++){selectTrace(i);await wait(850);}e.target.disabled=false;};
+
+/* ---------- architecture ---------- */
+(function(){const A=[
+  ["VOICE","Capture the spoken command.","Microphone (system speech recogniser) or typed text","Command text","Entry point. In the APK: RecognizerIntent in HomeScreen / AnswerActivity."],
+  ["SPEECH / INTENT","Turn the utterance into an intent.","Command text","Verb family (ORDER, SEARCH, ADD…) and app","Rule-based and offline. No LLM. In the APK: CommandParser.kt."],
+  ["SLOT EXTRACTION","Separate parameter values from task structure.","Command text","ITEM, RESTAURANT, QUANTITY, ADDRESS, ordinal","Why \"Farmhouse\", \"two\" and \"work\" reuse one skill (T4–T6). In the APK: CommandParser.kt."],
+  ["SKILL MEMORY","Find the learned skill that matches by meaning.","Intent + slots","Skill, several choices, or no match","No match → UNKNOWN INTENT, safe no-op (T12). In the APK: SkillMatcher.kt, SkillRepository.kt (JSON)."],
+  ["GENERALIZED WORKFLOW","Bind this command's values into the learned semantic steps.","Skill + slot values","Steps like INPUT {ITEM}, SELECT {RESTAURANT}, ADD near {ITEM}","Missing values are asked for mid-run (T13). In the APK: WorkflowSynthesizer.kt, WorkflowExecutor.kt."],
+  ["ANDROID ACCESSIBILITY","Observe and act through the platform accessibility service.","Accessibility events + windows","Live access to the foreground app","No app-specific APIs, deep links or coordinates. In the APK: TeachFlowAccessibilityService.kt."],
+  ["UI TREE","Read the current screen as a semantic tree.","Active window","Nodes with role, text, state, bounds, hierarchy","Credential fields are redacted at capture. In the APK: AccessibilityTreeParser.kt, SemanticRoleClassifier.kt."],
+  ["SEMANTIC GROUNDING","Find the element that plays the step's role now.","UI tree + step + slots","Target with structured evidence, or ask / recover","Ties are never guessed: TeachFlow asks. In the APK: SemanticGrounder.kt."],
+  ["ACTION EXECUTOR","Perform the action on the grounded node.","Target node","ACTION_CLICK / SET_TEXT / scroll","Coordinates are never replayed. In the APK: ActionExecutor.kt."],
+  ["VERIFIER","Check that the expected state occurred.","Screen before + after","PASSED ✓ or RECOVERY REQUIRED","Expected vs observed for every step. In the APK: WorkflowExecutor.checkExpected."],
+  ["RECOVERY / CLARIFICATION","Classify the state and respond to it.","Failed step + current screen","Dismiss popup, skip done step, scroll, re-ground, or a specific question","Max 3 attempts per step, then SAFE STOP (T7, T10). In the APK: StateClassifier.kt, RecoveryEngine.kt."],
+  ["SAFE STOP","End with one explicit reason.","Run outcome","Run report + structured trace","PAYMENT_BOUNDARY, RECOVERY_EXHAUSTED… (T14). In the APK: RunReport.kt."],
+  ["SAFETY GUARDIAN","Deterministic check before every step and tap, and after every action.","Screen + proposed target","Continue, or stop at login / OTP / payment","Rules, not a model. Credentials are never typed (T11). In the APK: SafetyGuardian.kt."],
+  ["YOUR TURN","Hand control back to the person.","Safety stop","Payment: run ends. Sign-in: waits for Resume","Resumes only on an explicit tap. In the APK: OverlayController.kt."]];
+  const f=$("#arch-flow"),d=$("#arch-detail");
+  const show=i=>{$$(".anode",f).forEach((b,j)=>b.setAttribute("aria-pressed",i===j));const[n,p,a,o,r]=A[i];
+    d.innerHTML=`<div class="lp-label">STAGE ${String(i+1).padStart(2,"0")} OF ${A.length}</div><h3 style="font-size:1.45rem">${n}</h3><dl><dt>PURPOSE</dt><dd>${p}</dd><dt>INPUT</dt><dd>${a}</dd><dt>OUTPUT</dt><dd>${o}</dd><dt>ROLE IN TEACHFLOW</dt><dd>${r}</dd></dl>`;};
+  A.forEach(([n],i)=>{const b=document.createElement("button");b.className="anode"+(i===12?" guard":"")+(i===13?" hand":"");b.textContent=n;b.setAttribute("aria-pressed","false");b.onclick=()=>show(i);f.appendChild(b);});
+  show(7);
+  if(!RM){const ns=$$(".anode",f);let k=0;onView(f,()=>setInterval(()=>{ns.forEach(n=>n.classList.remove("pulse"));ns[k%ns.length].classList.add("pulse");k++;},650));}})();
+
+/* ---------- future nets ---------- */
+$$(".net").forEach(svg=>{const n=+svg.dataset.n,w=300,h=160;svg.setAttribute("viewBox",`0 0 ${w} ${h}`);let s=n*7;const rnd=()=>(s=(s*9301+49297)%233280)/233280;
+  const pts=Array.from({length:n},(_,i)=>n===3?[60+i*90,80+(i%2?-20:20)]:[20+rnd()*(w-40),20+rnd()*(h-40)]);let html="";
+  pts.forEach((p,i)=>pts.forEach((q,j)=>{if(j>i&&Math.hypot(p[0]-q[0],p[1]-q[1])<(n>10?90:130))html+=`<line x1="${p[0]}" y1="${p[1]}" x2="${q[0]}" y2="${q[1]}"/>`;}));
+  pts.forEach((p,i)=>html+=`<circle cx="${p[0]}" cy="${p[1]}" r="${3+(i%3)}" opacity="${.5+(i%2)*.5}"/>`);svg.innerHTML=html;});
+</script>
+</body>
+</html>
