@@ -6,7 +6,7 @@ Environment: no Android device or emulator, and no Google Maven access (so no Co
 |---|---|
 | **COMPILED** | Compiled with Kotlin 2.0.21 against `android.jar` (API 33), with coroutine stubs: 27 engine files, 0 errors. |
 | **LOGIC** | Ran on a JVM in `android/tools/logic-check` (synthetic screens, and the real `WorkflowExecutor` driving a scripted fake app). |
-| **SYNTAX** | Compose UI files parsed with no syntax errors. Not type-checked (Compose libraries unavailable). |
+| **BUILT** | The whole app (engine + Compose UI) built into an APK by GitHub Actions (`.github/workflows/build-apk.yml`). |
 | **BROWSER** | Website exercised in headless Chromium. |
 | **NOT TESTED** | Requires a physical Android device. |
 
@@ -15,7 +15,7 @@ Environment: no Android device or emulator, and no Google Maven access (so no Co
 | Area | Check | Result |
 |---|---|---|
 | Functionality / engine | COMPILED | ✅ 0 errors |
-| UI (Compose) | SYNTAX | ✅ no syntax errors · ⚠️ type-checking needs Android Studio |
+| UI (Compose) + full app | **BUILT** on GitHub Actions | ✅ `gradle assembleDebug` succeeded on the first build (run 36613132718); the APK contains the service, executor, safety guardian, answer screen and Judge Mode, and declares `BIND_ACCESSIBILITY_SERVICE` |
 | Android / accessibility | COMPILED + manifest audit | ✅ service declared with `BIND_ACCESSIBILITY_SERVICE`; both activities declared; `AnswerActivity` started with `FLAG_ACTIVITY_NEW_TASK` · **NOT TESTED** on a device |
 | Teaching + relevance | LOGIC | ✅ phone call → IRRELEVANT·DISCARD · detour → IRRELEVANT · no-effect tap → UNCERTAIN (kept, flagged) |
 | Generalization / parameters | LOGIC | ✅ typed "Margherita" → `{ITEM}`; ADD next to the right item for Margherita / Farmhouse / Garlic Bread; quantity verified = 2; Work address selected |
@@ -53,4 +53,3 @@ Everything that touches real apps:
 - persistence across restarts
 - all of T1–T14
 
-The first Android Studio build may surface Compose type errors that couldn't be checked here.

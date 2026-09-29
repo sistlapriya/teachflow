@@ -4,8 +4,8 @@ Status as of this repository version. ✅ = done and verified here · ⏳ = need
 
 | | Item | Status | Notes |
 |---|---|---|---|
-| ⏳ | Installable APK | Source ready; **not built here** | Build in Android Studio (README §4). Fix any first-build Compose errors. Attach `app-debug.apk` to a GitHub release. |
-| ⏳ | Public/shared GitHub | Repository prepared | Push this folder. Fill `DATA.github` in `web/index.html` and the README Team section. |
+| ✅ | Installable APK | Built by GitHub Actions | [apk-latest release](https://github.com/sistlapriya/teachflow/releases/tag/apk-latest); rebuilt automatically on every Android change |
+| ✅ | Public/shared GitHub | https://github.com/sistlapriya/teachflow | Still to do: team names in the README |
 | ✅ | README | Done | Problem, solution, architecture, setup, permissions, teach, replay, parameters, recovery, safety, target apps, limitations, testing, demo, team (team to fill) |
 | ✅ | Setup instructions | Done | Including the Android 13+ restricted-settings step |
 | ⏳ | Demo video ≤ 5 min | Script ready | `demo/demo-script.md`. Record on a device. |

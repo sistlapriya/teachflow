@@ -10,7 +10,7 @@ Samsung PRISM Generative AI Hackathon 2026–27.
 
 | | What it is | Status |
 |---|---|---|
-| [`/android`](android) | **LIVE PROTOTYPE.** A real Android app using `AccessibilityService` and `AccessibilityNodeInfo` to observe and operate third-party apps. | Engine compile-checked and logic-tested off-device. **Device tests: NOT YET TESTED.** |
+| [`/android`](android) | **LIVE PROTOTYPE.** A real Android app using `AccessibilityService` and `AccessibilityNodeInfo` to observe and operate third-party apps. | Builds automatically on GitHub Actions ([download APK](https://github.com/sistlapriya/teachflow/releases/tag/apk-latest)). Logic-tested off-device. **Device tests: NOT YET TESTED.** |
 | [`/web`](web) | Judge-facing website. Every interactive demo on it is labelled **INTERACTIVE SIMULATION**. Judge Mode imports real results exported by the APK. | Browser-tested |
 | [`/docs`](docs) | Architecture, testing guide, presentation content, audit, submission checklist, screenshots | |
 | [`/demo`](demo) | 5-minute demo script and copy-paste commands | |
@@ -21,7 +21,7 @@ Samsung PRISM Generative AI Hackathon 2026–27.
 
 ## Quick start
 
-1. Install the APK (see [Setup](#4-setup)).
+1. Install the APK: download `teachflow-debug.apk` from the [latest release](https://github.com/sistlapriya/teachflow/releases/tag/apk-latest) (or build it, see [Setup](#4-setup)).
 2. Enable the **TeachFlow** Accessibility Service.
 3. Open a supported target app (Zomato or Amazon) once and sign in yourself.
 4. In TeachFlow, give the voice command (🎙 Speak) or type it, e.g. *"Order a Margherita pizza from Domino's on Zomato."*
@@ -75,10 +75,11 @@ Details: [`docs/architecture.md`](docs/architecture.md).
 
 ## 4. Setup
 
-1. Open [`/android`](android) in **Android Studio** (Ladybug or newer). The Gradle wrapper jar is generated on first sync.
-2. **Build → Build APK(s)**. The output is `android/app/build/outputs/apk/debug/app-debug.apk`.
-3. Install it on an Android 8.0+ phone: `adb install app-debug.apk`.
-4. Install **Zomato** and/or **Amazon** and sign in to them yourself. Save *Home* and *Work* addresses in Zomato if you want to test addresses.
+**Download (easiest):** get `teachflow-debug.apk` from the [**apk-latest** release](https://github.com/sistlapriya/teachflow/releases/tag/apk-latest). GitHub Actions ([`.github/workflows/build-apk.yml`](.github/workflows/build-apk.yml)) builds it automatically from `main` whenever the Android code changes. Copy it to an Android 8.0+ phone and open it (allow "Install unknown apps" when asked), or run `adb install teachflow-debug.apk`.
+
+**Build it yourself:** open [`/android`](android) in Android Studio (Ladybug or newer) → **Build → Build APK(s)**, or run `gradle assembleDebug` in `android/` with Gradle 8.9 and JDK 17.
+
+Then install **Zomato** and/or **Amazon** and sign in to them yourself. Save *Home* and *Work* addresses in Zomato if you want to test addresses.
 
 ## 5. Android Accessibility permission
 
@@ -156,7 +157,6 @@ Nothing in the code is specific to these apps. No package names, labels or test 
 ## 12. Known limitations
 
 - **Not yet run on a physical device.** All device-level results are NOT YET TESTED.
-- The Compose UI could not be compiled in the build environment (the Compose libraries were unavailable). It passed a syntax-level check, but the first Android Studio build may surface small errors.
 - Commands must be in English. The parser is rule-based and offline.
 - Semantic roles and verification checks are heuristics. For example, "cart opens" looks for words like *cart, bill, total*. Apps with unlabelled custom views may expose too little, and TeachFlow then asks instead of guessing.
 - Quantity and address steps need the app to expose a "+" control and a saved-address list to accessibility.
