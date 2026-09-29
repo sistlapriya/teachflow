@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TeachFlow</string>
+    <string name="service_label">TeachFlow</string>
+    <string name="service_description">TeachFlow reads the structure of the app on screen (buttons, text fields and labels) so it can learn tasks you demonstrate. It taps and types only while running a skill you taught, and stops at payment and sign-in. Password, OTP, PIN, CVV and card fields are never recorded.</string>
+</resources>

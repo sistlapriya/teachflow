@@ -1,0 +1,1 @@
+Add device screenshots here after testing, for example teach overlay, review (LEARNED), replay overlay, RECOVERY EXHAUSTED, SAFETY BOUNDARY, run report, and the Tests tab. None exist yet: the APK has not been run on a device.
