@@ -1,0 +1,65 @@
+name: Build APK
+
+on:
+  push:
+    branches: [main]
+    paths: ["android/**", ".github/workflows/build-apk.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-apk
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+
+      - name: Build debug APK
+        working-directory: android
+        run: |
+          set -o pipefail
+          gradle assembleDebug --no-daemon --stacktrace 2>&1 | tee ../build.log
+
+      - name: Publish APK as the "apk-latest" release
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk teachflow-debug.apk
+          gh release delete apk-latest --yes --cleanup-tag || true
+          gh release create apk-latest teachflow-debug.apk \
+            --title "TeachFlow APK (latest build)" --prerelease \
+            --notes "Debug APK built automatically from commit ${GITHUB_SHA::7}. Install on Android 8.0+, then enable the TeachFlow accessibility service (see README). Device tests: NOT YET TESTED."
+
+      - name: Keep the APK as a workflow artifact too
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: teachflow-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Save the build log if the build failed
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir /tmp/log && cp build.log /tmp/log/ 2>/dev/null || echo "no log" > /tmp/log/build.log
+          grep -E "^e: |error:|What went wrong|FAILURE|Could not" build.log | head -200 > /tmp/log/errors.txt || true
+          cd /tmp/log && git init -q && git checkout -q -b build-logs
+          git -c user.name=github-actions -c user.email=actions@github.com add . 
+          git -c user.name=github-actions -c user.email=actions@github.com commit -q -m "Build log for run ${GITHUB_RUN_ID}"
+          git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" build-logs
