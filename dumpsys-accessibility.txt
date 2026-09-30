@@ -1,0 +1,48 @@
+ACCESSIBILITY MANAGER (dumpsys accessibility)
+
+currentUserId=0
+hasWindowMagnificationConnection=false
+Magnifier on display#0
+    MagnificationConfig[mode: 1, scale: 1.0, centerX: 0.0, centerY: 0.0] 
+    Magnification region=SkRegion((5,5,1075,2337))
+    IdOfLastServiceToMagnify=-1
+    SupportWindowMagnification=false
+    WindowMagnificationConnectionState=DISCONNECTED
+User state[
+     attributes:{id=0, touchExplorationEnabled=false, serviceHandlesDoubleTap=false, requestMultiFingerGestures=false, requestTwoFingerPassthrough=false, sendMotionEventsEnabledfalse, displayMagnificationEnabled=false, autoclickEnabled=false, nonInteractiveUiTimeout=0, interactiveUiTimeout=0, installedServiceCount=4, magnificationModes={0=1}, magnificationCapabilities=3, audioDescriptionByDefaultEnabled=false, magnificationFollowTypingEnabled=true}
+     shortcut key:{}
+     button:{}
+     button target:{null}
+     Bound services:{Service[label=TeachFlow, feedbackType[FEEDBACK_GENERIC], capabilities=33, eventTypes=[TYPE_VIEW_CLICKED, TYPE_VIEW_LONG_CLICKED, TYPE_VIEW_TEXT_CHANGED, TYPE_WINDOW_STATE_CHANGED, TYPE_WINDOW_CONTENT_CHANGED, TYPE_VIEW_SCROLLED], notificationTimeout=100, requestA11yBtn=false]}
+     Enabled services:{{com.teachflow.agent/com.teachflow.agent.accessibility.TeachFlowAccessibilityService}}
+     Binding services:{}
+     Crashed services:{}
+     Client list info:{
+          Client list callbacks: 16
+          Client list killed: false
+          Client list broadcasts count: -1
+          Registered clients:{
+[com.google.android.apps.nexuslauncher][com.teachflow.agent][com.google.android.settings.intelligence][com.google.android.apps.wellbeing][com.google.android.apps.maps][com.google.android.as][com.google.android.deskclock][com.teachflow.practicefood][com.google.android.apps.photos][com.google.android.calendar][com.google.android.apps.messaging][com.google.android.inputmethod.latin][com.google.android.apps.youtube.music][com.google.android.youtube][com.google.android.googlequicksearchbox][com.google.android.contacts]}]
+Global Info [ Top focused display Id = 0
+     Active Window Id = 13
+     Top Focused Window Id = 13
+     Accessibility Focused Window Id = -1 ]
+
+Display[0] : 
+A11yWindow[AccessibilityWindowInfo[title=null, displayId=0, id=11, taskId=-1, type=TYPE_ACCESSIBILITY_OVERLAY, layer=2, region=SkRegion((31,495,785,966)), bounds=Rect(31, 495 - 785, 966), focused=false, active=false, pictureInPicture=false, hasParent=false, isAnchored=false, hasChildren=false]]
+WindowInfo[WindowInfo[title=null, displayId=0, taskId=-1, type=2032, layer=0, token=android.os.BinderProxy@1a4e481, region=SkRegion((31,495,785,966)), bounds=Rect(31, 495 - 785, 966), parent=null, focused=false, children=null, accessibility anchor=9223372034707292159, pictureInPicture=false, watchOutsideTouch=false, mTransformMatrix=Matrix{[1.0, 0.0, 31.0][0.0, 1.0, 495.0][0.0, 0.0, 1.0]}, mMagnificationSpec=<scale:1.0,offsetX:0.0,offsetY:0.0>]]
+,
+A11yWindow[AccessibilityWindowInfo[title=null, displayId=0, id=7, taskId=-1, type=TYPE_SYSTEM, layer=1, region=SkRegion((0,0,1080,128)), bounds=Rect(0, 0 - 1080, 128), focused=false, active=false, pictureInPicture=false, hasParent=false, isAnchored=false, hasChildren=false]]
+WindowInfo[WindowInfo[title=null, displayId=0, taskId=-1, type=2000, layer=1, token=android.os.BinderProxy@14efb9d, region=SkRegion((0,0,1080,128)), bounds=Rect(0, 0 - 1080, 128), parent=null, focused=false, children=null, accessibility anchor=9223372034707292159, pictureInPicture=false, watchOutsideTouch=false, mTransformMatrix=Matrix{[1.0, 0.0, 0.0][0.0, 1.0, 0.0][0.0, 0.0, 1.0]}, mMagnificationSpec=<scale:1.0,offsetX:0.0,offsetY:0.0>]]
+,
+A11yWindow[AccessibilityWindowInfo[title=PracticeFood, displayId=0, id=13, taskId=9, type=TYPE_APPLICATION, layer=0, region=SkRegion((0,0,1080,2400)), bounds=Rect(0, 0 - 1080, 2400), focused=true, active=true, pictureInPicture=false, hasParent=false, isAnchored=false, hasChildren=false]]
+WindowInfo[WindowInfo[title=PracticeFood, displayId=0, taskId=9, type=1, layer=2, token=android.os.BinderProxy@4ef2be5, region=SkRegion((0,0,1080,2400)), bounds=Rect(0, 0 - 1080, 2400), parent=null, focused=true, children=null, accessibility anchor=9223372034707292159, pictureInPicture=false, watchOutsideTouch=false, mTransformMatrix=Matrix{[1.0, 0.0, 0.0][0.0, 1.0, 0.0][0.0, 0.0, 1.0]}, mMagnificationSpec=<scale:1.0,offsetX:0.0,offsetY:0.0>]]
+
+A11yInputFilter Info : 
+Enabled features of Display [0] = [MotionEventInjector]
+Global client list info:{
+    Client list callbacks: 7
+    Client list killed: false
+    Client list broadcasts count: -1
+    Registered clients:{
+[com.google.android.gms, com.google.android.gsf][com.android.systemui][com.android.providers.settings, com.android.localtransport, com.android.wallpaperbackup, com.android.server.telecom, com.android.settings, com.android.emulator.multidisplay, android, com.android.location.fused, com.android.keychain, com.android.inputdevices, com.android.dynsystem][com.google.android.documentsui][com.google.android.permissioncontroller][com.android.providers.settings, com.android.localtransport, com.android.wallpaperbackup, com.android.server.telecom, com.android.settings, com.android.emulator.multidisplay, android, com.android.location.fused, com.android.keychain, com.android.inputdevices, com.android.dynsystem][com.google.android.setupwizard]

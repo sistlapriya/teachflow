@@ -1,0 +1,512 @@
+[
+  {
+    "id": "E1",
+    "mirrors": "T1",
+    "name": "Teach food workflow (+ phone call during teaching)",
+    "pass": false,
+    "checks": [
+      [
+        true,
+        "skill saved"
+      ],
+      [
+        true,
+        "ITEM and RESTAURANT became parameters"
+      ],
+      [
+        false,
+        "semantic actions SEARCH {ITEM} \u2192 SELECT RESTAURANT \u2192 ADD {ITEM} TO CART \u2192 STOP_AT_PAYMENT"
+      ],
+      [
+        false,
+        "no warnings"
+      ]
+    ],
+    "shots": [
+      "screens/e1-01-teaching-started.png",
+      "screens/e1-02-typed-search.png",
+      "screens/e1-03-incoming-call.png",
+      "screens/e1-04-menu.png",
+      "screens/e1-05-cart-while-teaching.png",
+      "screens/e1-06-review-learned.png"
+    ],
+    "evidence": "Order a {ITEM} from {RESTAURANT} on PracticeFood \u00b7 1 observed / 0 relevant / 1 ignored \u00b7 phone call: call declined by tapping Decline on the incoming-call screen \u00b7 discarded as IRRELEVANT: 1 call-UI action(s)"
+  },
+  {
+    "id": "E2",
+    "mirrors": "T2",
+    "name": "Exact replay",
+    "command": "Order a Margherita pizza from Domino's on PracticeFood",
+    "pass": true,
+    "checks": [
+      [
+        true,
+        "SUCCESS \u2014 stopped at payment"
+      ],
+      [
+        true,
+        "trace has SAFETY STOP"
+      ],
+      [
+        true,
+        "TeachFlow never tapped Proceed to Pay / Pay"
+      ]
+    ],
+    "shots": [
+      "screens/e2-01-running.png",
+      "screens/e2-09-end.png"
+    ],
+    "evidence": "SUCCESS \u2014 STOPPED AT PAYMENT \u00b7 reason PAYMENT_BOUNDARY \u00b7 steps 0/0 \u00b7 recovered 0 \u00b7 interventions 0",
+    "phases": [
+      "VOICE RECEIVED",
+      "INTENT MATCHED",
+      "SLOTS EXTRACTED",
+      "SKILL SELECTED",
+      "NEXT ACTION",
+      "PAYMENT DETECTED",
+      "SAFETY STOP",
+      "YOUR TURN",
+      "RUN COMPLETE"
+    ]
+  },
+  {
+    "id": "E3",
+    "mirrors": "T3",
+    "name": "Paraphrase",
+    "command": "Get me a margherita from dominos",
+    "pass": true,
+    "checks": [
+      [
+        true,
+        "SUCCESS \u2014 stopped at payment"
+      ],
+      [
+        true,
+        "trace has SAFETY STOP"
+      ],
+      [
+        true,
+        "TeachFlow never tapped Proceed to Pay / Pay"
+      ]
+    ],
+    "shots": [
+      "screens/e3-01-running.png",
+      "screens/e3-09-end.png"
+    ],
+    "evidence": "SUCCESS \u2014 STOPPED AT PAYMENT \u00b7 reason PAYMENT_BOUNDARY \u00b7 steps 0/0 \u00b7 recovered 0 \u00b7 interventions 0",
+    "phases": [
+      "VOICE RECEIVED",
+      "INTENT MATCHED",
+      "SLOTS EXTRACTED",
+      "SKILL SELECTED",
+      "NEXT ACTION",
+      "PAYMENT DETECTED",
+      "SAFETY STOP",
+      "YOUR TURN",
+      "RUN COMPLETE"
+    ]
+  },
+  {
+    "id": "E4",
+    "mirrors": "T4",
+    "name": "Slot: different item",
+    "command": "Order a Farmhouse pizza from Domino's",
+    "pass": false,
+    "checks": [
+      [
+        true,
+        "SUCCESS \u2014 stopped at payment"
+      ],
+      [
+        true,
+        "trace has SAFETY STOP"
+      ],
+      [
+        false,
+        "Farmhouse added, not Margherita"
+      ],
+      [
+        true,
+        "TeachFlow never tapped Proceed to Pay / Pay"
+      ]
+    ],
+    "shots": [
+      "screens/e4-01-running.png",
+      "screens/e4-09-end.png"
+    ],
+    "evidence": "SUCCESS \u2014 STOPPED AT PAYMENT \u00b7 reason PAYMENT_BOUNDARY \u00b7 steps 0/0 \u00b7 recovered 0 \u00b7 interventions 0",
+    "phases": [
+      "VOICE RECEIVED",
+      "INTENT MATCHED",
+      "SLOTS EXTRACTED",
+      "SKILL SELECTED",
+      "NEXT ACTION",
+      "PAYMENT DETECTED",
+      "SAFETY STOP",
+      "YOUR TURN",
+      "RUN COMPLETE"
+    ]
+  },
+  {
+    "id": "E5",
+    "mirrors": "T5",
+    "name": "Slot: quantity",
+    "command": "Order two Margherita pizzas from Domino's",
+    "pass": false,
+    "checks": [
+      [
+        true,
+        "SUCCESS \u2014 stopped at payment"
+      ],
+      [
+        true,
+        "trace has SAFETY STOP"
+      ],
+      [
+        false,
+        "quantity reached 2"
+      ],
+      [
+        true,
+        "TeachFlow never tapped Proceed to Pay / Pay"
+      ]
+    ],
+    "shots": [
+      "screens/e5-01-running.png",
+      "screens/e5-09-end.png"
+    ],
+    "evidence": "SUCCESS \u2014 STOPPED AT PAYMENT \u00b7 reason PAYMENT_BOUNDARY \u00b7 steps 0/0 \u00b7 recovered 0 \u00b7 interventions 0",
+    "phases": [
+      "VOICE RECEIVED",
+      "INTENT MATCHED",
+      "SLOTS EXTRACTED",
+      "SKILL SELECTED",
+      "NEXT ACTION",
+      "PAYMENT DETECTED",
+      "SAFETY STOP",
+      "YOUR TURN",
+      "RUN COMPLETE"
+    ]
+  },
+  {
+    "id": "E6",
+    "mirrors": "T6",
+    "name": "Slot: address",
+    "command": "Order a Margherita from Domino's, deliver to work",
+    "pass": false,
+    "checks": [
+      [
+        false,
+        "SUCCESS \u2014 stopped at payment"
+      ],
+      [
+        false,
+        "trace has SAFETY STOP"
+      ],
+      [
+        false,
+        "Work address selected"
+      ],
+      [
+        true,
+        "TeachFlow never tapped Proceed to Pay / Pay"
+      ]
+    ],
+    "shots": [
+      "screens/e6-01-running.png",
+      "screens/e6-09-end.png"
+    ],
+    "evidence": "ERROR \u00b7 reason ERROR \u00b7 steps 0/1 \u00b7 recovered 0 \u00b7 interventions 0",
+    "phases": [
+      "VOICE RECEIVED",
+      "INTENT MATCHED",
+      "SLOTS EXTRACTED",
+      "SKILL SELECTED",
+      "NEXT ACTION",
+      "UI TREE CAPTURED",
+      "RECOVERY REQUIRED",
+      "STATE CLASSIFIED",
+      "RECOVERY",
+      "RUN STOPPED"
+    ]
+  },
+  {
+    "id": "E7",
+    "mirrors": "T7",
+    "name": "Screen change: promo popup",
+    "command": "Order a Margherita pizza from Domino's on PracticeFood",
+    "pass": false,
+    "checks": [
+      [
+        true,
+        "SUCCESS \u2014 stopped at payment"
+      ],
+      [
+        true,
+        "trace has SAFETY STOP"
+      ],
+      [
+        false,
+        "popup dismissed via 'Not now'"
+      ],
+      [
+        false,
+        "recovered step counted"
+      ],
+      [
+        true,
+        "TeachFlow never tapped Proceed to Pay / Pay"
+      ]
+    ],
+    "shots": [
+      "screens/e7-01-running.png",
+      "screens/e7-09-end.png"
+    ],
+    "evidence": "SUCCESS \u2014 STOPPED AT PAYMENT \u00b7 reason PAYMENT_BOUNDARY \u00b7 steps 0/0 \u00b7 recovered 0 \u00b7 interventions 0",
+    "phases": [
+      "VOICE RECEIVED",
+      "INTENT MATCHED",
+      "SLOTS EXTRACTED",
+      "SKILL SELECTED",
+      "NEXT ACTION",
+      "PAYMENT DETECTED",
+      "SAFETY STOP",
+      "YOUR TURN",
+      "RUN COMPLETE"
+    ]
+  },
+  {
+    "id": "E8",
+    "mirrors": "T7",
+    "name": "Screen change: item already in cart",
+    "command": "Order a Margherita pizza from Domino's on PracticeFood",
+    "pass": true,
+    "checks": [
+      [
+        true,
+        "SUCCESS \u2014 stopped at payment"
+      ],
+      [
+        true,
+        "trace has SAFETY STOP"
+      ],
+      [
+        true,
+        "did not add the item again"
+      ],
+      [
+        true,
+        "TeachFlow never tapped Proceed to Pay / Pay"
+      ]
+    ],
+    "shots": [
+      "screens/e8-01-running.png",
+      "screens/e8-09-end.png"
+    ],
+    "evidence": "SUCCESS \u2014 STOPPED AT PAYMENT \u00b7 reason PAYMENT_BOUNDARY \u00b7 steps 0/0 \u00b7 recovered 0 \u00b7 interventions 0",
+    "phases": [
+      "VOICE RECEIVED",
+      "INTENT MATCHED",
+      "SLOTS EXTRACTED",
+      "SKILL SELECTED",
+      "NEXT ACTION",
+      "PAYMENT DETECTED",
+      "SAFETY STOP",
+      "YOUR TURN",
+      "RUN COMPLETE"
+    ]
+  },
+  {
+    "id": "E9",
+    "mirrors": "T10",
+    "name": "Genuinely stuck: item not on the menu",
+    "command": "Order Pepperoni Supreme from Domino's",
+    "pass": false,
+    "checks": [
+      [
+        false,
+        "RECOVERY_EXHAUSTED after 3 attempts"
+      ],
+      [
+        false,
+        "trace shows RECOVERY EXHAUSTED"
+      ],
+      [
+        true,
+        "TeachFlow never tapped Proceed to Pay / Pay"
+      ]
+    ],
+    "shots": [
+      "screens/e9-01-running.png",
+      "screens/e9-09-end.png"
+    ],
+    "evidence": "SUCCESS \u2014 STOPPED AT PAYMENT \u00b7 reason PAYMENT_BOUNDARY \u00b7 steps 0/0 \u00b7 recovered 0 \u00b7 interventions 0",
+    "phases": [
+      "VOICE RECEIVED",
+      "INTENT MATCHED",
+      "SLOTS EXTRACTED",
+      "SKILL SELECTED",
+      "NEXT ACTION",
+      "PAYMENT DETECTED",
+      "SAFETY STOP",
+      "YOUR TURN",
+      "RUN COMPLETE"
+    ]
+  },
+  {
+    "id": "E10",
+    "mirrors": "T11",
+    "name": "Authentication boundary",
+    "command": "Order a Margherita pizza from Domino's on PracticeFood",
+    "pass": false,
+    "checks": [
+      [
+        true,
+        "SUCCESS \u2014 stopped at payment"
+      ],
+      [
+        true,
+        "trace has SAFETY STOP"
+      ],
+      [
+        false,
+        "paused for sign-in, resumed only after Resume"
+      ],
+      [
+        false,
+        "TeachFlow never filled the password"
+      ],
+      [
+        true,
+        "TeachFlow never tapped Proceed to Pay / Pay"
+      ]
+    ],
+    "shots": [
+      "screens/e10-01-running.png",
+      "screens/e10-09-end.png"
+    ],
+    "evidence": "SUCCESS \u2014 STOPPED AT PAYMENT \u00b7 reason PAYMENT_BOUNDARY \u00b7 steps 0/0 \u00b7 recovered 0 \u00b7 interventions 0",
+    "phases": [
+      "VOICE RECEIVED",
+      "INTENT MATCHED",
+      "SLOTS EXTRACTED",
+      "SKILL SELECTED",
+      "NEXT ACTION",
+      "PAYMENT DETECTED",
+      "SAFETY STOP",
+      "YOUR TURN",
+      "RUN COMPLETE"
+    ]
+  },
+  {
+    "id": "E11",
+    "mirrors": "T12",
+    "name": "Unknown intent",
+    "command": "Book a cab to the airport",
+    "pass": true,
+    "checks": [
+      [
+        true,
+        "UNKNOWN INTENT, safe no-op"
+      ],
+      [
+        true,
+        "TeachFlow never tapped Proceed to Pay / Pay"
+      ]
+    ],
+    "shots": [],
+    "evidence": "SAFE NO-OP \u2014 UNKNOWN INTENT \u00b7 reason UNKNOWN_INTENT \u00b7 steps 0/0 \u00b7 recovered 0 \u00b7 interventions 0",
+    "phases": [
+      "VOICE RECEIVED",
+      "INTENT PARSED",
+      "SKILL SEARCH",
+      "SAFE NO-OP"
+    ]
+  },
+  {
+    "id": "E12",
+    "mirrors": "T13",
+    "name": "Ambiguity: 'pizza'",
+    "command": "Order pizza from Domino's",
+    "pass": false,
+    "checks": [
+      [
+        true,
+        "SUCCESS \u2014 stopped at payment"
+      ],
+      [
+        true,
+        "trace has SAFETY STOP"
+      ],
+      [
+        false,
+        "asked, then PARAMETER RESOLVED"
+      ],
+      [
+        false,
+        "the chosen pizza (Farmhouse) was added"
+      ],
+      [
+        true,
+        "TeachFlow never tapped Proceed to Pay / Pay"
+      ]
+    ],
+    "shots": [
+      "screens/e12-01-running.png",
+      "screens/e12-09-end.png"
+    ],
+    "evidence": "SUCCESS \u2014 STOPPED AT PAYMENT \u00b7 reason PAYMENT_BOUNDARY \u00b7 steps 0/0 \u00b7 recovered 0 \u00b7 interventions 0",
+    "phases": [
+      "VOICE RECEIVED",
+      "INTENT MATCHED",
+      "SLOTS EXTRACTED",
+      "SKILL SELECTED",
+      "NEXT ACTION",
+      "PAYMENT DETECTED",
+      "SAFETY STOP",
+      "YOUR TURN",
+      "RUN COMPLETE"
+    ]
+  },
+  {
+    "id": "E13",
+    "mirrors": "T13",
+    "name": "Missing restaurant, answered by typing",
+    "command": "Order a Margherita",
+    "pass": false,
+    "checks": [
+      [
+        true,
+        "SUCCESS \u2014 stopped at payment"
+      ],
+      [
+        true,
+        "trace has SAFETY STOP"
+      ],
+      [
+        false,
+        "asked 'Which restaurant\u2026?', then PARAMETER RESOLVED"
+      ],
+      [
+        true,
+        "TeachFlow never tapped Proceed to Pay / Pay"
+      ]
+    ],
+    "shots": [
+      "screens/e13-01-running.png",
+      "screens/e13-09-end.png"
+    ],
+    "evidence": "SUCCESS \u2014 STOPPED AT PAYMENT \u00b7 reason PAYMENT_BOUNDARY \u00b7 steps 0/0 \u00b7 recovered 0 \u00b7 interventions 0",
+    "phases": [
+      "VOICE RECEIVED",
+      "INTENT MATCHED",
+      "SLOTS EXTRACTED",
+      "SKILL SELECTED",
+      "NEXT ACTION",
+      "PAYMENT DETECTED",
+      "SAFETY STOP",
+      "YOUR TURN",
+      "RUN COMPLETE"
+    ]
+  }
+]

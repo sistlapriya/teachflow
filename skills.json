@@ -1,0 +1,77 @@
+[
+  {
+    "id": "skill_1790779136343",
+    "name": "Order a {ITEM} from {RESTAURANT} on PracticeFood",
+    "intent": "ORDER",
+    "verbs": [
+      "ORDER"
+    ],
+    "exampleCommands": [
+      "Order a Margherita pizza from Domino's on PracticeFood"
+    ],
+    "contentTokens": [],
+    "targetPackage": "com.teachflow.practicefood",
+    "targetApp": "PracticeFood",
+    "slots": [
+      {
+        "name": "ITEM",
+        "type": "STRING",
+        "defaultValue": "Margherita pizza"
+      },
+      {
+        "name": "RESTAURANT",
+        "type": "ENTITY",
+        "defaultValue": "Domino's"
+      },
+      {
+        "name": "QUANTITY",
+        "type": "NUMBER",
+        "defaultValue": "1"
+      },
+      {
+        "name": "ADDRESS",
+        "type": "ADDRESS"
+      }
+    ],
+    "steps": [
+      {
+        "kind": "SELECT_ADDRESS",
+        "target": {
+          "role": "ADDRESS_SELECTOR",
+          "slotRef": "ADDRESS"
+        },
+        "optional": true,
+        "mayNeedScroll": false,
+        "evidence": "Added automatically: runs only when you name an address"
+      },
+      {
+        "kind": "STOP_AT_BOUNDARY",
+        "optional": false,
+        "mayNeedScroll": false,
+        "evidence": "You stopped teaching."
+      }
+    ],
+    "safetyBoundary": "PAYMENT",
+    "recoveryStrategies": [
+      "DISMISS_SAFE_POPUP",
+      "SCROLL_TO_FIND",
+      "SUBMIT_SEARCH",
+      "DETECT_ALREADY_DONE",
+      "ASK_USER"
+    ],
+    "discarded": [
+      {
+        "label": "Decline",
+        "packageName": "com.google.android.dialer",
+        "reason": "Phone call UI: outside the task, no contribution to it"
+      }
+    ],
+    "createdAt": 1790779136343,
+    "updatedAt": 1790779271753,
+    "successCount": 10,
+    "failureCount": 1,
+    "handoffCount": 0,
+    "demonstrations": 1,
+    "status": "ACTIVE"
+  }
+]

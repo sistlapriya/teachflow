@@ -1,0 +1,46 @@
+14:38:11 Setting up: enable TeachFlow's accessibility service
+14:38:23   service connected: True
+14:38:25 E1 TEACH: 'Order a Margherita pizza from Domino's on PracticeFood'
+14:38:41   diag after typing: {'actionsSeen': 0, 'lastActions': [], 'snapshot': 'com.teachflow.practicefood · 16 nodes', 'observedCount': 0, 'serviceInstance': True, 'service': True, 'state': 'LEARNING', 'headline': 'Teaching · PracticeFood', 'detail': "Do the task once. Stop at checkout, or I'll stop automatically at payment or sign-in.", 'boundary': None, 'human': False, 'runs': 0, 'skills': 0, 'pending': False}
+14:38:48   phone call: call declined by tapping Decline on the incoming-call screen
+14:38:54   ! could not find "Domino's Pizza" to tap
+14:38:55   ! could not find ADD near 'Margherita Pizza'
+14:38:55   ! could not find 'View Cart.*' to tap
+14:38:56   diag before stop: {'actionsSeen': 1, 'lastActions': ['CLICK com.google.android.dialer "Decline"'], 'snapshot': 'com.teachflow.practicefood · 16 nodes', 'observedCount': 1, 'serviceInstance': True, 'service': True, 'state': 'LEARNING', 'headline': 'Teaching · PracticeFood', 'detail': "Do the task once. Stop at checkout, or I'll stop automatically at payment or sign-in.", 'boundary': None, 'human': False, 'runs': 0, 'skills': 0, 'pending': False}
+14:38:58   after stop: state=COMPLETED pending=True headline='Workflow synthesized'
+14:39:07 E2 Exact replay: "Order a Margherita pizza from Domino's on PracticeFood"
+14:39:51   matched Order a {ITEM} from {RESTAURANT} on PracticeFood (1.00)
+14:40:00   → PASS · SUCCESS — STOPPED AT PAYMENT · reason PAYMENT_BOUNDARY · steps 0/0 · recovered 0 · interventions 0
+14:40:00 E3 Paraphrase: 'Get me a margherita from dominos'
+14:40:01   matched Order a {ITEM} from {RESTAURANT} on PracticeFood (0.78)
+14:40:09   → PASS · SUCCESS — STOPPED AT PAYMENT · reason PAYMENT_BOUNDARY · steps 0/0 · recovered 0 · interventions 0
+14:40:09 E4 Slot: different item: "Order a Farmhouse pizza from Domino's"
+14:40:09   matched Order a {ITEM} from {RESTAURANT} on PracticeFood (0.73)
+14:40:17   → FAIL · SUCCESS — STOPPED AT PAYMENT · reason PAYMENT_BOUNDARY · steps 0/0 · recovered 0 · interventions 0
+14:40:17 E5 Slot: quantity: "Order two Margherita pizzas from Domino's"
+14:40:17   matched Order a {ITEM} from {RESTAURANT} on PracticeFood (0.85)
+14:40:24   → FAIL · SUCCESS — STOPPED AT PAYMENT · reason PAYMENT_BOUNDARY · steps 0/0 · recovered 0 · interventions 0
+14:40:24 E6 Slot: address: "Order a Margherita from Domino's, deliver to work"
+14:40:24   matched Order a {ITEM} from {RESTAURANT} on PracticeFood (0.82)
+14:40:32   → FAIL · ERROR · reason ERROR · steps 0/1 · recovered 0 · interventions 0
+14:40:32 E7 Screen change: promo popup: "Order a Margherita pizza from Domino's on PracticeFood"
+14:40:32   matched Order a {ITEM} from {RESTAURANT} on PracticeFood (1.00)
+14:40:39   → FAIL · SUCCESS — STOPPED AT PAYMENT · reason PAYMENT_BOUNDARY · steps 0/0 · recovered 0 · interventions 0
+14:40:39 E8 Screen change: item already in cart: "Order a Margherita pizza from Domino's on PracticeFood"
+14:40:40   matched Order a {ITEM} from {RESTAURANT} on PracticeFood (1.00)
+14:40:47   → PASS · SUCCESS — STOPPED AT PAYMENT · reason PAYMENT_BOUNDARY · steps 0/0 · recovered 0 · interventions 0
+14:40:47 E9 Genuinely stuck: item not on the menu: "Order Pepperoni Supreme from Domino's"
+14:40:47   matched Order a {ITEM} from {RESTAURANT} on PracticeFood (0.65)
+14:40:54   → FAIL · SUCCESS — STOPPED AT PAYMENT · reason PAYMENT_BOUNDARY · steps 0/0 · recovered 0 · interventions 0
+14:40:54 E10 Authentication boundary: "Order a Margherita pizza from Domino's on PracticeFood"
+14:40:55   matched Order a {ITEM} from {RESTAURANT} on PracticeFood (1.00)
+14:41:02   → FAIL · SUCCESS — STOPPED AT PAYMENT · reason PAYMENT_BOUNDARY · steps 0/0 · recovered 0 · interventions 0
+14:41:02 E11 Unknown intent: 'Book a cab to the airport'
+14:41:02   no skill matched (unknown)
+14:41:03   → PASS · SAFE NO-OP — UNKNOWN INTENT · reason UNKNOWN_INTENT · steps 0/0 · recovered 0 · interventions 0
+14:41:03 E12 Ambiguity: 'pizza': "Order pizza from Domino's"
+14:41:03   matched Order a {ITEM} from {RESTAURANT} on PracticeFood (0.78)
+14:41:10   → FAIL · SUCCESS — STOPPED AT PAYMENT · reason PAYMENT_BOUNDARY · steps 0/0 · recovered 0 · interventions 0
+14:41:10 E13 Missing restaurant, answered by typing: 'Order a Margherita'
+14:41:11   matched Order a {ITEM} from {RESTAURANT} on PracticeFood (0.57)
+14:41:18   → FAIL · SUCCESS — STOPPED AT PAYMENT · reason PAYMENT_BOUNDARY · steps 0/0 · recovered 0 · interventions 0

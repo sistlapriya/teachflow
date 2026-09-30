@@ -1,0 +1,153 @@
+--------- beginning of main
+09-30 14:38:26.298  3281  3281 I TeachFlow: [TEACH] Started for PracticeFood; slots={RESTAURANT=Domino's, ITEM=Margherita pizza}
+09-30 14:38:29.115  4135  4135 I PracticeFood: PF_START popup=false login=false empty=false precart=[]
+09-30 14:38:56.344  3281  3281 I TeachFlow: [LEARN] Observed 1, relevant 0, ignored 1; steps 2
+09-30 14:39:07.343  4581  4581 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:08.452  5552  5552 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:08.848  5584  5584 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:09.056  5605  5605 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:09.285  5627  5627 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:09.485  5644  5644 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:09.815  5661  5661 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:10.812  5712  5712 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:11.054  5730  5730 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:11.222  5747  5747 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:11.556  5772  5772 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:11.795  5793  5793 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:12.280  5815  5815 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:12.467  5832  5832 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:12.576  5850  5850 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:12.648  5868  5868 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:12.701  5885  5885 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:12.768  5902  5902 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:18.103  6056  6056 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:18.167  6074  6074 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:20.031  6094  6094 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:20.192  6116  6116 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:20.327  6133  6133 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:20.568  6152  6152 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:20.821  6169  6169 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:27.874  6351  6351 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:27.951  6369  6369 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:28.011  6388  6388 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:32.830  6719  6719 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:33.075  6741  6741 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:33.195  6769  6769 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:50.778  7009  7009 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:51.064  3281  3281 I TeachFlow: [VOICE RECEIVED] "Order a Margherita pizza from Domino's on PracticeFood"
+09-30 14:39:51.069  3281  3281 I TeachFlow: [INTENT MATCHED] ORDER
+09-30 14:39:51.069  3281  3281 I TeachFlow: [SLOTS EXTRACTED] QUANTITY=1 (taught default), RESTAURANT=Domino's, ITEM=Margherita pizza
+09-30 14:39:51.069  3281  3281 I TeachFlow: [SKILL SELECTED] Order a {ITEM} from {RESTAURANT} on PracticeFood · PracticeFood
+09-30 14:39:53.220  7053  7053 I PracticeFood: PF_START popup=false login=false empty=false precart=[]
+09-30 14:39:54.583  3281  3281 I TeachFlow: [NEXT ACTION] Skipped "SELECT ADDRESS {ADDRESS}" (not requested this time)
+09-30 14:39:54.599  3281  3281 I TeachFlow: [PAYMENT DETECTED] Reached the learned stop point: the next step is payment.
+09-30 14:39:54.599  3281  3281 I TeachFlow: [SAFETY STOP] Payment boundary reached. Automation stopped. No payment was made by TeachFlow.
+09-30 14:39:54.599  3281  3281 I TeachFlow: [YOUR TURN] Complete this step yourself.
+09-30 14:39:54.599  3281  3281 I TeachFlow: [RUN COMPLETE] Reason: PAYMENT_BOUNDARY · Reached the learned stop point: the next step is payment.
+09-30 14:39:55.848  7080  7080 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:57.208  7104  7104 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:58.033  7164  7164 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:58.138  7180  7180 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:39:58.242  7199  7199 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:40:01.174  7239  7239 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+09-30 14:40:01.248  3281  3281 I TeachFlow: [VOICE RECEIVED] "Get me a margherita from dominos"
+09-30 14:40:01.257  3281  3281 I TeachFlow: [INTENT MATCHED] ORDER
+09-30 14:40:01.257  3281  3281 I TeachFlow: [SLOTS EXTRACTED] QUANTITY=1 (taught default), RESTAURANT=dominos, ITEM=margherita
+09-30 14:40:01.257  3281  3281 I TeachFlow: [SKILL SELECTED] Order a {ITEM} from {RESTAURANT} on PracticeFood · PracticeFood
+09-30 14:40:02.066  3281  3281 I TeachFlow: [NEXT ACTION] Skipped "SELECT ADDRESS {ADDRESS}" (not requested this time)
+09-30 14:40:02.080  3281  3281 I TeachFlow: [PAYMENT DETECTED] Reached the learned stop point: the next step is payment.
+09-30 14:40:02.080  3281  3281 I TeachFlow: [SAFETY STOP] Payment boundary reached. Automation stopped. No payment was made by TeachFlow.
+09-30 14:40:02.080  3281  3281 I TeachFlow: [YOUR TURN] Complete this step yourself.
+09-30 14:40:02.080  3281  3281 I TeachFlow: [RUN COMPLETE] Reason: PAYMENT_BOUNDARY · Reached the learned stop point: the next step is payment.
+09-30 14:40:03.126  7278  7278 I PracticeFood: PF_START popup=false login=false empty=false precart=[]
+09-30 14:40:09.181  3281  3281 I TeachFlow: [VOICE RECEIVED] "Order a Farmhouse pizza from Domino's"
+09-30 14:40:09.186  3281  3281 I TeachFlow: [INTENT MATCHED] ORDER
+09-30 14:40:09.186  3281  3281 I TeachFlow: [SLOTS EXTRACTED] QUANTITY=1 (taught default), RESTAURANT=Domino's, ITEM=Farmhouse pizza
+09-30 14:40:09.186  3281  3281 I TeachFlow: [SKILL SELECTED] Order a {ITEM} from {RESTAURANT} on PracticeFood · PracticeFood
+09-30 14:40:09.997  3281  3281 I TeachFlow: [NEXT ACTION] Skipped "SELECT ADDRESS {ADDRESS}" (not requested this time)
+09-30 14:40:10.006  3281  3281 I TeachFlow: [PAYMENT DETECTED] Reached the learned stop point: the next step is payment.
+09-30 14:40:10.006  3281  3281 I TeachFlow: [SAFETY STOP] Payment boundary reached. Automation stopped. No payment was made by TeachFlow.
+09-30 14:40:10.006  3281  3281 I TeachFlow: [YOUR TURN] Complete this step yourself.
+09-30 14:40:10.006  3281  3281 I TeachFlow: [RUN COMPLETE] Reason: PAYMENT_BOUNDARY · Reached the learned stop point: the next step is payment.
+09-30 14:40:11.665  7377  7377 I PracticeFood: PF_START popup=false login=false empty=false precart=[]
+09-30 14:40:17.330  3281  3281 I TeachFlow: [VOICE RECEIVED] "Order two Margherita pizzas from Domino's"
+09-30 14:40:17.335  3281  3281 I TeachFlow: [INTENT MATCHED] ORDER
+09-30 14:40:17.335  3281  3281 I TeachFlow: [SLOTS EXTRACTED] QUANTITY=2, RESTAURANT=Domino's, ITEM=Margherita pizzas
+09-30 14:40:17.335  3281  3281 I TeachFlow: [SKILL SELECTED] Order a {ITEM} from {RESTAURANT} on PracticeFood · PracticeFood
+09-30 14:40:18.142  3281  3281 I TeachFlow: [NEXT ACTION] Skipped "SELECT ADDRESS {ADDRESS}" (not requested this time)
+09-30 14:40:18.152  3281  3281 I TeachFlow: [PAYMENT DETECTED] Reached the learned stop point: the next step is payment.
+09-30 14:40:18.153  3281  3281 I TeachFlow: [SAFETY STOP] Payment boundary reached. Automation stopped. No payment was made by TeachFlow.
+09-30 14:40:18.153  3281  3281 I TeachFlow: [YOUR TURN] Complete this step yourself.
+09-30 14:40:18.153  3281  3281 I TeachFlow: [RUN COMPLETE] Reason: PAYMENT_BOUNDARY · Reached the learned stop point: the next step is payment.
+09-30 14:40:19.100  7466  7466 I PracticeFood: PF_START popup=false login=false empty=false precart=[]
+09-30 14:40:24.732  3281  3281 I TeachFlow: [VOICE RECEIVED] "Order a Margherita from Domino's, deliver to work"
+09-30 14:40:24.738  3281  3281 I TeachFlow: [INTENT MATCHED] ORDER
+09-30 14:40:24.738  3281  3281 I TeachFlow: [SLOTS EXTRACTED] QUANTITY=1 (taught default), ADDRESS=Work, RESTAURANT=Domino's, ITEM=Margherita
+09-30 14:40:24.738  3281  3281 I TeachFlow: [SKILL SELECTED] Order a {ITEM} from {RESTAURANT} on PracticeFood · PracticeFood
+09-30 14:40:25.548  3281  3281 I TeachFlow: [NEXT ACTION] SELECT ADDRESS {ADDRESS}
+09-30 14:40:25.560  3281  3281 I TeachFlow: [UI TREE CAPTURED] 16 nodes · com.teachflow.practicefood
+09-30 14:40:25.561  3281  3281 I TeachFlow: [RECOVERY REQUIRED] I can't find an address selector on this screen.
+09-30 14:40:25.576  3281  3281 I TeachFlow: [STATE CLASSIFIED] MISSING_TARGET · App is open and has content, but the target isn't visible
+09-30 14:40:25.577  3281  3281 I TeachFlow: [RECOVERY] Re-inspecting the UI after a short wait
+09-30 14:40:26.593  3281  3281 I TeachFlow: [RUN STOPPED] Reason: ERROR · I couldn't read the screen (accessibility tree unavailable).
+09-30 14:40:26.613  7538  7538 I PracticeFood: PF_START popup=false login=false empty=false precart=[]
+09-30 14:40:32.386  3281  3281 I TeachFlow: [VOICE RECEIVED] "Order a Margherita pizza from Domino's on PracticeFood"
+09-30 14:40:32.394  3281  3281 I TeachFlow: [INTENT MATCHED] ORDER
+09-30 14:40:32.394  3281  3281 I TeachFlow: [SLOTS EXTRACTED] QUANTITY=1 (taught default), RESTAURANT=Domino's, ITEM=Margherita pizza
+09-30 14:40:32.394  3281  3281 I TeachFlow: [SKILL SELECTED] Order a {ITEM} from {RESTAURANT} on PracticeFood · PracticeFood
+09-30 14:40:33.200  3281  3281 I TeachFlow: [NEXT ACTION] Skipped "SELECT ADDRESS {ADDRESS}" (not requested this time)
+09-30 14:40:33.210  3281  3281 I TeachFlow: [PAYMENT DETECTED] Reached the learned stop point: the next step is payment.
+09-30 14:40:33.210  3281  3281 I TeachFlow: [SAFETY STOP] Payment boundary reached. Automation stopped. No payment was made by TeachFlow.
+09-30 14:40:33.210  3281  3281 I TeachFlow: [YOUR TURN] Complete this step yourself.
+09-30 14:40:33.210  3281  3281 I TeachFlow: [RUN COMPLETE] Reason: PAYMENT_BOUNDARY · Reached the learned stop point: the next step is payment.
+09-30 14:40:33.980  7616  7616 I PracticeFood: PF_START popup=true login=false empty=false precart=[]
+09-30 14:40:39.886  3281  3281 I TeachFlow: [VOICE RECEIVED] "Order a Margherita pizza from Domino's on PracticeFood"
+09-30 14:40:39.890  3281  3281 I TeachFlow: [INTENT MATCHED] ORDER
+09-30 14:40:39.890  3281  3281 I TeachFlow: [SLOTS EXTRACTED] QUANTITY=1 (taught default), RESTAURANT=Domino's, ITEM=Margherita pizza
+09-30 14:40:39.890  3281  3281 I TeachFlow: [SKILL SELECTED] Order a {ITEM} from {RESTAURANT} on PracticeFood · PracticeFood
+09-30 14:40:40.699  3281  3281 I TeachFlow: [NEXT ACTION] Skipped "SELECT ADDRESS {ADDRESS}" (not requested this time)
+09-30 14:40:40.711  3281  3281 I TeachFlow: [PAYMENT DETECTED] Reached the learned stop point: the next step is payment.
+09-30 14:40:40.711  3281  3281 I TeachFlow: [SAFETY STOP] Payment boundary reached. Automation stopped. No payment was made by TeachFlow.
+09-30 14:40:40.711  3281  3281 I TeachFlow: [YOUR TURN] Complete this step yourself.
+09-30 14:40:40.711  3281  3281 I TeachFlow: [RUN COMPLETE] Reason: PAYMENT_BOUNDARY · Reached the learned stop point: the next step is payment.
+09-30 14:40:41.651  7717  7717 I PracticeFood: PF_START popup=false login=false empty=false precart=[Margherita]
+09-30 14:40:47.543  3281  3281 I TeachFlow: [VOICE RECEIVED] "Order Pepperoni Supreme from Domino's"
+09-30 14:40:47.547  3281  3281 I TeachFlow: [INTENT MATCHED] ORDER
+09-30 14:40:47.547  3281  3281 I TeachFlow: [SLOTS EXTRACTED] QUANTITY=1 (taught default), RESTAURANT=Domino's, ITEM=Pepperoni Supreme
+09-30 14:40:47.547  3281  3281 I TeachFlow: [SKILL SELECTED] Order a {ITEM} from {RESTAURANT} on PracticeFood · PracticeFood
+09-30 14:40:48.355  3281  3281 I TeachFlow: [NEXT ACTION] Skipped "SELECT ADDRESS {ADDRESS}" (not requested this time)
+09-30 14:40:48.361  3281  3281 I TeachFlow: [PAYMENT DETECTED] Reached the learned stop point: the next step is payment.
+09-30 14:40:48.361  3281  3281 I TeachFlow: [SAFETY STOP] Payment boundary reached. Automation stopped. No payment was made by TeachFlow.
+09-30 14:40:48.361  3281  3281 I TeachFlow: [YOUR TURN] Complete this step yourself.
+09-30 14:40:48.361  3281  3281 I TeachFlow: [RUN COMPLETE] Reason: PAYMENT_BOUNDARY · Reached the learned stop point: the next step is payment.
+09-30 14:40:49.232  7808  7808 I PracticeFood: PF_START popup=false login=false empty=false precart=[]
+09-30 14:40:54.899  3281  3281 I TeachFlow: [VOICE RECEIVED] "Order a Margherita pizza from Domino's on PracticeFood"
+09-30 14:40:54.904  3281  3281 I TeachFlow: [INTENT MATCHED] ORDER
+09-30 14:40:54.904  3281  3281 I TeachFlow: [SLOTS EXTRACTED] QUANTITY=1 (taught default), RESTAURANT=Domino's, ITEM=Margherita pizza
+09-30 14:40:54.904  3281  3281 I TeachFlow: [SKILL SELECTED] Order a {ITEM} from {RESTAURANT} on PracticeFood · PracticeFood
+09-30 14:40:55.712  3281  3281 I TeachFlow: [NEXT ACTION] Skipped "SELECT ADDRESS {ADDRESS}" (not requested this time)
+09-30 14:40:55.719  3281  3281 I TeachFlow: [PAYMENT DETECTED] Reached the learned stop point: the next step is payment.
+09-30 14:40:55.720  3281  3281 I TeachFlow: [SAFETY STOP] Payment boundary reached. Automation stopped. No payment was made by TeachFlow.
+09-30 14:40:55.720  3281  3281 I TeachFlow: [YOUR TURN] Complete this step yourself.
+09-30 14:40:55.720  3281  3281 I TeachFlow: [RUN COMPLETE] Reason: PAYMENT_BOUNDARY · Reached the learned stop point: the next step is payment.
+09-30 14:40:56.461  7878  7878 I PracticeFood: PF_START popup=false login=true empty=false precart=[]
+09-30 14:41:03.554  3281  3281 I TeachFlow: [VOICE RECEIVED] "Order pizza from Domino's"
+09-30 14:41:03.558  3281  3281 I TeachFlow: [INTENT MATCHED] ORDER
+09-30 14:41:03.558  3281  3281 I TeachFlow: [SLOTS EXTRACTED] QUANTITY=1 (taught default), RESTAURANT=Domino's, ITEM=pizza
+09-30 14:41:03.558  3281  3281 I TeachFlow: [SKILL SELECTED] Order a {ITEM} from {RESTAURANT} on PracticeFood · PracticeFood
+09-30 14:41:04.366  3281  3281 I TeachFlow: [NEXT ACTION] Skipped "SELECT ADDRESS {ADDRESS}" (not requested this time)
+09-30 14:41:04.372  3281  3281 I TeachFlow: [PAYMENT DETECTED] Reached the learned stop point: the next step is payment.
+09-30 14:41:04.373  3281  3281 I TeachFlow: [SAFETY STOP] Payment boundary reached. Automation stopped. No payment was made by TeachFlow.
+09-30 14:41:04.373  3281  3281 I TeachFlow: [YOUR TURN] Complete this step yourself.
+09-30 14:41:04.373  3281  3281 I TeachFlow: [RUN COMPLETE] Reason: PAYMENT_BOUNDARY · Reached the learned stop point: the next step is payment.
+09-30 14:41:05.236  7975  7975 I PracticeFood: PF_START popup=false login=false empty=false precart=[]
+09-30 14:41:10.932  3281  3281 I TeachFlow: [VOICE RECEIVED] "Order a Margherita"
+09-30 14:41:10.936  3281  3281 I TeachFlow: [INTENT MATCHED] ORDER
+09-30 14:41:10.936  3281  3281 I TeachFlow: [SLOTS EXTRACTED] QUANTITY=1 (taught default), ITEM=Margherita
+09-30 14:41:10.936  3281  3281 I TeachFlow: [SKILL SELECTED] Order a {ITEM} from {RESTAURANT} on PracticeFood · PracticeFood
+09-30 14:41:11.744  3281  3281 I TeachFlow: [NEXT ACTION] Skipped "SELECT ADDRESS {ADDRESS}" (not requested this time)
+09-30 14:41:11.749  3281  3281 I TeachFlow: [PAYMENT DETECTED] Reached the learned stop point: the next step is payment.
+09-30 14:41:11.749  3281  3281 I TeachFlow: [SAFETY STOP] Payment boundary reached. Automation stopped. No payment was made by TeachFlow.
+09-30 14:41:11.749  3281  3281 I TeachFlow: [YOUR TURN] Complete this step yourself.
+09-30 14:41:11.749  3281  3281 I TeachFlow: [RUN COMPLETE] Reason: PAYMENT_BOUNDARY · Reached the learned stop point: the next step is payment.
+09-30 14:41:12.390  8047  8047 I PracticeFood: PF_START popup=false login=false empty=false precart=[]

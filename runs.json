@@ -1,0 +1,1013 @@
+[
+  {
+    "id": "run_1790779271749",
+    "skillId": "skill_1790779136343",
+    "skillName": "Order a {ITEM} from {RESTAURANT} on PracticeFood",
+    "command": "Order a Margherita",
+    "parameters": {
+      "QUANTITY": "1",
+      "ITEM": "Margherita"
+    },
+    "startedAt": 1790779270932,
+    "completedAt": 1790779271749,
+    "status": "SUCCESS",
+    "terminalReason": "PAYMENT_BOUNDARY",
+    "terminalMessage": "Reached the learned stop point: the next step is payment.",
+    "finalStatus": "SUCCESS \u2014 STOPPED AT PAYMENT",
+    "stoppedAtStep": 2,
+    "stoppedAtStepTitle": "STOP_AT_PAYMENT",
+    "stepsTotal": 0,
+    "stepsSucceeded": 0,
+    "stepsRecovered": 0,
+    "recoveryAttempts": 0,
+    "userInterventions": 0,
+    "actionsAttempted": 0,
+    "actionsSucceeded": 0,
+    "safetyBoundaryTriggered": "PAYMENT",
+    "trace": [
+      {
+        "t": 1790779270932,
+        "phase": "VOICE RECEIVED",
+        "message": "\"Order a Margherita\""
+      },
+      {
+        "t": 1790779270936,
+        "phase": "INTENT MATCHED",
+        "message": "ORDER",
+        "result": "score 0.58",
+        "reason": "no app named (neutral); same action type: ORDER; ITEM similar to taught value"
+      },
+      {
+        "t": 1790779270936,
+        "phase": "SLOTS EXTRACTED",
+        "message": "QUANTITY=1 (taught default), ITEM=Margherita"
+      },
+      {
+        "t": 1790779270936,
+        "phase": "SKILL SELECTED",
+        "message": "Order a {ITEM} from {RESTAURANT} on PracticeFood \u00b7 PracticeFood"
+      },
+      {
+        "t": 1790779271744,
+        "phase": "NEXT ACTION",
+        "message": "Skipped \"SELECT ADDRESS {ADDRESS}\" (not requested this time)",
+        "step": 1,
+        "action": "SELECT_ADDRESS",
+        "result": "SKIPPED"
+      },
+      {
+        "t": 1790779271749,
+        "phase": "PAYMENT DETECTED",
+        "message": "Reached the learned stop point: the next step is payment.",
+        "step": 2,
+        "state": "PAYMENT"
+      },
+      {
+        "t": 1790779271749,
+        "phase": "SAFETY STOP",
+        "message": "Payment boundary reached. Automation stopped. No payment was made by TeachFlow.",
+        "step": 2,
+        "result": "STOPPED"
+      },
+      {
+        "t": 1790779271749,
+        "phase": "YOUR TURN",
+        "message": "Complete this step yourself.",
+        "step": 2
+      },
+      {
+        "t": 1790779271749,
+        "phase": "RUN COMPLETE",
+        "message": "Reason: PAYMENT_BOUNDARY \u00b7 Reached the learned stop point: the next step is payment.",
+        "step": 2,
+        "result": "SUCCESS",
+        "reason": "Reached the learned stop point: the next step is payment."
+      }
+    ]
+  },
+  {
+    "id": "run_1790779264373",
+    "skillId": "skill_1790779136343",
+    "skillName": "Order a {ITEM} from {RESTAURANT} on PracticeFood",
+    "command": "Order pizza from Domino's",
+    "parameters": {
+      "QUANTITY": "1",
+      "RESTAURANT": "Domino's",
+      "ITEM": "pizza"
+    },
+    "startedAt": 1790779263554,
+    "completedAt": 1790779264373,
+    "status": "SUCCESS",
+    "terminalReason": "PAYMENT_BOUNDARY",
+    "terminalMessage": "Reached the learned stop point: the next step is payment.",
+    "finalStatus": "SUCCESS \u2014 STOPPED AT PAYMENT",
+    "stoppedAtStep": 2,
+    "stoppedAtStepTitle": "STOP_AT_PAYMENT",
+    "stepsTotal": 0,
+    "stepsSucceeded": 0,
+    "stepsRecovered": 0,
+    "recoveryAttempts": 0,
+    "userInterventions": 0,
+    "actionsAttempted": 0,
+    "actionsSucceeded": 0,
+    "safetyBoundaryTriggered": "PAYMENT",
+    "trace": [
+      {
+        "t": 1790779263554,
+        "phase": "VOICE RECEIVED",
+        "message": "\"Order pizza from Domino's\""
+      },
+      {
+        "t": 1790779263558,
+        "phase": "INTENT MATCHED",
+        "message": "ORDER",
+        "result": "score 0.78",
+        "reason": "no app named (neutral); same action type: ORDER; same RESTAURANT as taught (Domino's); ITEM similar to taught value"
+      },
+      {
+        "t": 1790779263558,
+        "phase": "SLOTS EXTRACTED",
+        "message": "QUANTITY=1 (taught default), RESTAURANT=Domino's, ITEM=pizza"
+      },
+      {
+        "t": 1790779263558,
+        "phase": "SKILL SELECTED",
+        "message": "Order a {ITEM} from {RESTAURANT} on PracticeFood \u00b7 PracticeFood"
+      },
+      {
+        "t": 1790779264366,
+        "phase": "NEXT ACTION",
+        "message": "Skipped \"SELECT ADDRESS {ADDRESS}\" (not requested this time)",
+        "step": 1,
+        "action": "SELECT_ADDRESS",
+        "result": "SKIPPED"
+      },
+      {
+        "t": 1790779264372,
+        "phase": "PAYMENT DETECTED",
+        "message": "Reached the learned stop point: the next step is payment.",
+        "step": 2,
+        "state": "PAYMENT"
+      },
+      {
+        "t": 1790779264373,
+        "phase": "SAFETY STOP",
+        "message": "Payment boundary reached. Automation stopped. No payment was made by TeachFlow.",
+        "step": 2,
+        "result": "STOPPED"
+      },
+      {
+        "t": 1790779264373,
+        "phase": "YOUR TURN",
+        "message": "Complete this step yourself.",
+        "step": 2
+      },
+      {
+        "t": 1790779264373,
+        "phase": "RUN COMPLETE",
+        "message": "Reason: PAYMENT_BOUNDARY \u00b7 Reached the learned stop point: the next step is payment.",
+        "step": 2,
+        "result": "SUCCESS",
+        "reason": "Reached the learned stop point: the next step is payment."
+      }
+    ]
+  },
+  {
+    "id": "run_1790779262345",
+    "command": "Book a cab to the airport",
+    "parameters": {},
+    "startedAt": 1790779262344,
+    "completedAt": 1790779262345,
+    "status": "NO_OP",
+    "terminalReason": "UNKNOWN_INTENT",
+    "terminalMessage": "No learned workflow matches this request. Nothing was executed.",
+    "finalStatus": "SAFE NO-OP \u2014 UNKNOWN INTENT",
+    "stepsTotal": 0,
+    "stepsSucceeded": 0,
+    "stepsRecovered": 0,
+    "recoveryAttempts": 0,
+    "userInterventions": 0,
+    "actionsAttempted": 0,
+    "actionsSucceeded": 0,
+    "trace": [
+      {
+        "t": 1790779262344,
+        "phase": "VOICE RECEIVED",
+        "message": "\"Book a cab to the airport\""
+      },
+      {
+        "t": 1790779262344,
+        "phase": "INTENT PARSED",
+        "message": "BOOK \u00b7 slots {ITEM=cab}"
+      },
+      {
+        "t": 1790779262344,
+        "phase": "SKILL SEARCH",
+        "message": "No skill above the match threshold (best 0.20)"
+      },
+      {
+        "t": 1790779262345,
+        "phase": "SAFE NO-OP",
+        "message": "No learned workflow matches this request. Nothing was executed.",
+        "result": "NO ACTION TAKEN",
+        "reason": "UNKNOWN_INTENT"
+      }
+    ]
+  },
+  {
+    "id": "run_1790779255720",
+    "skillId": "skill_1790779136343",
+    "skillName": "Order a {ITEM} from {RESTAURANT} on PracticeFood",
+    "command": "Order a Margherita pizza from Domino's on PracticeFood",
+    "parameters": {
+      "QUANTITY": "1",
+      "RESTAURANT": "Domino's",
+      "ITEM": "Margherita pizza"
+    },
+    "startedAt": 1790779254899,
+    "completedAt": 1790779255720,
+    "status": "SUCCESS",
+    "terminalReason": "PAYMENT_BOUNDARY",
+    "terminalMessage": "Reached the learned stop point: the next step is payment.",
+    "finalStatus": "SUCCESS \u2014 STOPPED AT PAYMENT",
+    "stoppedAtStep": 2,
+    "stoppedAtStepTitle": "STOP_AT_PAYMENT",
+    "stepsTotal": 0,
+    "stepsSucceeded": 0,
+    "stepsRecovered": 0,
+    "recoveryAttempts": 0,
+    "userInterventions": 0,
+    "actionsAttempted": 0,
+    "actionsSucceeded": 0,
+    "safetyBoundaryTriggered": "PAYMENT",
+    "trace": [
+      {
+        "t": 1790779254899,
+        "phase": "VOICE RECEIVED",
+        "message": "\"Order a Margherita pizza from Domino's on PracticeFood\""
+      },
+      {
+        "t": 1790779254904,
+        "phase": "INTENT MATCHED",
+        "message": "ORDER",
+        "result": "score 1.00",
+        "reason": "same app: PracticeFood; same action type: ORDER; same RESTAURANT as taught (Domino's); ITEM similar to taught value"
+      },
+      {
+        "t": 1790779254904,
+        "phase": "SLOTS EXTRACTED",
+        "message": "QUANTITY=1 (taught default), RESTAURANT=Domino's, ITEM=Margherita pizza"
+      },
+      {
+        "t": 1790779254904,
+        "phase": "SKILL SELECTED",
+        "message": "Order a {ITEM} from {RESTAURANT} on PracticeFood \u00b7 PracticeFood"
+      },
+      {
+        "t": 1790779255712,
+        "phase": "NEXT ACTION",
+        "message": "Skipped \"SELECT ADDRESS {ADDRESS}\" (not requested this time)",
+        "step": 1,
+        "action": "SELECT_ADDRESS",
+        "result": "SKIPPED"
+      },
+      {
+        "t": 1790779255719,
+        "phase": "PAYMENT DETECTED",
+        "message": "Reached the learned stop point: the next step is payment.",
+        "step": 2,
+        "state": "PAYMENT"
+      },
+      {
+        "t": 1790779255720,
+        "phase": "SAFETY STOP",
+        "message": "Payment boundary reached. Automation stopped. No payment was made by TeachFlow.",
+        "step": 2,
+        "result": "STOPPED"
+      },
+      {
+        "t": 1790779255720,
+        "phase": "YOUR TURN",
+        "message": "Complete this step yourself.",
+        "step": 2
+      },
+      {
+        "t": 1790779255720,
+        "phase": "RUN COMPLETE",
+        "message": "Reason: PAYMENT_BOUNDARY \u00b7 Reached the learned stop point: the next step is payment.",
+        "step": 2,
+        "result": "SUCCESS",
+        "reason": "Reached the learned stop point: the next step is payment."
+      }
+    ]
+  },
+  {
+    "id": "run_1790779248361",
+    "skillId": "skill_1790779136343",
+    "skillName": "Order a {ITEM} from {RESTAURANT} on PracticeFood",
+    "command": "Order Pepperoni Supreme from Domino's",
+    "parameters": {
+      "QUANTITY": "1",
+      "RESTAURANT": "Domino's",
+      "ITEM": "Pepperoni Supreme"
+    },
+    "startedAt": 1790779247543,
+    "completedAt": 1790779248361,
+    "status": "SUCCESS",
+    "terminalReason": "PAYMENT_BOUNDARY",
+    "terminalMessage": "Reached the learned stop point: the next step is payment.",
+    "finalStatus": "SUCCESS \u2014 STOPPED AT PAYMENT",
+    "stoppedAtStep": 2,
+    "stoppedAtStepTitle": "STOP_AT_PAYMENT",
+    "stepsTotal": 0,
+    "stepsSucceeded": 0,
+    "stepsRecovered": 0,
+    "recoveryAttempts": 0,
+    "userInterventions": 0,
+    "actionsAttempted": 0,
+    "actionsSucceeded": 0,
+    "safetyBoundaryTriggered": "PAYMENT",
+    "trace": [
+      {
+        "t": 1790779247543,
+        "phase": "VOICE RECEIVED",
+        "message": "\"Order Pepperoni Supreme from Domino's\""
+      },
+      {
+        "t": 1790779247547,
+        "phase": "INTENT MATCHED",
+        "message": "ORDER",
+        "result": "score 0.65",
+        "reason": "no app named (neutral); same action type: ORDER; same RESTAURANT as taught (Domino's); ITEM slot compatible (new value)"
+      },
+      {
+        "t": 1790779247547,
+        "phase": "SLOTS EXTRACTED",
+        "message": "QUANTITY=1 (taught default), RESTAURANT=Domino's, ITEM=Pepperoni Supreme"
+      },
+      {
+        "t": 1790779247547,
+        "phase": "SKILL SELECTED",
+        "message": "Order a {ITEM} from {RESTAURANT} on PracticeFood \u00b7 PracticeFood"
+      },
+      {
+        "t": 1790779248355,
+        "phase": "NEXT ACTION",
+        "message": "Skipped \"SELECT ADDRESS {ADDRESS}\" (not requested this time)",
+        "step": 1,
+        "action": "SELECT_ADDRESS",
+        "result": "SKIPPED"
+      },
+      {
+        "t": 1790779248361,
+        "phase": "PAYMENT DETECTED",
+        "message": "Reached the learned stop point: the next step is payment.",
+        "step": 2,
+        "state": "PAYMENT"
+      },
+      {
+        "t": 1790779248361,
+        "phase": "SAFETY STOP",
+        "message": "Payment boundary reached. Automation stopped. No payment was made by TeachFlow.",
+        "step": 2,
+        "result": "STOPPED"
+      },
+      {
+        "t": 1790779248361,
+        "phase": "YOUR TURN",
+        "message": "Complete this step yourself.",
+        "step": 2
+      },
+      {
+        "t": 1790779248361,
+        "phase": "RUN COMPLETE",
+        "message": "Reason: PAYMENT_BOUNDARY \u00b7 Reached the learned stop point: the next step is payment.",
+        "step": 2,
+        "result": "SUCCESS",
+        "reason": "Reached the learned stop point: the next step is payment."
+      }
+    ]
+  },
+  {
+    "id": "run_1790779240711",
+    "skillId": "skill_1790779136343",
+    "skillName": "Order a {ITEM} from {RESTAURANT} on PracticeFood",
+    "command": "Order a Margherita pizza from Domino's on PracticeFood",
+    "parameters": {
+      "QUANTITY": "1",
+      "RESTAURANT": "Domino's",
+      "ITEM": "Margherita pizza"
+    },
+    "startedAt": 1790779239886,
+    "completedAt": 1790779240711,
+    "status": "SUCCESS",
+    "terminalReason": "PAYMENT_BOUNDARY",
+    "terminalMessage": "Reached the learned stop point: the next step is payment.",
+    "finalStatus": "SUCCESS \u2014 STOPPED AT PAYMENT",
+    "stoppedAtStep": 2,
+    "stoppedAtStepTitle": "STOP_AT_PAYMENT",
+    "stepsTotal": 0,
+    "stepsSucceeded": 0,
+    "stepsRecovered": 0,
+    "recoveryAttempts": 0,
+    "userInterventions": 0,
+    "actionsAttempted": 0,
+    "actionsSucceeded": 0,
+    "safetyBoundaryTriggered": "PAYMENT",
+    "trace": [
+      {
+        "t": 1790779239886,
+        "phase": "VOICE RECEIVED",
+        "message": "\"Order a Margherita pizza from Domino's on PracticeFood\""
+      },
+      {
+        "t": 1790779239890,
+        "phase": "INTENT MATCHED",
+        "message": "ORDER",
+        "result": "score 1.00",
+        "reason": "same app: PracticeFood; same action type: ORDER; same RESTAURANT as taught (Domino's); ITEM similar to taught value"
+      },
+      {
+        "t": 1790779239890,
+        "phase": "SLOTS EXTRACTED",
+        "message": "QUANTITY=1 (taught default), RESTAURANT=Domino's, ITEM=Margherita pizza"
+      },
+      {
+        "t": 1790779239890,
+        "phase": "SKILL SELECTED",
+        "message": "Order a {ITEM} from {RESTAURANT} on PracticeFood \u00b7 PracticeFood"
+      },
+      {
+        "t": 1790779240699,
+        "phase": "NEXT ACTION",
+        "message": "Skipped \"SELECT ADDRESS {ADDRESS}\" (not requested this time)",
+        "step": 1,
+        "action": "SELECT_ADDRESS",
+        "result": "SKIPPED"
+      },
+      {
+        "t": 1790779240711,
+        "phase": "PAYMENT DETECTED",
+        "message": "Reached the learned stop point: the next step is payment.",
+        "step": 2,
+        "state": "PAYMENT"
+      },
+      {
+        "t": 1790779240711,
+        "phase": "SAFETY STOP",
+        "message": "Payment boundary reached. Automation stopped. No payment was made by TeachFlow.",
+        "step": 2,
+        "result": "STOPPED"
+      },
+      {
+        "t": 1790779240711,
+        "phase": "YOUR TURN",
+        "message": "Complete this step yourself.",
+        "step": 2
+      },
+      {
+        "t": 1790779240711,
+        "phase": "RUN COMPLETE",
+        "message": "Reason: PAYMENT_BOUNDARY \u00b7 Reached the learned stop point: the next step is payment.",
+        "step": 2,
+        "result": "SUCCESS",
+        "reason": "Reached the learned stop point: the next step is payment."
+      }
+    ]
+  },
+  {
+    "id": "run_1790779233210",
+    "skillId": "skill_1790779136343",
+    "skillName": "Order a {ITEM} from {RESTAURANT} on PracticeFood",
+    "command": "Order a Margherita pizza from Domino's on PracticeFood",
+    "parameters": {
+      "QUANTITY": "1",
+      "RESTAURANT": "Domino's",
+      "ITEM": "Margherita pizza"
+    },
+    "startedAt": 1790779232386,
+    "completedAt": 1790779233210,
+    "status": "SUCCESS",
+    "terminalReason": "PAYMENT_BOUNDARY",
+    "terminalMessage": "Reached the learned stop point: the next step is payment.",
+    "finalStatus": "SUCCESS \u2014 STOPPED AT PAYMENT",
+    "stoppedAtStep": 2,
+    "stoppedAtStepTitle": "STOP_AT_PAYMENT",
+    "stepsTotal": 0,
+    "stepsSucceeded": 0,
+    "stepsRecovered": 0,
+    "recoveryAttempts": 0,
+    "userInterventions": 0,
+    "actionsAttempted": 0,
+    "actionsSucceeded": 0,
+    "safetyBoundaryTriggered": "PAYMENT",
+    "trace": [
+      {
+        "t": 1790779232386,
+        "phase": "VOICE RECEIVED",
+        "message": "\"Order a Margherita pizza from Domino's on PracticeFood\""
+      },
+      {
+        "t": 1790779232394,
+        "phase": "INTENT MATCHED",
+        "message": "ORDER",
+        "result": "score 1.00",
+        "reason": "same app: PracticeFood; same action type: ORDER; same RESTAURANT as taught (Domino's); ITEM similar to taught value"
+      },
+      {
+        "t": 1790779232394,
+        "phase": "SLOTS EXTRACTED",
+        "message": "QUANTITY=1 (taught default), RESTAURANT=Domino's, ITEM=Margherita pizza"
+      },
+      {
+        "t": 1790779232394,
+        "phase": "SKILL SELECTED",
+        "message": "Order a {ITEM} from {RESTAURANT} on PracticeFood \u00b7 PracticeFood"
+      },
+      {
+        "t": 1790779233200,
+        "phase": "NEXT ACTION",
+        "message": "Skipped \"SELECT ADDRESS {ADDRESS}\" (not requested this time)",
+        "step": 1,
+        "action": "SELECT_ADDRESS",
+        "result": "SKIPPED"
+      },
+      {
+        "t": 1790779233210,
+        "phase": "PAYMENT DETECTED",
+        "message": "Reached the learned stop point: the next step is payment.",
+        "step": 2,
+        "state": "PAYMENT"
+      },
+      {
+        "t": 1790779233210,
+        "phase": "SAFETY STOP",
+        "message": "Payment boundary reached. Automation stopped. No payment was made by TeachFlow.",
+        "step": 2,
+        "result": "STOPPED"
+      },
+      {
+        "t": 1790779233210,
+        "phase": "YOUR TURN",
+        "message": "Complete this step yourself.",
+        "step": 2
+      },
+      {
+        "t": 1790779233210,
+        "phase": "RUN COMPLETE",
+        "message": "Reason: PAYMENT_BOUNDARY \u00b7 Reached the learned stop point: the next step is payment.",
+        "step": 2,
+        "result": "SUCCESS",
+        "reason": "Reached the learned stop point: the next step is payment."
+      }
+    ]
+  },
+  {
+    "id": "run_1790779226593",
+    "skillId": "skill_1790779136343",
+    "skillName": "Order a {ITEM} from {RESTAURANT} on PracticeFood",
+    "command": "Order a Margherita from Domino's, deliver to work",
+    "parameters": {
+      "QUANTITY": "1",
+      "ADDRESS": "Work",
+      "RESTAURANT": "Domino's",
+      "ITEM": "Margherita"
+    },
+    "startedAt": 1790779224732,
+    "completedAt": 1790779226593,
+    "status": "FAILED",
+    "terminalReason": "ERROR",
+    "terminalMessage": "I couldn't read the screen (accessibility tree unavailable).",
+    "finalStatus": "ERROR",
+    "stoppedAtStep": 1,
+    "stoppedAtStepTitle": "SELECT ADDRESS {ADDRESS}",
+    "stepsTotal": 1,
+    "stepsSucceeded": 0,
+    "stepsRecovered": 0,
+    "recoveryAttempts": 1,
+    "userInterventions": 0,
+    "actionsAttempted": 0,
+    "actionsSucceeded": 0,
+    "trace": [
+      {
+        "t": 1790779224732,
+        "phase": "VOICE RECEIVED",
+        "message": "\"Order a Margherita from Domino's, deliver to work\""
+      },
+      {
+        "t": 1790779224738,
+        "phase": "INTENT MATCHED",
+        "message": "ORDER",
+        "result": "score 0.83",
+        "reason": "no app named (neutral); same action type: ORDER; ADDRESS slot compatible; same RESTAURANT as taught (Domino's); ITEM similar to taught value"
+      },
+      {
+        "t": 1790779224738,
+        "phase": "SLOTS EXTRACTED",
+        "message": "QUANTITY=1 (taught default), ADDRESS=Work, RESTAURANT=Domino's, ITEM=Margherita"
+      },
+      {
+        "t": 1790779224738,
+        "phase": "SKILL SELECTED",
+        "message": "Order a {ITEM} from {RESTAURANT} on PracticeFood \u00b7 PracticeFood"
+      },
+      {
+        "t": 1790779225548,
+        "phase": "NEXT ACTION",
+        "message": "SELECT ADDRESS {ADDRESS}",
+        "step": 1,
+        "action": "SELECT_ADDRESS",
+        "target": "address selector \"Work\""
+      },
+      {
+        "t": 1790779225560,
+        "phase": "UI TREE CAPTURED",
+        "message": "16 nodes \u00b7 com.teachflow.practicefood",
+        "step": 1,
+        "state": "com.teachflo"
+      },
+      {
+        "t": 1790779225561,
+        "phase": "RECOVERY REQUIRED",
+        "message": "I can't find an address selector on this screen.",
+        "step": 1,
+        "action": "SELECT_ADDRESS",
+        "result": "FAILED \u2717",
+        "recoveryCount": 1,
+        "reason": "I can't find an address selector on this screen."
+      },
+      {
+        "t": 1790779225576,
+        "phase": "STATE CLASSIFIED",
+        "message": "MISSING_TARGET \u00b7 App is open and has content, but the target isn't visible",
+        "step": 1,
+        "state": "MISSING_TARGET",
+        "recoveryCount": 1
+      },
+      {
+        "t": 1790779225577,
+        "phase": "RECOVERY",
+        "message": "Re-inspecting the UI after a short wait",
+        "step": 1,
+        "action": "RE-INSPECT",
+        "recoveryCount": 1
+      },
+      {
+        "t": 1790779226593,
+        "phase": "RUN STOPPED",
+        "message": "Reason: ERROR \u00b7 I couldn't read the screen (accessibility tree unavailable).",
+        "step": 1,
+        "result": "FAILED",
+        "reason": "I couldn't read the screen (accessibility tree unavailable)."
+      }
+    ]
+  },
+  {
+    "id": "run_1790779218153",
+    "skillId": "skill_1790779136343",
+    "skillName": "Order a {ITEM} from {RESTAURANT} on PracticeFood",
+    "command": "Order two Margherita pizzas from Domino's",
+    "parameters": {
+      "QUANTITY": "2",
+      "RESTAURANT": "Domino's",
+      "ITEM": "Margherita pizzas"
+    },
+    "startedAt": 1790779217330,
+    "completedAt": 1790779218153,
+    "status": "SUCCESS",
+    "terminalReason": "PAYMENT_BOUNDARY",
+    "terminalMessage": "Reached the learned stop point: the next step is payment.",
+    "finalStatus": "SUCCESS \u2014 STOPPED AT PAYMENT",
+    "stoppedAtStep": 2,
+    "stoppedAtStepTitle": "STOP_AT_PAYMENT",
+    "stepsTotal": 0,
+    "stepsSucceeded": 0,
+    "stepsRecovered": 0,
+    "recoveryAttempts": 0,
+    "userInterventions": 0,
+    "actionsAttempted": 0,
+    "actionsSucceeded": 0,
+    "safetyBoundaryTriggered": "PAYMENT",
+    "trace": [
+      {
+        "t": 1790779217330,
+        "phase": "VOICE RECEIVED",
+        "message": "\"Order two Margherita pizzas from Domino's\""
+      },
+      {
+        "t": 1790779217335,
+        "phase": "INTENT MATCHED",
+        "message": "ORDER",
+        "result": "score 0.85",
+        "reason": "no app named (neutral); same action type: ORDER; same RESTAURANT as taught (Domino's); QUANTITY slot compatible; ITEM similar to taught value"
+      },
+      {
+        "t": 1790779217335,
+        "phase": "SLOTS EXTRACTED",
+        "message": "QUANTITY=2, RESTAURANT=Domino's, ITEM=Margherita pizzas"
+      },
+      {
+        "t": 1790779217335,
+        "phase": "SKILL SELECTED",
+        "message": "Order a {ITEM} from {RESTAURANT} on PracticeFood \u00b7 PracticeFood"
+      },
+      {
+        "t": 1790779218142,
+        "phase": "NEXT ACTION",
+        "message": "Skipped \"SELECT ADDRESS {ADDRESS}\" (not requested this time)",
+        "step": 1,
+        "action": "SELECT_ADDRESS",
+        "result": "SKIPPED"
+      },
+      {
+        "t": 1790779218152,
+        "phase": "PAYMENT DETECTED",
+        "message": "Reached the learned stop point: the next step is payment.",
+        "step": 2,
+        "state": "PAYMENT"
+      },
+      {
+        "t": 1790779218153,
+        "phase": "SAFETY STOP",
+        "message": "Payment boundary reached. Automation stopped. No payment was made by TeachFlow.",
+        "step": 2,
+        "result": "STOPPED"
+      },
+      {
+        "t": 1790779218153,
+        "phase": "YOUR TURN",
+        "message": "Complete this step yourself.",
+        "step": 2
+      },
+      {
+        "t": 1790779218153,
+        "phase": "RUN COMPLETE",
+        "message": "Reason: PAYMENT_BOUNDARY \u00b7 Reached the learned stop point: the next step is payment.",
+        "step": 2,
+        "result": "SUCCESS",
+        "reason": "Reached the learned stop point: the next step is payment."
+      }
+    ]
+  },
+  {
+    "id": "run_1790779210006",
+    "skillId": "skill_1790779136343",
+    "skillName": "Order a {ITEM} from {RESTAURANT} on PracticeFood",
+    "command": "Order a Farmhouse pizza from Domino's",
+    "parameters": {
+      "QUANTITY": "1",
+      "RESTAURANT": "Domino's",
+      "ITEM": "Farmhouse pizza"
+    },
+    "startedAt": 1790779209181,
+    "completedAt": 1790779210006,
+    "status": "SUCCESS",
+    "terminalReason": "PAYMENT_BOUNDARY",
+    "terminalMessage": "Reached the learned stop point: the next step is payment.",
+    "finalStatus": "SUCCESS \u2014 STOPPED AT PAYMENT",
+    "stoppedAtStep": 2,
+    "stoppedAtStepTitle": "STOP_AT_PAYMENT",
+    "stepsTotal": 0,
+    "stepsSucceeded": 0,
+    "stepsRecovered": 0,
+    "recoveryAttempts": 0,
+    "userInterventions": 0,
+    "actionsAttempted": 0,
+    "actionsSucceeded": 0,
+    "safetyBoundaryTriggered": "PAYMENT",
+    "trace": [
+      {
+        "t": 1790779209181,
+        "phase": "VOICE RECEIVED",
+        "message": "\"Order a Farmhouse pizza from Domino's\""
+      },
+      {
+        "t": 1790779209186,
+        "phase": "INTENT MATCHED",
+        "message": "ORDER",
+        "result": "score 0.73",
+        "reason": "no app named (neutral); same action type: ORDER; same RESTAURANT as taught (Domino's); ITEM slot compatible (new value)"
+      },
+      {
+        "t": 1790779209186,
+        "phase": "SLOTS EXTRACTED",
+        "message": "QUANTITY=1 (taught default), RESTAURANT=Domino's, ITEM=Farmhouse pizza"
+      },
+      {
+        "t": 1790779209186,
+        "phase": "SKILL SELECTED",
+        "message": "Order a {ITEM} from {RESTAURANT} on PracticeFood \u00b7 PracticeFood"
+      },
+      {
+        "t": 1790779209997,
+        "phase": "NEXT ACTION",
+        "message": "Skipped \"SELECT ADDRESS {ADDRESS}\" (not requested this time)",
+        "step": 1,
+        "action": "SELECT_ADDRESS",
+        "result": "SKIPPED"
+      },
+      {
+        "t": 1790779210006,
+        "phase": "PAYMENT DETECTED",
+        "message": "Reached the learned stop point: the next step is payment.",
+        "step": 2,
+        "state": "PAYMENT"
+      },
+      {
+        "t": 1790779210006,
+        "phase": "SAFETY STOP",
+        "message": "Payment boundary reached. Automation stopped. No payment was made by TeachFlow.",
+        "step": 2,
+        "result": "STOPPED"
+      },
+      {
+        "t": 1790779210006,
+        "phase": "YOUR TURN",
+        "message": "Complete this step yourself.",
+        "step": 2
+      },
+      {
+        "t": 1790779210006,
+        "phase": "RUN COMPLETE",
+        "message": "Reason: PAYMENT_BOUNDARY \u00b7 Reached the learned stop point: the next step is payment.",
+        "step": 2,
+        "result": "SUCCESS",
+        "reason": "Reached the learned stop point: the next step is payment."
+      }
+    ]
+  },
+  {
+    "id": "run_1790779202080",
+    "skillId": "skill_1790779136343",
+    "skillName": "Order a {ITEM} from {RESTAURANT} on PracticeFood",
+    "command": "Get me a margherita from dominos",
+    "parameters": {
+      "QUANTITY": "1",
+      "RESTAURANT": "dominos",
+      "ITEM": "margherita"
+    },
+    "startedAt": 1790779201248,
+    "completedAt": 1790779202080,
+    "status": "SUCCESS",
+    "terminalReason": "PAYMENT_BOUNDARY",
+    "terminalMessage": "Reached the learned stop point: the next step is payment.",
+    "finalStatus": "SUCCESS \u2014 STOPPED AT PAYMENT",
+    "stoppedAtStep": 2,
+    "stoppedAtStepTitle": "STOP_AT_PAYMENT",
+    "stepsTotal": 0,
+    "stepsSucceeded": 0,
+    "stepsRecovered": 0,
+    "recoveryAttempts": 0,
+    "userInterventions": 0,
+    "actionsAttempted": 0,
+    "actionsSucceeded": 0,
+    "safetyBoundaryTriggered": "PAYMENT",
+    "trace": [
+      {
+        "t": 1790779201248,
+        "phase": "VOICE RECEIVED",
+        "message": "\"Get me a margherita from dominos\""
+      },
+      {
+        "t": 1790779201257,
+        "phase": "INTENT MATCHED",
+        "message": "ORDER",
+        "result": "score 0.78",
+        "reason": "no app named (neutral); same action type: ORDER; same RESTAURANT as taught (Domino's); ITEM similar to taught value"
+      },
+      {
+        "t": 1790779201257,
+        "phase": "SLOTS EXTRACTED",
+        "message": "QUANTITY=1 (taught default), RESTAURANT=dominos, ITEM=margherita"
+      },
+      {
+        "t": 1790779201257,
+        "phase": "SKILL SELECTED",
+        "message": "Order a {ITEM} from {RESTAURANT} on PracticeFood \u00b7 PracticeFood"
+      },
+      {
+        "t": 1790779202066,
+        "phase": "NEXT ACTION",
+        "message": "Skipped \"SELECT ADDRESS {ADDRESS}\" (not requested this time)",
+        "step": 1,
+        "action": "SELECT_ADDRESS",
+        "result": "SKIPPED"
+      },
+      {
+        "t": 1790779202080,
+        "phase": "PAYMENT DETECTED",
+        "message": "Reached the learned stop point: the next step is payment.",
+        "step": 2,
+        "state": "PAYMENT"
+      },
+      {
+        "t": 1790779202080,
+        "phase": "SAFETY STOP",
+        "message": "Payment boundary reached. Automation stopped. No payment was made by TeachFlow.",
+        "step": 2,
+        "result": "STOPPED"
+      },
+      {
+        "t": 1790779202080,
+        "phase": "YOUR TURN",
+        "message": "Complete this step yourself.",
+        "step": 2
+      },
+      {
+        "t": 1790779202080,
+        "phase": "RUN COMPLETE",
+        "message": "Reason: PAYMENT_BOUNDARY \u00b7 Reached the learned stop point: the next step is payment.",
+        "step": 2,
+        "result": "SUCCESS",
+        "reason": "Reached the learned stop point: the next step is payment."
+      }
+    ]
+  },
+  {
+    "id": "run_1790779194599",
+    "skillId": "skill_1790779136343",
+    "skillName": "Order a {ITEM} from {RESTAURANT} on PracticeFood",
+    "command": "Order a Margherita pizza from Domino's on PracticeFood",
+    "parameters": {
+      "QUANTITY": "1",
+      "RESTAURANT": "Domino's",
+      "ITEM": "Margherita pizza"
+    },
+    "startedAt": 1790779191063,
+    "completedAt": 1790779194599,
+    "status": "SUCCESS",
+    "terminalReason": "PAYMENT_BOUNDARY",
+    "terminalMessage": "Reached the learned stop point: the next step is payment.",
+    "finalStatus": "SUCCESS \u2014 STOPPED AT PAYMENT",
+    "stoppedAtStep": 2,
+    "stoppedAtStepTitle": "STOP_AT_PAYMENT",
+    "stepsTotal": 0,
+    "stepsSucceeded": 0,
+    "stepsRecovered": 0,
+    "recoveryAttempts": 0,
+    "userInterventions": 0,
+    "actionsAttempted": 0,
+    "actionsSucceeded": 0,
+    "safetyBoundaryTriggered": "PAYMENT",
+    "trace": [
+      {
+        "t": 1790779191063,
+        "phase": "VOICE RECEIVED",
+        "message": "\"Order a Margherita pizza from Domino's on PracticeFood\""
+      },
+      {
+        "t": 1790779191069,
+        "phase": "INTENT MATCHED",
+        "message": "ORDER",
+        "result": "score 1.00",
+        "reason": "same app: PracticeFood; same action type: ORDER; same RESTAURANT as taught (Domino's); ITEM similar to taught value"
+      },
+      {
+        "t": 1790779191069,
+        "phase": "SLOTS EXTRACTED",
+        "message": "QUANTITY=1 (taught default), RESTAURANT=Domino's, ITEM=Margherita pizza"
+      },
+      {
+        "t": 1790779191069,
+        "phase": "SKILL SELECTED",
+        "message": "Order a {ITEM} from {RESTAURANT} on PracticeFood \u00b7 PracticeFood"
+      },
+      {
+        "t": 1790779194583,
+        "phase": "NEXT ACTION",
+        "message": "Skipped \"SELECT ADDRESS {ADDRESS}\" (not requested this time)",
+        "step": 1,
+        "action": "SELECT_ADDRESS",
+        "result": "SKIPPED"
+      },
+      {
+        "t": 1790779194599,
+        "phase": "PAYMENT DETECTED",
+        "message": "Reached the learned stop point: the next step is payment.",
+        "step": 2,
+        "state": "PAYMENT"
+      },
+      {
+        "t": 1790779194599,
+        "phase": "SAFETY STOP",
+        "message": "Payment boundary reached. Automation stopped. No payment was made by TeachFlow.",
+        "step": 2,
+        "result": "STOPPED"
+      },
+      {
+        "t": 1790779194599,
+        "phase": "YOUR TURN",
+        "message": "Complete this step yourself.",
+        "step": 2
+      },
+      {
+        "t": 1790779194599,
+        "phase": "RUN COMPLETE",
+        "message": "Reason: PAYMENT_BOUNDARY \u00b7 Reached the learned stop point: the next step is payment.",
+        "step": 2,
+        "result": "SUCCESS",
+        "reason": "Reached the learned stop point: the next step is payment."
+      }
+    ]
+  }
+]
