@@ -57,7 +57,8 @@ class CommandParser(private val knownAppLabels: () -> Collection<String>) {
     )
 
     fun parse(raw: String): ParsedCommand {
-        var text = " " + raw.trim().replace("\u2019", "'").trimEnd('.', '!', '?') + " "
+        // Commas and semicolons separate clauses ("…from Domino's, deliver to work"), so treat them like "and".
+        var text = " " + raw.trim().replace("\u2019", "'").trimEnd('.', '!', '?').replace(Regex("\\s*[,;]\\s*"), " and ") + " "
         val slots = LinkedHashMap<String, String>()
 
         // App: a known launcher label, preferably introduced by on/in/using/via.

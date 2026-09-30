@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- DEBUG BUILDS ONLY. Lets the emulator end-to-end tests (android/e2e) drive TeachFlow over adb.
+     This receiver is not present in release builds. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <receiver android:name="com.teachflow.agent.debug.DebugCommandReceiver" android:exported="true" />
+    </application>
+</manifest>

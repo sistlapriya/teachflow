@@ -14,3 +14,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "TeachFlow"
 include(":app")
+include(":testapp") // PracticeFood: test app for the emulator E2E tests only
