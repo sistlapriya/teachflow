@@ -10,7 +10,6 @@ These are NOT the T1–T14 device tests on Zomato/Amazon; they mirror them on a 
 Every PASS/FAIL below is computed from TeachFlow's own run reports and PracticeFood's log.
 """
 import base64, json, os, re, subprocess, sys, time, traceback
-import xml.etree.ElementTree as ET
 
 OUT = "e2e-out"
 SHOTS = os.path.join(OUT, "screens")
@@ -66,35 +65,23 @@ def shot(name):
     return "screens/" + name + ".png"
 
 
-def dump():
-    for _ in range(4):
-        sh("uiautomator", "dump", "/sdcard/ui.xml")
-        x = adb("exec-out", "cat", "/sdcard/ui.xml")
-        if "<hierarchy" in x:
-            return ET.fromstring(x[x.index("<hierarchy"):])
-        time.sleep(1)
-    return None
+def nodes(pattern=None):
+    """Visible labelled/editable nodes, read through TeachFlow's accessibility access.
+    (uiautomator is NOT used: it suspends accessibility services while it runs, which would
+    make TeachFlow miss the very taps it is supposed to observe.)"""
+    r = tf("findall", text=pattern) if pattern else tf("findall")
+    return r.get("nodes", [])
 
 
-def center(node):
-    x1, y1, x2, y2 = map(int, re.findall(r"\d+", node.get("bounds")))
-    return (x1 + x2) // 2, (y1 + y2) // 2
-
-
-def find(pattern, root=None):
-    root = root or dump()
-    if root is None:
-        return None
-    for n in root.iter("node"):
-        for a in ("text", "content-desc"):
-            if re.fullmatch(pattern, n.get(a, "") or "", re.I | re.S):
-                return n
+def find(pattern, all_nodes=None):
+    for n in (all_nodes if all_nodes is not None else nodes()):
+        if re.fullmatch(pattern, n.get("label") or "", re.I | re.S):
+            return n
     return None
 
 
 def tap_node(n):
-    x, y = center(n)
-    sh("input", "tap", str(x), str(y))
+    sh("input", "tap", str(n["x"]), str(n["y"]))
 
 
 def tap(pattern, wait=1.8):
@@ -108,14 +95,13 @@ def tap(pattern, wait=1.8):
 
 
 def tap_add_near(item, wait=2.0):
-    root = dump()
-    anchor = find(re.escape(item), root)
-    adds = [n for n in root.iter("node") if (n.get("text") or "").strip().upper() == "ADD"]
+    all_nodes = nodes()
+    anchor = find(re.escape(item), all_nodes)
+    adds = [n for n in all_nodes if (n.get("label") or "").strip().upper() == "ADD"]
     if anchor is None or not adds:
         log(f"  ! could not find ADD near {item!r}")
         return False
-    ay = center(anchor)[1]
-    tap_node(min(adds, key=lambda n: abs(center(n)[1] - ay)))
+    tap_node(min(adds, key=lambda n: abs(n["y"] - anchor["y"])))
     time.sleep(wait)
     return True
 
@@ -186,12 +172,7 @@ def teach():
     time.sleep(3)
     shots = [shot("e1-01-teaching-started")]
     tap(r"Search for restaurant, item or more")
-    field = None
-    root = dump()
-    for n in root.iter("node"):
-        if n.get("class") == "android.widget.EditText":
-            field = n
-            break
+    field = next((n for n in nodes() if n.get("editable") and n.get("pkg") == PF_PKG), None)
     if field is not None:
         tap_node(field)
         time.sleep(1)

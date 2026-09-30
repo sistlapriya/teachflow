@@ -111,6 +111,31 @@ class DebugCommandReceiver : BroadcastReceiver() {
                     out.put("observedCount", AgentBus.status.value.observedCount)
                     out.put("serviceInstance", TeachFlowAccessibilityService.instance != null)
                 }
+                "findall" -> {
+                    // Every labelled or editable node on screen (all windows except TeachFlow's own overlay),
+                    // so the test can tap like a person looking at the screen, without uiautomator
+                    // (which suspends accessibility services while it runs).
+                    val re = arg("text")?.let { Regex(it, RegexOption.IGNORE_CASE) }
+                    val svc = TeachFlowAccessibilityService.instance
+                    val found = JSONArray()
+                    svc?.windows?.forEach { w ->
+                        val root = w.root ?: return@forEach
+                        if (root.packageName?.toString() == app.packageName) return@forEach
+                        val queue = ArrayDeque<AccessibilityNodeInfo>().apply { add(root) }
+                        while (queue.isNotEmpty() && found.length() < 400) {
+                            val n = queue.removeFirst()
+                            val label = (n.text ?: n.contentDescription)?.toString().orEmpty()
+                            if ((label.isNotBlank() || n.isEditable) && n.isVisibleToUser && (re == null || re.containsMatchIn(label))) {
+                                val r = Rect(); n.getBoundsInScreen(r)
+                                found.put(JSONObject().put("label", label).put("x", r.centerX()).put("y", r.centerY())
+                                    .put("top", r.top).put("bottom", r.bottom).put("cls", n.className?.toString())
+                                    .put("editable", n.isEditable).put("clickable", n.isClickable).put("pkg", n.packageName?.toString()))
+                            }
+                            for (i in 0 until n.childCount) n.getChild(i)?.let { queue.add(it) }
+                        }
+                    }
+                    out.put("nodes", found)
+                }
                 "find" -> {
                     // Search every window (e.g. an incoming-call heads-up) for a node whose text or description matches.
                     val re = Regex(arg("text")!!, RegexOption.IGNORE_CASE)

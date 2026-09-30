@@ -55,7 +55,14 @@ class TeachFlowAccessibilityService : AccessibilityService() {
 
     private var captureJob: Job? = null
     private var lastCaptureAt = 0L
-    private var session: TeachingSession? = null
+    /**
+     * The teaching session lives at process level (not per service instance): Android can unbind and
+     * rebind an accessibility service at any time (for example when another automation tool starts),
+     * and a demonstration in progress must survive that.
+     */
+    private var session: TeachingSession?
+        get() = activeSession
+        set(v) { activeSession = v }
     private var runJob: Job? = null
 
     override fun onServiceConnected() {
@@ -74,7 +81,7 @@ class TeachFlowAccessibilityService : AccessibilityService() {
         overlay = OverlayController(this, scope).also { it.start() }
         scope.launch { AgentBus.requests.collect { handle(it) } }
         scheduleCapture(0)
-        TfLog.i("SERVICE", "Connected")
+        TfLog.i("SERVICE", "Connected" + if (activeSession != null) " (teaching session in progress kept)" else "")
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
@@ -287,5 +294,7 @@ class TeachFlowAccessibilityService : AccessibilityService() {
         /** The connected service, or null. Used by the debug-only test hook to search windows. */
         @Volatile var instance: TeachFlowAccessibilityService? = null
             private set
+
+        @Volatile private var activeSession: TeachingSession? = null
     }
 }
