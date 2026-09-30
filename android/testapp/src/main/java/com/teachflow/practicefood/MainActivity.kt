@@ -90,10 +90,11 @@ class MainActivity : Activity() {
             addView(label("Domino's Pizza", 22f, bold = true))
             addView(label("Pizza, Fast Food · 4.2 ★", 14f))
             menu.forEach { item -> addView(menuRow(item)) }
-            if (cart.isNotEmpty()) addView(button("View Cart · ${cart.values.sum()} item${if (cart.values.sum() == 1) "" else "s"}") {
-                if (login && !loggedIn) showLogin() else showCart()
-            })
         }
+        // Sticky bottom bar, like real food apps.
+        if (cart.isNotEmpty()) bottomBar?.addView(button("View Cart · ${cart.values.sum()} item${if (cart.values.sum() == 1) "" else "s"}") {
+            if (login && !loggedIn) showLogin() else showCart()
+        }, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(64)))
         if (popup && !popupShown) {
             popupShown = true
             AlertDialog.Builder(this)
@@ -163,6 +164,7 @@ class MainActivity : Activity() {
     // ---- building blocks ----------------------------------------------------------------
 
     private var scroll: ScrollView? = null
+    private var bottomBar: LinearLayout? = null
     private val currentScroll get() = scroll?.scrollY ?: 0
 
     /** A header area (room for TeachFlow's floating panel) above a scrollable content column. */
@@ -180,6 +182,9 @@ class MainActivity : Activity() {
         val sv = ScrollView(this).apply { addView(col) }
         scroll = sv
         outer.addView(sv, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f))
+        val bar = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(12), 0, dp(12), dp(8)) }
+        bottomBar = bar
+        outer.addView(bar, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
         setContentView(outer)
         if (scrollTo > 0) sv.post { sv.scrollTo(0, scrollTo) }
     }

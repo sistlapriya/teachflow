@@ -60,6 +60,7 @@ class TeachFlowAccessibilityService : AccessibilityService() {
 
     override fun onServiceConnected() {
         super.onServiceConnected()
+        instance = this
         apps = AppResolver(this)
         commandParser = CommandParser { apps.apps().map { it.label } }
         observer.listener = { action, isUpdate ->
@@ -99,6 +100,7 @@ class TeachFlowAccessibilityService : AccessibilityService() {
         overlay?.stop()
         scope.cancel()
         AgentBus.serviceConnected.value = false
+        if (instance === this) instance = null
         super.onDestroy()
     }
 
@@ -279,5 +281,11 @@ class TeachFlowAccessibilityService : AccessibilityService() {
                 finishTeaching(s.stopReason!!)
             }
         }
+    }
+
+    companion object {
+        /** The connected service, or null. Used by the debug-only test hook to search windows. */
+        @Volatile var instance: TeachFlowAccessibilityService? = null
+            private set
     }
 }

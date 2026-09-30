@@ -3,7 +3,10 @@ package com.teachflow.agent.debug
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.graphics.Rect
 import android.util.Base64
+import android.view.accessibility.AccessibilityNodeInfo
+import com.teachflow.agent.accessibility.TeachFlowAccessibilityService
 import com.teachflow.agent.core.AgentBus
 import com.teachflow.agent.core.AgentRequest
 import com.teachflow.agent.core.AgentState
@@ -100,6 +103,35 @@ class DebugCommandReceiver : BroadcastReceiver() {
                     }
                 }
                 "resume" -> AgentBus.request(AgentRequest.Resume)
+                "diag" -> {
+                    val acts = AgentBus.actions.value
+                    out.put("actionsSeen", acts.size)
+                    out.put("lastActions", JSONArray(acts.take(8).map { "${it.type} ${it.packageName} \"${it.displayLabel.take(40)}\"" }))
+                    AgentBus.snapshot.value?.let { out.put("snapshot", "${it.packageName} · ${it.nodes.size} nodes") }
+                    out.put("observedCount", AgentBus.status.value.observedCount)
+                    out.put("serviceInstance", TeachFlowAccessibilityService.instance != null)
+                }
+                "find" -> {
+                    // Search every window (e.g. an incoming-call heads-up) for a node whose text or description matches.
+                    val re = Regex(arg("text")!!, RegexOption.IGNORE_CASE)
+                    val svc = TeachFlowAccessibilityService.instance
+                    var hit: String? = null
+                    svc?.windows?.forEach { w ->
+                        val root = w.root ?: return@forEach
+                        val queue = ArrayDeque<AccessibilityNodeInfo>().apply { add(root) }
+                        while (queue.isNotEmpty() && hit == null) {
+                            val n = queue.removeFirst()
+                            val label = (n.text ?: n.contentDescription)?.toString().orEmpty()
+                            if (label.isNotBlank() && re.containsMatchIn(label)) {
+                                val r = Rect(); n.getBoundsInScreen(r)
+                                hit = "${r.centerX()},${r.centerY()}"
+                                out.put("label", label); out.put("pkg", n.packageName?.toString())
+                            }
+                            for (i in 0 until n.childCount) n.getChild(i)?.let { queue.add(it) }
+                        }
+                    }
+                    out.put("found", hit ?: JSONObject.NULL)
+                }
                 "done" -> AgentBus.setStatus(AgentState.READY, "Ready")
                 else -> Unit // "status"
             }

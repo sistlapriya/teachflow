@@ -128,8 +128,17 @@ def runs_json():
         return []
 
 
+PF_MARK = [0]
+
+
 def pf_log():
-    return adb("logcat", "-d", "-s", "PracticeFood:I")
+    """PracticeFood log lines since the current scenario started."""
+    lines = adb("logcat", "-d", "-s", "PracticeFood:I").splitlines()
+    return "\n".join(lines[PF_MARK[0]:])
+
+
+def mark_pf():
+    PF_MARK[0] = len(adb("logcat", "-d", "-s", "PracticeFood:I").splitlines())
 
 
 def launch_pf(**extras):
@@ -170,6 +179,7 @@ def setup():
 def teach():
     log("E1 TEACH: 'Order a Margherita pizza from Domino's on PracticeFood'")
     adb("logcat", "-c")
+    adb("logcat", "-G", "16M")
     tf("teach", command="Order a Margherita pizza from Domino's on PracticeFood", pkg=PF_PKG, label="PracticeFood")
     time.sleep(1)
     launch_pf()
@@ -188,6 +198,7 @@ def teach():
     sh("input", "text", "Margherita")
     time.sleep(2.5)
     shots.append(shot("e1-02-typed-search"))
+    log(f"  diag after typing: {tf('diag')}")
 
     # Bonus: an incoming phone call during teaching, declined by the "user".
     call_note = "not attempted"
@@ -195,10 +206,11 @@ def teach():
         adb("emu", "gsm", "call", "5551234")
         time.sleep(4)
         shots.append(shot("e1-03-incoming-call"))
-        n = find(r"(?i).*(decline|reject|dismiss).*")
-        if n is not None:
-            tap_node(n)
-            call_note = "call declined by tapping the phone UI"
+        hit = tf("find", text=r"^(decline|reject)$").get("found")
+        if hit:
+            x, y = hit.split(",")
+            sh("input", "tap", x, y)
+            call_note = "call declined by tapping Decline on the incoming-call screen"
         else:
             adb("emu", "gsm", "cancel", "5551234")
             call_note = "call UI button not found; call cancelled from the emulator (no tap to observe)"
@@ -216,8 +228,14 @@ def teach():
     tap_add_near("Margherita Pizza")
     tap(r"View Cart.*", wait=2.5)
     shots.append(shot("e1-05-cart-while-teaching"))
+    log(f"  diag before stop: {tf('diag')}")
+    with open(os.path.join(OUT, "teach-logcat.txt"), "w") as f:
+        f.write(adb("logcat", "-d", "-s", "TeachFlow:*", "PracticeFood:*", "AndroidRuntime:*"))
+    with open(os.path.join(OUT, "dumpsys-accessibility.txt"), "w") as f:
+        f.write(sh("dumpsys", "accessibility"))
     tf("stop")
     st = wait_for(lambda s: s.get("pending") is True, timeout=30)
+    log(f"  after stop: state={st.get('state')} pending={st.get('pending')} headline={st.get('headline')!r}")
     time.sleep(2)
     shots.append(shot("e1-06-review-learned"))
     saved = tf("save")
@@ -239,7 +257,7 @@ def teach():
 
 def scenario(eid, mirrors, name, command, expect, extras=None, answer=None, sign_in=False, timeout=200):
     log(f"{eid} {name}: {command!r}")
-    adb("logcat", "-c")
+    mark_pf()
     tf("done")
     before = tf("status").get("runs", 0)
     r = tf("run", command=command)
@@ -358,7 +376,7 @@ def write_outputs():
     with open(os.path.join(OUT, "skills.json"), "w") as f:
         f.write(adb("exec-out", "run-as", TF_PKG, "cat", "files/skills.json"))
     with open(os.path.join(OUT, "logcat.txt"), "w") as f:
-        f.write(adb("logcat", "-d", "-s", "TeachFlow:*", "PracticeFood:*"))
+        f.write(adb("logcat", "-d", "-s", "TeachFlow:*", "PracticeFood:*", "AndroidRuntime:*"))
     with open(os.path.join(OUT, "harness-log.txt"), "w") as f:
         f.write("\n".join(LOG))
     with open(os.path.join(OUT, "results.json"), "w") as f:
