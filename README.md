@@ -7,6 +7,13 @@ TeachFlow is an Android agent that learns a task from **one demonstration**, tur
 > TeachFlow learns what the user is trying to accomplish, not merely where the user tapped.
 
 Samsung PRISM Generative AI Hackathon 2026–27.
+## Submission links
+
+| Item | Link |
+|---|---|
+| ▶ Demo video (≤ 5 min) | [Watch the TeachFlow demo](https://drive.google.com/file/d/16r8XAJm42MbK0sRWVK049LkRFQsvZno5/view?usp=sharing) |
+| 📊 Presentation | [TeachFlow presentation](https://docs.google.com/presentation/d/1kEgIoKVwpI-128HwD9vqwwOH_83y7B0l/view?usp=sharing) |
+| 📦 APK | [Download teachflow-debug.apk](https://github.com/sistlapriya/teachflow/releases/tag/apk-latest) |
 
 | | What it is | Status |
 |---|---|---|
@@ -171,11 +178,13 @@ Nothing in the code is specific to these apps. No package names, labels or test 
 
 ## 14. Demo
 
-The 5-minute sequence (teach → exact replay → paraphrase → changed item → quantity → popup → stuck → safety stop) is in [`demo/demo-script.md`](demo/demo-script.md), with copy-paste commands in [`demo/commands.md`](demo/commands.md). The presentation content is in [`docs/presentation.md`](docs/presentation.md).
+▶ [Watch the 5-minute demo video](https://drive.google.com/file/d/16r8XAJm42MbK0sRWVK049LkRFQsvZno5/view?usp=sharing)
 
 ## 15. Team
 
-_Add team member names, roles and contact here._
+SISTLA SAI HARIPRIYA-RA22411003010060
+ALANKRIT PANDEY -RA2411003011261_
+
 
 ---
 
